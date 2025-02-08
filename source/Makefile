@@ -4,13 +4,13 @@ EXAMPLES=$(patsubst %.tex,%.pdf,$(wildcard assets/*.tex))
 default: full
 
 clean:
-	rm -f *.aux std.pdf std-gram.ext *.idx *.ilg *.ind *.log *.lot *.lof *.tmp *.out *.glo *.gls *.fls *.fdb* *.toc *.xtr
+	rm -f *.aux std.pdf std-gram.ext *.idx *.ilg *.ind *.log *.lot *.lof *.tmp *.out *.glo *.gls *.fls *.fdb* *.toc *.xtr *.xdv
 
 refresh:
 	pdflatex std
 
 full:
-	latexmk -pdf std
+	latexmk -xelatex std.tex
 
 quiet:
 	latexmk -pdf std -e '$$max_repeat = 1;' -silent || ( rm std.pdf; latexmk -pdf std -e '$$max_repeat = 4;' )

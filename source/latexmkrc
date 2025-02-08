@@ -1,6 +1,10 @@
 add_cus_dep('glo', 'gls', 0, 'makeglo2gls');
+$aux_dir = '.';
+$out_dir = '.';
 sub makeglo2gls {
-    system("makeindex -s basic.gst -o '$_[0]'.gls '$_[0]'.glo");
+    my ($base_name) = @_;
+    system("makeindex -s basic.gst -o \"$base_name.gls\" \"$base_name.glo\"");
 }
 
-$pdflatex = "pdflatex -shell-escape %O %S"
+$xelatex = 'xelatex -shell-escape %O %S';
+$xdvipdfmx = 'xdvipdfmx -E -o %D %O %S';
