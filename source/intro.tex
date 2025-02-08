@@ -1,706 +1,642 @@
 %!TEX root = std.tex
 
-\rSec0[intro.scope]{Scope}
+\rSec0[intro.scope]{适用范围}
 
 \pnum
 \indextext{scope|(}%
-This document specifies requirements for implementations
-of the \Cpp{} programming language. The first such requirement is that
-an implementation implements the language, so this document also
-defines \Cpp{}. Other requirements and relaxations of the first
-requirement appear at various places within this document.
+本标准规定了C++编程语言实现的要求。首要要求是任何实现必须正确实现该语言，因此本标准也定义了C++语言。在本标准其他章节中，对首要要求的补充说明和放宽条件将散见于各处。
 
 \pnum
-\Cpp{} is a general purpose programming language based on the C
-programming language as described in \IsoC{}.
-\Cpp{} provides many facilities
-beyond those provided by C, including additional data types,
-classes, templates, exceptions, namespaces, operator
-overloading, function name overloading, references, free store
-management operators, and additional library facilities.%
+\Cpp{}是基于\IsoC{}所描述的C编程语言发展而来的通用编程语言。相较于C语言，\Cpp{}提供了诸多扩展功能，包括额外的数据类型、类、模板、异常处理、命名空间、运算符重载、函数名重载、引用、自由存储管理运算符，以及更多库功能。%
 \indextext{scope|)}
 
-\rSec0[intro.refs]{Normative references}%
-\indextext{normative references|see{references, normative}}%
+\rSec0[intro.refs]{规范性引用}%
+\indextext{normative references|see{引用，规范性}}%
 
 \pnum
 \indextext{references!normative|(}%
-The following documents are referred to in the text
-in such a way that some or all of their content
-constitutes requirements
-of this document. For dated references, only the edition cited applies.
-For undated references, the latest edition of the referenced document
-(including any amendments) applies.
+以下文件中的条款通过本文的引用而成为本标准的条款。凡是注日期的引用文件，仅所注日期的版本适用于本标准。凡是不注日期的引用文件，其最新版本（包括所有的修改单）适用于本标准。
 \begin{itemize}
-% ISO documents in numerical order.
-\item ISO/IEC 2382, \doccite{Information technology --- Vocabulary}
-\item ISO 8601-1:2019, \doccite{Date and time --- Representations for information interchange --- Part 1: Basic rules}
-\item \IsoC{}, \doccite{Information technology --- Programming languages --- C}
-\item \IsoPosix{}, \doccite{Information Technology --- Portable Operating System Interface (POSIX\textregistered)\begin{footnote}
-POSIX\textregistered\ is a registered trademark of
-the Institute of Electrical and Electronic Engineers, Inc.
-This information is given for the convenience of users of this document and
-does not constitute an endorsement by ISO or IEC of this product.
+% ISO文档按编号排序
+\item ISO/IEC 2382，\doccite{信息技术 词汇}
+\item ISO 8601-1:2019，\doccite{日期与时间 信息交换表示法 第1部分：基本规则}
+\item \IsoC{}，\doccite{信息技术 编程语言 C}
+\item \IsoPosix{}，\doccite{信息技术 可移植操作系统接口（POSIX\textregistered）\begin{footnote}
+POSIX\textregistered\ 是电气与电子工程师学会的注册商标。
+此信息仅为本文档使用者提供便利，不构成ISO或IEC对该产品的认可。
 \end{footnote}
-Base Specifications, Issue 7}
-\item \IsoPosix{}/Cor 1:2013, \doccite{Information Technology --- Portable Operating System Interface
-(POSIX\textregistered) Base Specifications, Issue 7 --- Technical Corrigendum 1}
-\item \IsoPosix{}/Cor 2:2017, \doccite{Information Technology --- Portable Operating System Interface
-(POSIX\textregistered) Base Specifications, Issue 7 --- Technical Corrigendum 2}
-\item \IsoFloatUndated{}:2020, \doccite{Information technology --- Microprocessor Systems --- Floating-Point arithmetic}
-\item ISO 80000-2:2019, \doccite{Quantities and units --- Part 2: Mathematics}
-% Other international standards.
-\item Ecma International, \doccite{ECMAScript
+基础规范 第7版}
+\item \IsoPosix{}/Cor 1:2013，\doccite{信息技术 可移植操作系统接口（POSIX\textregistered）基础规范 第7版 技术勘误1}
+\item \IsoPosix{}/Cor 2:2017，\doccite{信息技术 可移植操作系统接口（POSIX\textregistered）基础规范 第7版 技术勘误2}
+\item \IsoFloatUndated{}:2020，\doccite{信息技术 微处理器系统 浮点算术}
+\item ISO 80000-2:2019，\doccite{量和单位 第2部分：数学}
+% 其他国际标准
+\item Ecma International，\doccite{ECMAScript
 \begin{footnote}
-ECMAScript\textregistered\ is a registered trademark of Ecma
-International.
-This information is given for the convenience of users of this document and
-does not constitute an endorsement by ISO or IEC of this product.
+ECMAScript\textregistered\ 是Ecma International的注册商标。
+此信息仅为本文档使用者提供便利，不构成ISO或IEC对该产品的认可。
 \end{footnote}
-Language Specification},
-Standard Ecma-262, third edition, 1999.
+语言规范}，Ecma-262标准第三版，1999年。
 \item
-The Unicode Consortium. \doccite{The Unicode Standard}.
-Available from: \url{https://www.unicode.org/versions/latest/}
+Unicode联盟，\doccite{Unicode标准}。
+访问地址：\url{https://www.unicode.org/versions/latest/}
 \end{itemize}
 \indextext{references!normative|)}
 
-\rSec0[intro.defs]{Terms and definitions}
+\rSec0[intro.defs]{术语和定义}
 
 \pnum
 \indextext{definitions|(}%
-For the purposes of this document,
-the terms and definitions
-given in ISO/IEC 2382, ISO 80000-2:2019,
-and the following apply.
+就本文档而言，
+适用 ISO/IEC 2382、ISO 80000-2:2019
+以及下列各项中给出的术语和定义。
 
 \pnum
-ISO and IEC maintain terminology databases
-for use in standardization
-at the following addresses:
+ISO 和 IEC 维护用于标准化的术语数据库，
+地址如下：
 \begin{itemize}
-\item ISO Online browsing platform: available at \url{https://www.iso.org/obp}
-\item IEC Electropedia: available at \url{https://www.electropedia.org/}
+\item ISO 在线浏览平台：可在 \url{https://www.iso.org/obp} 获取
+\item IEC Electropedia：可在 \url{https://www.electropedia.org/} 获取
 \end{itemize}
 
 \indexdefn{access}%
-\definition{access}{defns.access}
-\defncontext{execution-time action}
-read or modify the value of an object
+\definition{访问}{defns.access}
+\defncontext{执行时动作}
+读取或修改对象的值
 
 \begin{defnote}
-Only glvalues of scalar type can be used to access objects.
-Reads of scalar objects are described in \ref{conv.lval} and
-modifications of scalar objects are described in
-\ref{expr.ass}, \ref{expr.post.incr}, and \ref{expr.pre.incr}.
-Attempts to read or modify an object of class type
-typically invoke a constructor\iref{class.ctor}
-or assignment operator\iref{class.copy.assign};
-such invocations do not themselves constitute accesses,
-although they may involve accesses of scalar subobjects.
+只有标量类型的泛左值才能用于访问对象。
+标量对象的读取在 \ref{conv.lval} 中描述，
+标量对象的修改在
+\ref{expr.ass}、\ref{expr.post.incr} 和 \ref{expr.pre.incr} 中描述。
+尝试读取或修改类类型的对象
+通常会调用构造函数\iref{class.ctor}
+或赋值运算符\iref{class.copy.assign}；
+此类调用本身并不构成访问，
+尽管它们可能涉及标量子对象的访问。
 \end{defnote}
 
 \indexdefn{argument}%
 \indexdefn{argument!function call expression}
-\definition{argument}{defns.argument}
-\defncontext{function call expression} expression in the
-comma-separated list bounded by the parentheses
+\definition{实参}{defns.argument}
+\defncontext{函数调用表达式} 括号括起来的逗号分隔列表中的表达式
 
 \indexdefn{argument}%
 \indexdefn{argument!function-like macro}%
-\definition{argument}{defns.argument.macro}
-\defncontext{function-like macro} sequence of preprocessing tokens in the
-comma-separated list bounded by the parentheses
+\definition{实参}{defns.argument.macro}
+\defncontext{类函数宏} 括号括起来的逗号分隔列表中的预处理记号序列
 
 \indexdefn{argument}%
 \indexdefn{argument!throw expression}%
-\definition{argument}{defns.argument.throw}
-\defncontext{throw expression} operand of \keyword{throw}
+\definition{实参}{defns.argument.throw}
+\defncontext{throw 表达式} \keyword{throw} 的操作数
 
 \indexdefn{argument}%
 \indexdefn{argument!template instantiation}%
-\definition{argument}{defns.argument.templ}
-\defncontext{template instantiation}
-\grammarterm{constant-expression},
-\grammarterm{type-id}, or
-\grammarterm{id-expression} in the comma-separated
-list bounded by the angle brackets
+\definition{实参}{defns.argument.templ}
+\defncontext{模板实例化}
+尖括号括起来的逗号分隔列表中的
+\grammarterm{常量表达式}、
+\grammarterm{类型标识} 或
+\grammarterm{标识表达式}
 
 \indexdefn{block (execution)}%
-\definition{block}{defns.block}
-\defncontext{execution}
-wait for some condition (other than for the implementation to execute
-the execution steps of the thread of execution) to be satisfied before
-continuing execution past the blocking operation
+\definition{阻塞}{defns.block}
+\defncontext{执行}
+等待某个条件（除了等待实现执行该执行线程的执行步骤之外）满足，
+然后再继续执行到阻塞操作之后
 
 \indexdefn{block (statement)}%
-\definition{block}{defns.block.stmt}
-\defncontext{statement}
-compound statement
+\definition{块}{defns.block.stmt}
+\defncontext{语句}
+复合语句
 
 \indexdefn{C!standard library}%
-\definition{C standard library}{defns.c.lib}
-library described in \IsoC{}, Clause 7
+\definition{C标准库}{defns.c.lib}
+\IsoC{} 第 7 条款中描述的库
 \begin{defnote}
-With the qualifications noted in \ref{\firstlibchapter}
-through \ref{\lastlibchapter} and in \ref{diff.library},
-the C standard library is a subset of the \Cpp{} standard library.
+根据 \ref{\firstlibchapter}
+到 \ref{\lastlibchapter} 以及 \ref{diff.library} 中指出的限定条件，
+C 标准库是 \Cpp{} 标准库的子集。
 \end{defnote}
 
-\definition{character}{defns.character}
+\definition{字符}{defns.character}
 \indexdefn{character}%
-\defncontext{library}
-object which,
-when treated sequentially,
-can represent text
+\defncontext{库}
+当被顺序处理时，
+可以表示文本的对象
 
 \begin{defnote}
-The term does not mean only
-\tcode{char},
-\keyword{char8_t},
-\keyword{char16_t},
-\keyword{char32_t},
-and
+该术语不仅仅指
+\tcode{char}、
+\keyword{char8_t}、
+\keyword{char16_t}、
+\keyword{char32_t}、
+和
 \keyword{wchar_t}
-objects\iref{basic.fundamental},
-but any value that can be represented by a type
-that provides the definitions specified in
-\ref{strings}, \ref{localization}, \ref{input.output}, or~\ref{re}.
+对象\iref{basic.fundamental}，
+还指任何可以用一个类型表示的值，
+该类型提供了在
+\ref{strings}、\ref{localization}、\ref{input.output} 或~\ref{re} 中指定的定义。
 \end{defnote}
 
-\definition{character container type}{defns.character.container}
-\defncontext{library}
+\definition{字符容器类型}{defns.character.container}
+\defncontext{库}
 \indexdefn{type!character container}%
-class or a type used to
-represent a \termref{defns.character}{character}{}
+用于表示 \termref{defns.character}{字符}{} 的类或类型
 
 \begin{defnote}
-It is used for one of the template parameters of \tcode{char_traits}
-and the class templates which use that,
-such as the string, iostream, and regular expression class templates.
+它被用作 \tcode{char_traits}
+和使用它的类模板（
+如 string、iostream 和regex类模板）的模板参数之一。
 \end{defnote}
 
-\definition{collating element}{defns.regex.collating.element}
+\definition{测序元素}{defns.regex.collating.element}
 \indexdefn{collating element}%
-sequence of one or more \termref{defns.character}{character}{s} within the
-current locale that collate as if they were a single character
+当前 locale 中一个或多个 \termref{defns.character}{字符}{} 的序列，
+它们被视为单个字符进行排序
 
-\definition{component}{defns.component}
-\defncontext{library}
+\definition{组件}{defns.component}
+\defncontext{库}
 \indexdefn{component}%
-group of library entities directly related as members, \termref{defns.parameter}{parameter}{s}, or
-return types
+作为成员、\termref{defns.parameter}{形参}{} 或
+返回类型直接相关的一组库实体
 
 \begin{defnote}
-For example, the class template \tcode{basic_string}
-and the non-member function templates
-that operate on strings are referred to as the string component.
+例如，类模板 \tcode{basic_string}
+和对字符串进行操作的非成员函数模板
+被称为字符串组件。
 \end{defnote}
 
 \indexdefn{behavior!conditionally-supported}%
-\definition{conditionally-supported}{defns.cond.supp}
-program construct that an implementation is not required to support
+\definition{条件支持}{defns.cond.supp}
+不要求实现支持的程序结构
 
 \begin{defnote}
-Each implementation documents all conditionally-supported
-constructs that it does not support.
+每个实现都记录了它不支持的所有条件支持的
+结构。
 \end{defnote}
 
-\definition{constant evaluation}{defns.const.eval}
+\definition{常量求值}{defns.const.eval}
 \indexdefn{constant evaluation}%
-evaluation that is performed as part of evaluating an expression
-as a core constant expression\iref{expr.const}
+作为核心常量表达式\iref{expr.const}求值表达式的一部分而执行的求值
 
-\definition{constant subexpression}{defns.const.subexpr}
+\definition{常量子表达式}{defns.const.subexpr}
 \indexdefn{constant subexpression}%
-expression whose evaluation as subexpression of a
-\grammarterm{conditional-expression}
-\tcode{CE} would not prevent \tcode{CE}
-from being a core constant expression
+作为
+\grammarterm{条件表达式}
+\tcode{CE} 的子表达式进行求值时，
+不会阻止 \tcode{CE}
+成为核心常量表达式的表达式
 
-\definition{deadlock}{defns.deadlock}
-\defncontext{library}
+\definition{死锁}{defns.deadlock}
+\defncontext{库}
 \indexdefn{deadlock}%
-situation wherein
-one or more threads are unable to continue execution because each is
-\termref{defns.block}{block}{ed} waiting for one or more of the others to satisfy some condition
+一种情形，其中一个或多个线程无法继续执行，因为每个线程都在
+\termref{defns.block}{阻塞}{}等待其他一个或多个线程满足某个条件
 
-\definition{default behavior}{defns.default.behavior.impl}
+\definition{默认行为}{defns.default.behavior.impl}
 \indexdefn{behavior!default}%
-\defncontext{library implementation}
-specific behavior provided by the implementation,
-within the scope of the \termref{defns.required.behavior}{required behavior}{}
+\defncontext{库实现}
+在 \termref{defns.required.behavior}{要求行为}{} 范围内，由实现提供的特定行为
 
 \indexdefn{message!diagnostic}%
-\definition{diagnostic message}{defns.diagnostic}
-message belonging to an \impldef{diagnostic message} subset of the
-implementation's output messages
+\definition{诊断消息}{defns.diagnostic}
+属于实现输出消息中 \impldef{诊断消息} 子集的消息
 
 \indexdefn{type!dynamic}%
-\definition{dynamic type}{defns.dynamic.type}
-\defncontext{glvalue} type of the most derived object to which the
-glvalue refers
+\definition{动态类型}{defns.dynamic.type}
+\defncontext{泛左值} 泛左值所指的最底层派生对象的类型
 
 \begin{example}
-If a pointer\iref{dcl.ptr} \tcode{p} whose static type is ``pointer to
-class \tcode{B}'' is pointing to an object of class \tcode{D}, derived
-from \tcode{B}\iref{class.derived}, the dynamic type of the
-expression \tcode{*p} is ``\tcode{D}''. References\iref{dcl.ref} are
-treated similarly.
+如果一个静态类型为“指向类 \tcode{B} 的指针”\iref{dcl.ptr} 的指针 \tcode{p} 指向一个从 \tcode{B}\iref{class.derived} 派生的类 \tcode{D} 的对象，则表达式 \tcode{*p} 的动态类型为“\tcode{D}”。引用\iref{dcl.ref} 的处理方式类似。
 \end{example}
 
 \indexdefn{type!dynamic}%
-\definition{dynamic type}{defns.dynamic.type.prvalue}
-\defncontext{prvalue} \termref{defns.static.type}{static type}{} of the prvalue expression
+\definition{动态类型}{defns.dynamic.type.prvalue}
+\defncontext{纯右值} 纯右值表达式的 \termref{defns.static.type}{静态类型}{}
 
 \indexdefn{behavior!erroneous}%
-\definition{erroneous behavior}{defns.erroneous}
-well-defined behavior that the implementation is recommended to diagnose
+\definition{错误行为}{defns.erroneous}
+建议实现进行诊断的良定行为
 \begin{defnote}
-Erroneous behavior is always the consequence of incorrect program code.
-Implementations are allowed, but not required,
-to diagnose it\iref{intro.compliance.general}.
-Evaluation of a constant expression\iref{expr.const}
-never exhibits behavior specified as erroneous in \ref{intro} through \ref{\lastcorechapter}.
+错误行为总是由不正确的程序代码导致的。
+允许但不要求实现对其进行诊断\iref{intro.compliance.general}。
+常量表达式\iref{expr.const}的求值永远不会表现出 \ref{intro} 到 \ref{\lastcorechapter} 中指定的错误行为。
 \end{defnote}
 
-\definition{expression-equivalent}{defns.expression.equivalent}
-\defncontext{library}
+\definition{表达式等价}{defns.expression.equivalent}
+\defncontext{库}
 \indexdefn{expression-equivalent}%
-expressions that all have the same effects,
-either
-are all potentially-throwing or
-are all not potentially-throwing,
-and
-either
-are all \termref{defns.const.subexpr}{constant subexpression}{s} or
-are all not constant subexpressions
+具有相同效果的表达式，
+它们要么都是潜在抛出的，
+要么都不是潜在抛出的，
+并且
+要么都是 \termref{defns.const.subexpr}{常量子表达式}{}，
+要么都不是常量子表达式
 
 \begin{example}
-For a value \tcode{x} of type \tcode{int}
-and a function \tcode{f} that accepts integer arguments,
-the expressions
-\tcode{f(x + 2)},
-\tcode{f(2 + x)},
-and
+对于类型为 \tcode{int} 的值 \tcode{x}
+和一个接受整数参数的函数 \tcode{f}，
+表达式
+\tcode{f(x + 2)}、
+\tcode{f(2 + x)}
+和
 \tcode{f(1 + x + 1)}
-are expression-equivalent.
+是表达式等价的。
 \end{example}
 
-\definition{finite state machine}{defns.regex.finite.state.machine}
-\defncontext{regular expression}
+\definition{有限状态机}{defns.regex.finite.state.machine}
+\defncontext{正则表达式}
 \indexdefn{finite state machine}%
-unspecified data structure that is used to
-represent a \termref{defns.regex.regular.expression}{regular expression}{}, and which permits efficient matches
-against the regular expression to be obtained
+一种未指定的数据结构，用于
+表示 \termref{defns.regex.regular.expression}{正则表达式}{}，并且允许
+高效地获得与正则表达式的匹配
 
-\definition{format specifier}{defns.regex.format.specifier}
-\defncontext{regular expression}
+\definition{格式说明符}{defns.regex.format.specifier}
+\defncontext{正则表达式}
 \indexdefn{format specifier}%
-sequence of one or more \termref{defns.character}{character}{s} that is expected to be
-replaced with some part of a \termref{defns.regex.regular.expression}{regular expression}{} match
+一个或多个 \termref{defns.character}{字符}{} 的序列，预期
+被 \termref{defns.regex.regular.expression}{正则表达式}{} 匹配的某些部分替换
 
-\definition{handler function}{defns.handler}
-\defncontext{library}
+\definition{处理函数}{defns.handler}
+\defncontext{库}
 \indexdefn{function!handler}%
-non-reserved function whose definition may be provided by a \Cpp{} program
+可以由 \Cpp{} 程序提供定义的非保留函数
 
 \begin{defnote}
-A \Cpp{} program may designate a handler function at various points in its execution by
-supplying a pointer to the function when calling any of the library functions that install
-handler functions (see \ref{support}).
+\Cpp{} 程序可以通过
+在调用任何安装处理函数的库函数时提供指向该函数的指针，
+在其执行的各个点指定处理函数（参见 \ref{support}）。
 \end{defnote}
 
 \indexdefn{program!ill-formed}%
-\definition{ill-formed program}{defns.ill.formed}
-program that is not well-formed\iref{defns.well.formed}
+\definition{病构程序}{defns.ill.formed}
+不是良构的\iref{defns.well.formed}程序
 
 \indexdefn{behavior!implementation-defined}%
-\definition{implementation-defined behavior}{defns.impl.defined}
-behavior, for a \termref{defns.well.formed}{well-formed program}{} construct and correct data, that
-depends on the implementation and that each implementation documents
+\definition{实现定义行为}{defns.impl.defined}
+对于 \termref{defns.well.formed}{良构程序}{} 结构和正确的数据，
+依赖于实现并且每个实现都记录在案的行为
 
-\definition{implementation-defined strict total order over pointers}
-{defns.order.ptr}
+\definition{指针上的实现定义严格全序}{defns.order.ptr}
 \indexdefn{pointer!strict total order}%
-\defncontext{library}
-\impldef{strict total order over pointer values}
-strict total ordering over all pointer values
-such that the ordering is consistent with the partial order
-imposed by the built-in operators
-\tcode{<}, \tcode{>}, \tcode{<=}, \tcode{>=}, and \tcode{<=>}
+\defncontext{库}
+\impldef{指针值上的严格全序}
+所有指针值上的严格全序，
+使得该排序与内置运算符
+\tcode{<}、\tcode{>}、\tcode{<=}、\tcode{>=} 和 \tcode{<=>}
+所施加的偏序一致
 
 \indexdefn{limits!implementation}%
-\definition{implementation limit}{defns.impl.limits}
-restriction imposed upon programs by the implementation
+\definition{实现限制}{defns.impl.limits}
+实现对程序施加的限制
 
 \indexdefn{behavior!locale-specific}%
-\definition{locale-specific behavior}{defns.locale.specific}
-behavior that depends on local conventions of nationality, culture, and
-language that each implementation documents
+\definition{区域特定行为}{defns.locale.specific}
+依赖于每个实现都记录在案的国籍、文化和
+语言的本地约定的行为
 
-\definition{matched}{defns.regex.matched}
-\defncontext{regular expression}
+\definition{匹配}{defns.regex.matched}
+\defncontext{正则表达式}
 \indexdefn{matched}%
 \indexdefn{regular expression!matched}%
-condition when a sequence of zero or more \termref{defns.character}{character}{s}
-correspond to a sequence of characters defined by the pattern
+零个或多个 \termref{defns.character}{字符}{} 的序列
+对应于由模式定义的字符序列时的条件
 
-\definition{modifier function}{defns.modifier}
-\defncontext{library}
+\definition{修改器函数}{defns.modifier}
+\defncontext{库}
 \indexdefn{function!modifier}%
-class member function other than a constructor,
-assignment operator, or destructor
-that alters the state of an object of the class
+改变类对象状态的、
+除构造函数、
+赋值运算符或析构函数之外的
+类成员函数
 
-\definition{move assignment}{defns.move.assign}
-\defncontext{library}
+\definition{移动赋值}{defns.move.assign}
+\defncontext{库}
 \indexdefn{assignment!move}%
-assignment of an rvalue of some object type to a modifiable lvalue of the same type
+将某个对象类型的右值赋值给同一类型的可修改左值
 
-\definition{move construction}{defns.move.constr}
-\defncontext{library}
+\definition{移动构造}{defns.move.constr}
+\defncontext{库}
 \indexdefn{construction!move}%
-direct-initialization of an object of some type with an rvalue of the same type
+使用相同类型的右值对某个类型的对象进行直接初始化
 
 \indexdefn{library call!non-constant}%
-\definition{non-constant library call}{defns.nonconst.libcall}
-invocation of a library function that,
-as part of evaluating any expression \tcode{E},
-prevents \tcode{E} from being a core constant expression
+\definition{非常量库调用}{defns.nonconst.libcall}
+作为任何表达式 \tcode{E} 求值的一部分，
+阻止 \tcode{E} 成为核心常量表达式的库函数调用
 
 \definition{NTCTS}{defns.ntcts}
-\defncontext{library}
+\defncontext{库}
 \indexdefn{NTCTS}%
 \indexdefn{string!null-terminated character type}%
-sequence of values that have
-\termref{defns.character}{character}{} type
-that precede the terminating null character type
-value
-\tcode{charT()}
+具有
+\termref{defns.character}{字符}{} 类型
+且位于终止空字符类型
+值 \tcode{charT()} 之前的值序列
 
-\definition{observer function}{defns.observer}
-\defncontext{library}
+\definition{观察者函数}{defns.observer}
+\defncontext{库}
 \indexdefn{function!observer}%
-class member function that accesses the state of an object of the class
-but does not alter that state
+访问类对象状态
+但不改变该状态的类成员函数
 
 \begin{defnote}
-Observer functions are specified as
+观察者函数被指定为
 \keyword{const}
-member functions.
+成员函数。
 \end{defnote}
 
 \indexdefn{parameter}%
 \indexdefn{parameter!function}%
 \indexdefn{parameter!catch clause}%
-\definition{parameter}{defns.parameter}
-\defncontext{function or catch clause} object or reference declared as part of a function declaration or
-definition or in the catch clause of an exception handler that
-acquires a value on entry to the function or handler
+\definition{形参}{defns.parameter}
+\defncontext{函数或 catch 子句} 在函数声明或定义中，或在异常处理程序的 catch 子句中声明的
+在进入函数或处理程序时获取值的对象或引用
 
 \indexdefn{parameter}%
 \indexdefn{parameter!function-like macro}%
-\definition{parameter}{defns.parameter.macro}
-\defncontext{function-like macro} identifier from
-the comma-separated list bounded by the parentheses immediately
-following the macro name
+\definition{形参}{defns.parameter.macro}
+\defncontext{类函数宏} 紧跟在宏名称后面的括号括起来的逗号分隔列表中的标识符
 
 \indexdefn{parameter}%
 \indexdefn{parameter!template}%
-\definition{parameter}{defns.parameter.templ}
-\defncontext{template} member of a \grammarterm{template-parameter-list}
+\definition{形参}{defns.parameter.templ}
+\defncontext{模板} \grammarterm{模板参数列表} 的成员
 
-\definition{primary equivalence class}{defns.regex.primary.equivalence.class}
-\defncontext{regular expression}
+\definition{主等价类}{defns.regex.primary.equivalence.class}
+\defncontext{正则表达式}
 \indexdefn{primary equivalence class}%
-set of one or more \termref{defns.character}{character}{s} which
-share the same primary sort key: that is the sort key weighting that
-depends only upon character shape, and not accents, case, or
-locale-specific tailorings
+共享相同主排序键的一个或多个 \termref{defns.character}{字符}{} 的集合：即仅依赖于字符形状，
+而不依赖于重音、大小写或区域特定定制的排序键权重
 
-\definition{program-defined specialization}{defns.prog.def.spec}
-\defncontext{library}
+\definition{程序定义的特化}{defns.prog.def.spec}
+\defncontext{库}
 \indexdefn{specialization!program-defined}%
-explicit template specialization or partial specialization
-that is not part of the \Cpp{} standard library and
-not defined by the implementation
+不是 \Cpp{} 标准库的一部分
+且不是由实现定义的显式模板特化或部分特化
 
-\definition{program-defined type}{defns.prog.def.type}
-\defncontext{library}
+\definition{程序定义的类型}{defns.prog.def.type}
+\defncontext{库}
 \indexdefn{type!program-defined}%
-non-closure class type or enumeration type
-that is not part of the \Cpp{} standard library and
-not defined by the implementation,
-or a closure type of a non-implementation-provided lambda expression,
-or an instantiation of a \termref{defns.prog.def.spec}{program-defined specialization}{}
+不是 \Cpp{} 标准库的一部分且不是由实现定义的非闭包类类型或枚举类型，
+或非实现提供的 lambda 表达式的闭包类型，
+或 \termref{defns.prog.def.spec}{程序定义的特化}{} 的实例化
 
 \begin{defnote}
-Types defined by the implementation include
-extensions\iref{intro.compliance} and internal types used by the library.
+由实现定义的类型包括
+扩展\iref{intro.compliance} 和库使用的内部类型。
 \end{defnote}
 
-\definition{projection}{defns.projection}
+\definition{投影}{defns.projection}
 \indexdefn{projection}%
-\defncontext{library}
-transformation that an algorithm applies
-before inspecting the values of elements
+\defncontext{库}
+算法在检查元素值之前应用的变换
 
 \begin{example}
 \begin{codeblock}
 std::pair<int, std::string_view> pairs[] = {{2, "foo"}, {1, "bar"}, {0, "baz"}};
 std::ranges::sort(pairs, std::ranges::less{}, [](auto const& p) { return p.first; });
 \end{codeblock}
-sorts the pairs in increasing order of their \tcode{first} members:
+按其 \tcode{first} 成员的升序对 pairs 进行排序：
 \begin{codeblock}
 {{0, "baz"}, {1, "bar"}, {2, "foo"}}
 \end{codeblock}
 \end{example}
 
-\definition{referenceable type}{defns.referenceable}
+\definition{可引用类型}{defns.referenceable}
 \indexdefn{type!referenceable}%
-type that is either an
-object type, a function type that does not have cv-qualifiers or a
-\grammarterm{ref-qualifier}, or a reference type
+对象类型、
+不具有 cv 限定符或 \grammarterm{ref-qualifier} 的函数类型，
+或引用类型
 
 \begin{defnote}
-The term describes a type to which a reference can be created,
-including reference types.
+该术语描述了可以创建引用的类型，
+包括引用类型。
 \end{defnote}
 
-\definition{regular expression}{defns.regex.regular.expression}
-pattern that selects specific strings
-from a set of \termref{defns.character}{character}{} strings
+\definition{正则表达式}{defns.regex.regular.expression}
+从一组 \termref{defns.character}{字符}{} 串中选择特定字符串的模式
 
-\definition{replacement function}{defns.replacement}
-\defncontext{library}
+\definition{替换函数}{defns.replacement}
+\defncontext{库}
 \indexdefn{function!replacement}%
-non-reserved function
-whose definition is provided by a \Cpp{} program
+由 \Cpp{} 程序提供定义的非保留函数
 
 \begin{defnote}
-Only one definition for such a function is in effect for the duration of the program's
-execution, as the result of creating the program\iref{lex.phases} and resolving the
-definitions of all translation units\iref{basic.link}.
+在程序执行期间，由于创建程序\iref{lex.phases} 和解析
+所有翻译单元\iref{basic.link} 的定义，
+对于这样的函数，只有一个定义有效。
 \end{defnote}
 
-\definition{required behavior}{defns.required.behavior}
-\defncontext{library}
+\definition{要求行为}{defns.required.behavior}
+\defncontext{库}
 \indexdefn{behavior!required}%
-description of \termref{defns.replacement}{replacement function}{}
-and \termref{defns.handler}{handler function}{} semantics
-applicable to both the behavior provided by the implementation and
-the behavior of any such function definition in the program
+适用于实现提供的行为以及程序中任何此类函数定义的行为的
+\termref{defns.replacement}{替换函数}{} 和
+\termref{defns.handler}{处理函数}{} 语义的描述
 
 \begin{defnote}
-If such a function defined in a \Cpp{} program fails to meet the required
-behavior when it executes, the behavior is undefined.%
+如果 \Cpp{} 程序中定义的此类函数在执行时未能满足要求行为，
+则该行为是未定义的。%
 \indextext{undefined}
 \end{defnote}
 
-\definition{reserved function}{defns.reserved.function}
-\defncontext{library}
+\definition{保留函数}{defns.reserved.function}
+\defncontext{库}
 \indexdefn{function!reserved}%
-function, specified as part of the \Cpp{} standard library, that is defined by the
-implementation
+作为 \Cpp{} 标准库的一部分指定的、
+由实现定义的函数
 
 \begin{defnote}
-If a \Cpp{} program provides a definition for any reserved function, the results are undefined.%
+如果 \Cpp{} 程序为任何保留函数提供了定义，则结果是未定义的。%
 \indextext{undefined}
 \end{defnote}
 
-\definition{runtime-undefined behavior}{defns.undefined.runtime}
+\definition{运行时未定义行为}{defns.undefined.runtime}
 \indexdefn{behavior!runtime-undefined}%
-behavior that is undefined except when it occurs during constant evaluation
+除常量求值期间发生外均为未定义的行为
 
 \begin{defnote}
-During constant evaluation,
+在常量求值期间，
 \begin{itemize}
 \item
-it is
-\impldef{whether runtime-undefined behavior results in the expression being deemed non-constant}
-whether runtime-undefined behavior results in the expression being deemed non-constant
-(as specified in~\ref{expr.const}) and
+\impldef{运行时未定义行为是否导致表达式被视为非常量}
+运行时未定义行为是否导致表达式被视为非常量（如 \ref{expr.const} 中所述）
 \item
-runtime-undefined behavior has no other effect.
+运行时未定义行为没有其他影响。
 \end{itemize}
 \end{defnote}
 
 \indexdefn{signature}%
-\definition{signature}{defns.signature}
-\defncontext{function}
-name,
-parameter-type-list,
-and enclosing namespace
+\definition{签名}{defns.signature}
+\defncontext{函数}
+名称、
+形参类型列表 (parameter-type-list)
+和外围命名空间
 
 \begin{defnote}
-Signatures are used as a basis for
-name mangling and linking.
+签名被用作
+名称重整和链接的基础。
 \end{defnote}
 
 \indexdefn{signature}%
-\definition{signature}{defns.signature.friend}
-\defncontext{non-template friend function with trailing \grammarterm{requires-clause}}
-name,
-parameter-type-list,
-enclosing class,
-and
-trailing \grammarterm{requires-clause}
+\definition{签名}{defns.signature.friend}
+\defncontext{带有尾随 \grammarterm{requires-clause} 的非模板友元函数}
+名称、
+形参类型列表、
+外围类、
+和
+尾随 \grammarterm{requires-clause}
 
 \indexdefn{signature}%
-\definition{signature}{defns.signature.templ}
-\defncontext{function template}
-name,
-parameter-type-list,
-enclosing namespace,
-return type,
-\termref{defns.signature.template.head}{signature}{} of the \grammarterm{template-head},
-and
-trailing \grammarterm{requires-clause} (if any)
+\definition{签名}{defns.signature.templ}
+\defncontext{函数模板}
+名称、
+形参类型列表、
+外围命名空间、
+返回类型、
+\grammarterm{template-head} 的 \termref{defns.signature.template.head}{签名}{}、
+和
+尾随 \grammarterm{requires-clause}（如果有）
 
 \indexdefn{signature}%
-\definition{signature}{defns.signature.templ.friend}
-\defncontext{friend function template with constraint involving enclosing template parameters}
-name,
-parameter-type-list,
-return type,
-enclosing class,
-\termref{defns.signature.template.head}{signature}{} of the \grammarterm{template-head},
-and
-trailing \grammarterm{requires-clause} (if any)
+\definition{签名}{defns.signature.templ.friend}
+\defncontext{带有涉及外围模板形参的约束的友元函数模板}
+名称、
+形参类型列表、
+返回类型、
+外围类、
+\grammarterm{template-head} 的 \termref{defns.signature.template.head}{签名}{}、
+和
+尾随 \grammarterm{requires-clause}（如果有）
 
 \indexdefn{signature}%
-\definition{signature}{defns.signature.spec}
-\defncontext{function template specialization} \termref{defns.signature.templ}{signature}{} of the template of which it is a specialization
-and its template \termref{defns.argument.templ}{argument}{s} (whether explicitly specified or deduced)
+\definition{签名}{defns.signature.spec}
+\defncontext{函数模板特化} 它是其特化的模板的 \termref{defns.signature.templ}{签名}{}
+及其模板 \termref{defns.argument.templ}{实参}{}（无论是显式指定的还是推导的）
 
 \indexdefn{signature}%
-\definition{signature}{defns.signature.member}
-\defncontext{class member function}
-name,
-parameter-type-list,
-class of which the function is a member,
-\cv-qualifiers (if any),
-\grammarterm{ref-qualifier} (if any),
-and
-trailing \grammarterm{requires-clause} (if any)
+\definition{签名}{defns.signature.member}
+\defncontext{类成员函数}
+名称、
+形参类型列表、
+函数所属的类、
+cv 限定符（如果有）、
+\grammarterm{ref-qualifier}（如果有）、
+和
+尾随 \grammarterm{requires-clause}（如果有）
 
 \indexdefn{signature}%
-\definition{signature}{defns.signature.member.templ}
-\defncontext{class member function template}
-name,
-parameter-type-list,
-class of which the function is a member,
-\cv-qualifiers (if any),
-\grammarterm{ref-qualifier} (if any),
-return type (if any),
-\termref{defns.signature.template.head}{signature}{} of the \grammarterm{template-head},
-and
-trailing \grammarterm{requires-clause} (if any)
+\definition{签名}{defns.signature.member.templ}
+\defncontext{类成员函数模板}
+名称、
+形参类型列表、
+函数所属的类、
+cv 限定符（如果有）、
+\grammarterm{ref-qualifier}（如果有）、
+返回类型（如果有）、
+\grammarterm{template-head} 的 \termref{defns.signature.template.head}{签名}{}、
+和
+尾随 \grammarterm{requires-clause}（如果有）
 
 \indexdefn{signature}%
-\definition{signature}{defns.signature.member.spec}
-\defncontext{class member function template specialization} \termref{defns.signature.member.templ}{signature}{} of the member function template
-of which it is a specialization and its template arguments (whether explicitly specified or deduced)
+\definition{签名}{defns.signature.member.spec}
+\defncontext{类成员函数模板特化} 它是其特化的成员函数模板的 \termref{defns.signature.member.templ}{签名}{}
+及其模板实参（无论是显式指定的还是推导的）
 
 \indexdefn{signature}%
-\definition{signature}{defns.signature.template.head}
+\definition{签名}{defns.signature.template.head}
 \defncontext{\grammarterm{template-head}}
-template \termref{defns.parameter.templ}{parameter}{} list,
-excluding template parameter names and default \termref{defns.argument.templ}{argument}{s},
-and
-\grammarterm{requires-clause} (if any)
+模板 \termref{defns.parameter.templ}{形参}{} 列表，
+不包括模板形参名称和默认 \termref{defns.argument.templ}{实参}{}，
+和
+\grammarterm{requires-clause}（如果有）
 
-\definition{stable algorithm}{defns.stable}
-\defncontext{library}
+\definition{稳定算法}{defns.stable}
+\defncontext{库}
 \indexdefn{algorithm!stable}%
 \indexdefn{stable algorithm}%
-algorithm that preserves, as appropriate to the particular algorithm, the order
-of elements
+根据特定算法的需要，保持元素顺序的算法
 
 \begin{defnote}
-Requirements for stable algorithms are given in \ref{algorithm.stable}.
+稳定算法的要求在 \ref{algorithm.stable} 中给出。
 \end{defnote}
 
 \indexdefn{type!static}%
-\definition{static type}{defns.static.type}
-type of an expression resulting from
-analysis of the program without considering execution semantics
+\definition{静态类型}{defns.static.type}
+不考虑执行语义，通过分析程序得到的表达式的类型
 
 \begin{defnote}
-The static type of an expression depends only on the form of the program in
-which the expression appears, and does not change while the program is
-executing.
+表达式的静态类型仅取决于
+表达式出现的程序形式，并且在程序执行期间不会更改。
 \end{defnote}
 
-\definition{sub-expression}{defns.regex.subexpression}
-\defncontext{regular expression}
+\definition{子表达式}{defns.regex.subexpression}
+\defncontext{正则表达式}
 \indexdefn{sub-expression!regular expression}%
-subset of a \termref{defns.regex.regular.expression}{regular expression}{} that has
-been marked by parentheses
+已用括号标记的 \termref{defns.regex.regular.expression}{正则表达式}{} 的子集
 
-\definition{traits class}{defns.traits}
-\defncontext{library}
+\definition{特征类}{defns.traits}
+\defncontext{库}
 \indexdefn{traits}%
-class that encapsulates a set of types and functions necessary for class templates and
-function templates to manipulate objects of types for which they are instantiated
+封装了一组类型和函数的类，这些类型和函数是类模板和
+函数模板操作实例化对象类型所必需的
 
 \indexdefn{unblock}%
-\definition{unblock}{defns.unblock}
-satisfy a condition that one or more \termref{defns.block}{blocked}{} threads of execution are waiting for
+\definition{解除阻塞}{defns.unblock}
+满足一个或多个 \termref{defns.block}{阻塞}{} 执行线程正在等待的条件
 
 \indexdefn{behavior!undefined}%
-\definition{undefined behavior}{defns.undefined}
-behavior for which this document
-imposes no requirements
+\definition{未定义行为}{defns.undefined}
+本文档
+对此未作任何要求的行为
 
 \begin{defnote}
-Undefined behavior may be expected when
-this document omits any explicit
-definition of behavior or when a program uses an incorrect construct or invalid data.
-Permissible undefined behavior ranges
-from ignoring the situation completely with unpredictable results, to
-behaving during translation or program execution in a documented manner
-characteristic of the environment (with or without the issuance of a
-\termref{defns.diagnostic}{diagnostic message}{}), to terminating a translation or execution (with the
-issuance of a diagnostic message). Many incorrect program constructs do
-not engender undefined behavior; they are required to be diagnosed.
-Evaluation of a constant expression\iref{expr.const} never exhibits behavior explicitly
-specified as undefined in \ref{intro} through \ref{\lastcorechapter}.
+当本文档省略任何显式
+行为定义，或当程序使用不正确的结构或无效数据时，可能会出现未定义行为。
+允许的未定义行为范围
+从完全忽略这种情况并产生不可预测的结果，到
+在翻译或程序执行期间以环境特征的文档化方式运行
+（无论是否发出 \termref{defns.diagnostic}{诊断消息}{}），到终止翻译或执行（发出
+诊断消息）。许多不正确的程序结构并
+不会导致未定义行为；它们需要被诊断。
+常量表达式\iref{expr.const}的求值永远不会表现出 \ref{intro} 到 \ref{\lastcorechapter} 中明确指定的未定义行为。
 \end{defnote}
 
 \indexdefn{behavior!unspecified}%
-\definition{unspecified behavior}{defns.unspecified}
-behavior, for a \termref{defns.well.formed}{well-formed program}{} construct and correct data, that
-depends on the implementation
+\definition{未指明行为}{defns.unspecified}
+对于 \termref{defns.well.formed}{良构程序}{} 结构和正确的数据，
+依赖于实现的行为
 
 \begin{defnote}
-The implementation is not required to
-document which behavior occurs. The range of
-possible behaviors is usually delineated by this document.
+不要求实现
+记录发生哪种行为。
+可能的行为范围通常由本文档划定。
 \end{defnote}
 
-\definition{valid but unspecified state}{defns.valid}
-\defncontext{library}
+\definition{有效但未指明状态}{defns.valid}
+\defncontext{库}
 \indexdefn{valid but unspecified state}%
-value of an object that is not specified except that the object's invariants are
-met and operations on the object behave as specified for its type
+未指定的对象值，但对象的
+不变量得到满足，并且对对象的操作按照其类型指定的方式进行
 
 \begin{example}
-If an object \tcode{x} of type \tcode{std::vector<int>} is in a
-valid but unspecified state, \tcode{x.empty()} can be called unconditionally,
-and \tcode{x.front()} can be called only if \tcode{x.empty()} returns
-\tcode{false}.
+如果类型为 \tcode{std::vector<int>} 的对象 \tcode{x} 处于
+有效但未指明状态，则可以无条件调用 \tcode{x.empty()}，
+并且只有当 \tcode{x.empty()} 返回
+\tcode{false} 时才能调用 \tcode{x.front()}。
 \end{example}
 
 \indexdefn{program!well-formed}%
-\definition{well-formed program}{defns.well.formed}
-\Cpp{} program constructed according to the syntax and semantic rules
+\definition{良构程序}{defns.well.formed}
+根据语法和语义规则构造的 \Cpp{} 程序
 \indextext{definitions|)}
 
-\rSec0[intro]{General principles}
+\rSec0[intro]{一般原则}
 
-\rSec1[intro.compliance]{Implementation compliance}%
+\rSec1[intro.compliance]{实现符合性}%
 \indextext{diagnostic message|see{message, diagnostic}}%
 \indexdefn{conditionally-supported behavior|see{behavior, con\-ditionally-supported}}%
 \indextext{dynamic type|see{type, dynamic}}%
@@ -723,316 +659,296 @@ and \tcode{x.front()} can be called only if \tcode{x.empty()} returns
 \indextext{order of evaluation in expression|see{expression, order of evaluation of}}%
 \indextext{multiple threads|see{threads, multiple}}%
 
-\rSec2[intro.compliance.general]{General}
+\rSec2[intro.compliance.general]{概述}
 
 \pnum
 \indextext{conformance requirements|(}%
 \indextext{conformance requirements!general|(}%
-The set of
-\defn{diagnosable rules}
-consists of all syntactic and semantic rules in this document
-except for those rules containing an explicit notation that
-``no diagnostic is required'' or which are described as resulting in
-``undefined behavior''.
+\defn{可诊断规则} 集
+包含本文档中的所有语法和语义规则，
+但那些包含显式注释
+“不需要诊断”或被描述为导致
+“未定义行为”的规则除外。
 
 \pnum
 \indextext{conformance requirements!method of description}%
-Although this document states only requirements on \Cpp{}
-implementations, those requirements are often easier to understand if
-they are phrased as requirements on programs, parts of programs, or
-execution of programs. Such requirements have the following meaning:
+虽然本文档仅规定了对 \Cpp{}
+实现的要求，但如果
+将这些要求表述为对程序、程序部分或
+程序执行的要求，通常更容易理解。此类要求具有以下含义：
 \begin{itemize}
 \item
-If a program contains no violations of the rules in
-\ref{lex} through \ref{\lastlibchapter} as well as those specified in \ref{depr},
-a conforming implementation shall accept and correctly execute
+如果程序不包含违反
+\ref{lex} 到 \ref{\lastlibchapter} 以及 \ref{depr} 中规定的规则，
+符合标准的实现应接受并正确执行
 \begin{footnote}
-``Correct execution'' can include undefined behavior
-and erroneous behavior, depending on
-the data being processed; see \ref{intro.defs} and~\ref{intro.execution}.
+“正确执行”可以包括未定义行为
+和错误行为，具体取决于
+正在处理的数据；参见 \ref{intro.defs} 和~\ref{intro.execution}。
 \end{footnote}
-that program,
-except when the implementation's limitations (see below) are exceeded.
+该程序，
+除非超出实现的限制（见下文）。
 \item
 \indextext{behavior!undefined}%
-If a program contains a violation of a rule for which no diagnostic is required,
-this document places no requirement on implementations
-with respect to that program.
+如果程序包含违反不需要诊断的规则，
+则本文档对实现
+在该程序方面的行为不做任何要求。
 
 \item
 \indextext{message!diagnostic}%
-Otherwise, if a program contains
+否则，如果程序包含
 \begin{itemize}
 \item
-a violation of any diagnosable rule,
+违反任何可诊断规则，
 \item
-a preprocessing translation unit with
-a \tcode{\#warning} preprocessing directive\iref{cpp.error}, or
+具有 \tcode{\#warning} 预处理指令\iref{cpp.error} 的预处理翻译单元，或
 \item
-an occurrence
-of a construct described in this document as ``conditionally-supported'' when
-the implementation does not support that construct,
+本文档中描述为“条件支持”的结构，
+而实现不支持该结构，
 \end{itemize}
-a conforming implementation
-shall issue at least one diagnostic message.
+符合标准的实现
+应发出至少一条诊断消息。
 \end{itemize}
 \begin{note}
-During template argument deduction and substitution,
-certain constructs that in other contexts require a diagnostic
-are treated differently;
-see~\ref{temp.deduct}.
+在模板实参推导和替换期间，
+某些在其他上下文中需要诊断的结构
+会被区别对待；
+参见~\ref{temp.deduct}。
 \end{note}
-Furthermore, a conforming implementation
-shall not accept
+此外，符合标准的实现
+不应接受
 \begin{itemize}
 \item
-a preprocessing translation unit containing
-a \tcode{\#error} preprocessing directive\iref{cpp.error} or
+包含 \tcode{\#error} 预处理指令\iref{cpp.error} 的预处理翻译单元，或
 \item
-a translation unit with
-a \grammarterm{static_assert-declaration} that fails\iref{dcl.pre}.
+具有失败的 \grammarterm{static_assert-declaration}\iref{dcl.pre} 的翻译单元。
 \end{itemize}
-
 \pnum
 \indextext{conformance requirements!library|(}%
 \indextext{conformance requirements!classes}%
 \indextext{conformance requirements!class templates}%
-For classes and class templates, the library Clauses specify partial
-definitions. Private members\iref{class.access} are not
-specified, but each implementation shall supply them to complete the
-definitions according to the description in the library Clauses.
+对于类和类模板，库条款指定了部分定义。私有成员\iref{class.access}
+未指定，但每个实现都应提供它们以根据库条款中的描述完成定义。
 
 \pnum
-For functions, function templates, objects, and values, the library
-Clauses specify declarations. Implementations shall supply definitions
-consistent with the descriptions in the library Clauses.
+对于函数、函数模板、对象和值，库
+条款指定了声明。实现应提供
+与库条款中的描述一致的定义。
 
 \pnum
-A \Cpp{}  translation unit\iref{lex.phases}
-obtains access to the names defined in the library by
-including the appropriate standard library header or importing
-the appropriate standard library named header unit\iref{using.headers}.
+\Cpp{} 翻译单元\iref{lex.phases}
+通过包含适当的标准库头文件或导入
+适当的标准库命名头单元\iref{using.headers} 来
+获取对库中定义的名称的访问权限。
 
 \pnum
-The templates, classes, functions, and objects in the library have
-external linkage\iref{basic.link}. The implementation provides
-definitions for standard library entities, as necessary, while combining
-translation units to form a complete \Cpp{}  program\iref{lex.phases}.%
+库中的模板、类、函数和对象具有
+外部链接\iref{basic.link}。在组合
+翻译单元以形成完整的 \Cpp{} 程序\iref{lex.phases} 时，
+实现会根据需要提供标准库实体的定义。%
 \indextext{conformance requirements!library|)}
 
 \pnum
-Two kinds of implementations are defined: a \defnadj{hosted}{implementation} and a
-\defnadj{freestanding}{implementation}.
-A freestanding
-implementation is one in which execution may take place without the benefit of
-an operating system.
-A hosted implementation
-supports all the facilities described in this document, while
-a freestanding implementation
-supports the entire \Cpp{} language
-described in \ref{lex} through \ref{\lastcorechapter} and
-the subset of the library facilities described in \ref{compliance}.
+定义了两种实现：\defnadj{宿主}{implementation} 和
+\defnadj{独立}{implementation}。
+独立
+实现是一种可以在没有操作系统的情况下执行的实现。
+宿主实现
+支持本文档中描述的所有设施，而
+独立实现
+支持 \ref{lex} 到 \ref{\lastcorechapter} 中描述的整个 \Cpp{} 语言
+以及 \ref{compliance} 中描述的库设施子集。
 
 \pnum
-An implementation is encouraged to document its limitations in
-the size or complexity of the programs it can successfully process,
-if possible and where known.
-\ref{implimits} lists some quantities that can be subject to limitations and
-a potential minimum supported value for each quantity.
+如果可能且已知，鼓励实现记录
+其在可以成功处理的程序的大小或复杂性方面的限制。
+\ref{implimits} 列出了一些可能受到限制的数量以及
+每个数量的潜在最小支持值。
 
 \pnum
-A conforming implementation may have extensions (including
-additional library functions), provided they do not alter the
-behavior of any well-formed program.
-Implementations are required to diagnose programs that use such
-extensions that are ill-formed according to this document.
-Having done so, however, they can compile and execute such programs.
+符合标准的实现可以具有扩展（包括
+附加的库函数），前提是它们不改变任何良构程序
+的行为。
+要求实现诊断使用此类
+根据本文档属于病构的扩展的程序。
+但是，这样做之后，它们可以编译和执行此类程序。
 
 \pnum
-Each implementation shall include documentation that identifies all
-conditionally-supported constructs\indextext{behavior!conditionally-supported}
-that it does not support and defines all locale-specific characteristics.
+每个实现都应包含文档，该文档标识所有
+它不支持的条件支持结构\indextext{behavior!conditionally-supported}
+并定义所有区域特定的特征。
 \begin{footnote}
-This documentation also defines implementation-defined behavior;
-see~\ref{intro.abstract}.
+本文档还定义了实现定义的行为；
+参见~\ref{intro.abstract}。
 \end{footnote}
 \indextext{conformance requirements!general|)}%
 \indextext{conformance requirements|)}%
 
-\rSec2[intro.abstract]{Abstract machine}
+\rSec2[intro.abstract]{抽象机器}
 
 \pnum
 \indextext{program execution|(}%
 \indextext{program execution!abstract machine}%
-The semantic descriptions in this document define a
-parameterized nondeterministic abstract machine. This document
-places no requirement on the structure of conforming
-implementations. In particular, they need not copy or emulate the
-structure of the abstract machine.
+本文档中的语义描述定义了一个
+参数化的非确定性抽象机器。本文档
+对符合标准的实现的结构不做任何要求。特别是，它们不需要复制或模拟
+抽象机器的结构。
 \indextext{as-if rule}%
 \indextext{behavior!observable}%
-Rather, conforming implementations are required to emulate (only) the observable
-behavior of the abstract machine as explained below.
+相反，符合标准的实现需要模拟（仅）
+如下所述的抽象机器的可观察行为。
 \begin{footnote}
-This provision is
-sometimes called the ``as-if'' rule, because an implementation is free to
-disregard any requirement of this document as long as the result
-is \emph{as if} the requirement had been obeyed, as far as can be determined
-from the observable behavior of the program. For instance, an actual
-implementation need not evaluate part of an expression if it can deduce that its
-value is not used and that no
+此规定
+有时被称为“as-if”规则，因为实现可以自由
+忽略本文档的任何要求，只要结果
+\emph{如同} 遵守了该要求一样，就程序的可观察行为而言。例如，如果一个实际的
+实现可以推断出表达式的某个部分的值
+未使用，并且没有
 \indextext{side effects}%
-side effects affecting the
-observable behavior of the program are produced.
+影响程序可观察行为的副作用
+产生，则不需要对该部分求值。
 \end{footnote}
 
 \pnum
 \indextext{behavior!implementation-defined}%
-Certain aspects and operations of the abstract machine are described in this
-document as implementation-defined behavior (for example,
-\tcode{sizeof(int)}). These constitute the parameters of the abstract machine.
-Each implementation shall include documentation describing its characteristics
-and behavior in these respects.
+抽象机器的某些方面和操作在本文档中被描述为
+实现定义的行为（例如，
+\tcode{sizeof(int)}）。这些构成了抽象机器的参数。
+每个实现都应包含描述其在这些方面的特征
+和行为的文档。
 \begin{footnote}
-This documentation also includes
-conditionally-supported constructs and locale-specific behavior.
-See~\ref{intro.compliance.general}.
+本文档还包括
+条件支持的结构和区域特定的行为。
+参见~\ref{intro.compliance.general}。
 \end{footnote}
-Such documentation shall define the instance of the
-abstract machine that corresponds to that implementation (referred to as the
-``corresponding instance'' below).
+此类文档应定义
+与该实现相对应的抽象机器实例（下文称为
+“相应的实例”）。
 
 \pnum
 \indextext{behavior!unspecified}%
-Certain other aspects and operations of the abstract machine are
-described in this document as unspecified behavior (for example,
-order of evaluation of arguments in a function call\iref{expr.call}).
-Where possible, this
-document defines a set of allowable behaviors. These
-define the nondeterministic aspects of the abstract machine. An instance
-of the abstract machine can thus have more than one possible execution
-for a given program and a given input.
+抽象机器的某些其他方面和操作
+在本文档中被描述为未指明行为（例如，
+函数调用中参数的求值顺序\iref{expr.call}）。
+在可能的情况下，本文档
+定义了一组允许的行为。这些
+定义了抽象机器的非确定性方面。因此，一个
+抽象机器的实例对于给定的程序和给定的输入
+可以有多个可能的执行。
 
 \pnum
 \indextext{behavior!undefined}%
-Certain other operations are described in this document as
-undefined behavior (for example, the effect of
-attempting to modify a const object).
+某些其他操作在本文档中被描述为
+未定义行为（例如，尝试
+修改 const 对象的效果）。
 \begin{note}
-This document imposes no requirements on the
-behavior of programs that contain undefined behavior.
+本文档对
+包含未定义行为的程序的行为不做任何要求。
 \end{note}
 
 \pnum
 \indextext{program!well-formed}%
 \indextext{behavior!observable}%
-A conforming implementation executing a well-formed program shall
-produce the same observable behavior as one of the possible executions
-of the corresponding instance of the abstract machine with the
-same program and the same input.
+符合标准的实现执行良构程序应
+产生与具有
+相同程序和相同输入的抽象机器的相应实例的可能执行之一
+相同的可观察行为。
 \indextext{behavior!undefined}%
-However, if any such execution contains an undefined operation, this document places no
-requirement on the implementation executing that program with that input
-(not even with regard to operations preceding the first undefined
-operation).
-If the execution contains an operation specified as having erroneous behavior,
-the implementation is permitted to issue a diagnostic and
-is permitted to terminate the execution
-at an unspecified time after that operation.
+但是，如果任何此类执行包含未定义操作，则本文档对实现执行
+具有该输入的该程序不做任何要求
+（甚至不考虑第一个未定义
+操作之前的操作）。
+如果执行包含指定为具有错误行为的操作，
+则允许实现在该操作之后的未指定时间发出诊断，
+并且允许终止执行。
 
 \pnum
 \recommended
-An implementation should issue a diagnostic when such an operation is executed.
+当执行此类操作时，实现应发出诊断。
 \begin{note}
-An implementation can issue a diagnostic
-if it can determine that erroneous behavior is reachable
-under an implementation-specific set of assumptions about the program behavior,
-which can result in false positives.
+如果实现可以确定
+在关于程序行为的一组特定于实现的假设下可到达错误行为，则它可以发出诊断消息，这可能会导致误报。
+
 \end{note}
 
 \pnum
 \indextext{conformance requirements}%
-The least requirements on a conforming implementation are:
+对符合标准的实现的最低要求是：
 \begin{itemize}
 \item
-Accesses through volatile glvalues are evaluated strictly according to the
-rules of the abstract machine.
+通过 volatile 泛左值的访问严格按照
+抽象机器的规则进行求值。
 \item
-At program termination, all data written into files shall be
-identical to one of the possible results that execution of the program
-according to the abstract semantics would have produced.
+在程序终止时，写入文件的所有数据应
+与根据抽象语义执行程序
+可能产生的结果之一相同。
 \item
-The input and output dynamics of interactive devices shall take
-place in such a fashion that prompting output is actually delivered before a program waits for input. What constitutes an interactive device is
-\impldef{interactive device}.
+交互式设备的输入和输出动态
+应以这样的方式进行：在程序等待输入之前，提示输出实际被传递。什么是交互式设备是
+\impldef{交互式设备}。
 \end{itemize}
 
-These collectively are referred to as the
-\defnx{observable behavior}{behavior!observable} of the program.
+这些统称为程序的
+\defnx{可观察行为}{behavior!observable}。
 \begin{note}
-More stringent correspondences between abstract and actual
-semantics can be defined by each implementation.
+每个实现都可以定义抽象语义和实际
+语义之间更严格的对应关系。
 \end{note}
 \indextext{program execution|)}%
 
-\rSec1[intro.structure]{Structure of this document}
+\rSec1[intro.structure]{本文档的结构}
 
 \pnum
 \indextext{standard!structure of|(}%
 \indextext{standard!structure of}%
-\ref{lex} through \ref{\lastcorechapter} describe the \Cpp{} programming
-language. That description includes detailed syntactic specifications in
-a form described in~\ref{syntax}. For convenience, \ref{gram}
-repeats all such syntactic specifications.
+\ref{lex} 到 \ref{\lastcorechapter} 描述了 \Cpp{} 编程
+语言。该描述包括详细的语法规范，
+其形式在 \ref{syntax} 中描述。为方便起见，\ref{gram}
+重复了所有这些语法规范。
 
 \pnum
-\ref{\firstlibchapter} through \ref{\lastlibchapter} and \ref{depr}
-(the \defn{library clauses}) describe the \Cpp{} standard library.
-That description includes detailed descriptions of the
-entities and macros
-that constitute the library, in a form described in \ref{library}.
+\ref{\firstlibchapter} 到 \ref{\lastlibchapter} 和 \ref{depr}
+（\defn{库条款}）描述了 \Cpp{} 标准库。
+该描述包括详细描述
+构成库的实体和宏，
+其形式在 \ref{library} 中描述。
 
 \pnum
-\ref{implimits} recommends lower bounds on the capacity of conforming
-implementations.
+\ref{implimits} 建议了符合标准的
+实现的容量下限。
 
 \pnum
-\ref{diff} summarizes the evolution of \Cpp{} since its first
-published description, and explains in detail the differences between
-\Cpp{} and C\@. Certain features of \Cpp{} exist solely for compatibility
-purposes; \ref{depr} describes those features.
+\ref{diff} 总结了 \Cpp{} 自首次
+发布描述以来的演变，并详细解释了
+\Cpp{} 和 C 之间的差异。 \Cpp{} 的某些特性仅出于兼容性
+目的而存在；\ref{depr} 描述了这些特性。
 \indextext{standard!structure of|)}
 
-\rSec1[syntax]{Syntax notation}
+\rSec1[syntax]{语法表示}
 
 \pnum
 \indextext{notation!syntax|(}%
-In the syntax notation used in this document, syntactic
-categories are indicated by \fakegrammarterm{italic, sans-serif} type, and literal words
-and characters in \tcode{constant} \tcode{width} type. Alternatives are
-listed on separate lines except in a few cases where a long set of
-alternatives is marked by the phrase ``one of''. If the text of an alternative is too long to fit on a line, the text is continued on subsequent lines indented from the first one.
-An optional terminal or non-terminal symbol is indicated by the subscript
-``\opt{\relax}'', so
+在本文档中使用的语法表示法中，语法
+类别由 \fakegrammarterm{斜体, 无衬线} 字体表示，而文字单词
+和字符以 \tcode{等宽} 字体表示。备选项
+列在单独的行上，除非在少数情况下，由短语“one of”标记的一长串
+备选项。如果备选项的文本太长而无法放在一行上，则文本将在后续行上继续，并从第一行缩进。
+可选的终结符或非终结符由下标
+“\opt{\relax}”表示，因此
 \begin{ncbnf}
 \terminal{\{} \opt{expression} \terminal{\}}
 \end{ncbnf}
-indicates an optional expression enclosed in braces.%
+表示用大括号括起来的可选表达式。%
 
 \pnum
-Names for syntactic categories have generally been chosen according to
-the following rules:
+语法类别的名称通常根据
+以下规则选择：
 \begin{itemize}
-\item \fakegrammarterm{X-name} is a use of an identifier in a context that
-determines its meaning (e.g., \grammarterm{class-name},
-\grammarterm{typedef-name}).
-\item \fakegrammarterm{X-id} is an identifier with no context-dependent meaning
-(e.g., \grammarterm{qualified-id}).
-\item \fakegrammarterm{X-seq} is one or more \fakegrammarterm{X}'s without intervening
-delimiters (e.g., \grammarterm{declaration-seq} is a sequence of
-declarations).
-\item \fakegrammarterm{X-list} is one or more \fakegrammarterm{X}'s separated by
-intervening commas (e.g., \grammarterm{identifier-list} is a sequence of
-identifiers separated by commas).
+\item \fakegrammarterm{X-name} 是在确定其含义的上下文中使用标识符（例如，\grammarterm{class-name}、
+\grammarterm{typedef-name}）。
+\item \fakegrammarterm{X-id} 是一个没有上下文相关含义的标识符
+（例如，\grammarterm{qualified-id}）。
+\item \fakegrammarterm{X-seq} 是一个或多个没有中间分隔符的 \fakegrammarterm{X}（例如，\grammarterm{declaration-seq} 是一个声明序列）。
+\item \fakegrammarterm{X-list} 是一个或多个由中间逗号分隔的 \fakegrammarterm{X}（例如，\grammarterm{identifier-list} 是一个由逗号分隔的标识符序列）。
 \end{itemize}%
 \indextext{notation!syntax|)}
