@@ -1,7 +1,7 @@
 %!TEX root = std.tex
-\rSec0[lex]{Lexical conventions}
+\rSec0[lex]{词法约定}
 
-\gramSec[gram.lex]{Lexical conventions}
+\gramSec[gram.lex]{词法约定}
 
 \indextext{lexical conventions|see{conventions, lexical}}
 \indextext{translation!separate|see{compilation, separate}}
@@ -22,269 +22,250 @@
 \indextext{null character|see{character, null}}
 \indextext{null wide character|see{wide-character, null}}
 
-\rSec1[lex.separate]{Separate translation}
+\rSec1[lex.separate]{独立翻译}
 
 \pnum
 \indextext{conventions!lexical|(}%
 \indextext{compilation!separate|(}%
-The text of the program is kept in units called
-\defnx{source files}{source file} in this document.
-A source file together with all the headers\iref{headers}
-and source files included\iref{cpp.include} via the preprocessing
-directive \tcode{\#include}, less any source lines skipped by any of the
-conditional inclusion\iref{cpp.cond} preprocessing directives,
-as modified by the implementation-defined behavior of any
-conditionally-supported-directives\iref{cpp.pre} and pragmas\iref{cpp.pragma},
-if any, is
-called a \defnadj{preprocessing}{translation unit}.
+程序的文本保存在本文档中称为
+\defnx{源文件}{source file} 的单元中。
+一个源文件连同所有通过预处理
+指令 \tcode{\#include} 包含的头文件\iref{headers}
+和源文件，减去任何被条件包含\iref{cpp.cond} 预处理指令跳过的任何源行,
+并由任何条件支持指令\iref{cpp.pre} 和编译指示\iref{cpp.pragma} 的实现定义行为（如果有）所修改,
+被称为 \defnadj{预处理}{翻译单元}。
 \begin{note}
-A \Cpp{} program need not all be translated at the same time.
+\Cpp{} 程序不需要全部同时翻译。
 \end{note}
 
 \pnum
 \begin{note}
-Previously translated translation units and instantiation
-units can be preserved individually or in libraries. The separate
-translation units of a program communicate\iref{basic.link} by (for
-example)
-calls to functions whose identifiers have external or module linkage,
-manipulation of objects whose identifiers have external or module linkage, or
-manipulation of data files. Translation units can be separately
-translated and then later linked to produce an executable
-program\iref{basic.link}.
+先前翻译的翻译单元和实例化
+单元可以单独保存或保存在库中。程序的各个
+翻译单元通过（例如）
+调用其标识符具有外部或模块链接的函数、
+操作其标识符具有外部或模块链接的对象，或
+操作数据文件来进行通信\iref{basic.link}。翻译单元可以被单独
+翻译，然后链接以生成可执行
+程序\iref{basic.link}。
 \end{note}
 \indextext{compilation!separate|)}
 
-\rSec1[lex.phases]{Phases of translation}%
+\rSec1[lex.phases]{翻译阶段}%
 
 \pnum
 \indextext{translation!phases|(}%
-The precedence among the syntax rules of translation is specified by the
-following phases.
+翻译的语法规则之间的优先级由
+以下阶段指定。
 \begin{footnote}
-Implementations behave as if these separate phases
-occur, although in practice different phases can be folded together.
+实现的行为就像这些独立的阶段
+发生一样，尽管在实践中不同的阶段可以折叠在一起。
 \end{footnote}
 
 \begin{enumerate}
 \item
 \indextext{character!source file}%
-An implementation shall support input files
-that are a sequence of UTF-8 code units (UTF-8 files).
-It may also support
-an \impldef{supported input files} set of other kinds of input files, and,
-if so, the kind of an input file is determined in
-an \impldef{determination of kind of input file} manner
-that includes a means of designating input files as UTF-8 files,
-independent of their content.
+实现应支持作为 UTF-8 代码单元序列的输入文件
+（UTF-8 文件）。
+它还可以支持
+\impldef{支持的输入文件} 其他类型的输入文件集，
+如果是，则输入文件的类型以
+\impldef{确定输入文件类型的方式}
+确定，包括一种将输入文件指定为 UTF-8 文件的方法，
+而与其内容无关。
 \begin{note}
-In other words,
-recognizing the \unicode{feff}{byte order mark} is not sufficient.
+换句话说，
+识别 \unicode{feff}{字节顺序标记} 是不够的。
 \end{note}
-If an input file is determined to be a UTF-8 file,
-then it shall be a well-formed UTF-8 code unit sequence and
-it is decoded to produce a sequence of Unicode
+如果输入文件被确定为 UTF-8 文件，
+则它应是良构的 UTF-8 代码单元序列，并且
+它被解码以产生 Unicode
 \begin{footnote}
-Unicode\textregistered\ is a registered trademark of Unicode, Inc.
-This information is given for the convenience of users of this document and
-does not constitute an endorsement by ISO or IEC of this product.
+Unicode\textregistered\ 是 Unicode, Inc. 的注册商标。
+提供此信息是为了方便本文档的用户，
+并不构成 ISO 或 IEC 对此产品的认可。
 \end{footnote}
-scalar values.
-A sequence of translation character set elements\iref{lex.charset} is then formed
-by mapping each Unicode scalar value
-to the corresponding translation character set element.
-In the resulting sequence,
-each pair of characters in the input sequence consisting of
-\unicode{000d}{carriage return} followed by \unicode{000a}{line feed},
-as well as each
-\unicode{000d}{carriage return} not immediately followed by a \unicode{000a}{line feed},
-is replaced by a single new-line character.
+标量值序列。
+然后通过将每个 Unicode 标量值
+映射到相应的翻译字符集元素来形成翻译字符集元素\iref{lex.charset}序列。
+在生成的序列中，
+输入序列中由
+\unicode{000d}{回车符} 后跟 \unicode{000a}{换行符} 组成的每对字符，
+以及每个
+未紧跟 \unicode{000a}{换行符} 的 \unicode{000d}{回车符}，
+都将被单个换行符替换。
 
-For any other kind of input file supported by the implementation,
-characters are mapped, in an
-\impldef{mapping input file characters to translation character set} manner,
-to a sequence of translation character set elements,
-representing end-of-line indicators as new-line characters.
+对于实现支持的任何其他类型的输入文件，
+字符将以
+\impldef{将输入文件字符映射到翻译字符集的方式}
+映射到翻译字符集元素序列，
+将行尾指示符表示为换行符。
 
 \item
 \indextext{line splicing}%
-If the first translation character is \unicode{feff}{byte order mark},
-it is deleted.
-Each sequence of a backslash character (\textbackslash)
-immediately followed by
-zero or more whitespace characters other than new-line followed by
-a new-line character is deleted, splicing
-physical source lines to form \defnx{logical source lines}{source line!logical}. Only the last
-backslash on any physical source line shall be eligible for being part
-of such a splice.
+如果第一个翻译字符是 \unicode{feff}{字节顺序标记}，
+则将其删除。
+反斜杠字符 (\textbackslash)
+紧跟零个或多个
+除换行符之外的空白字符再紧跟换行符的每个序列都将被删除，从而拼接
+物理源行以形成 \defnx{逻辑源行}{source line!logical}。只有任何物理源行上的最后一个
+反斜杠才有资格成为此类拼接的一部分。
 \begin{note}
-Line splicing can form
-a \grammarterm{universal-character-name}\iref{lex.charset}.
+行拼接可以形成
+\grammarterm{universal-character-name}\iref{lex.charset}。
 \end{note}
-A source file that is not empty and that (after splicing)
-does not end in a new-line character
-shall be processed as if an additional new-line character were appended
-to the file.
+一个非空且（拼接后）
+不以换行符结尾的源文件
+将被视为附加了一个额外的换行符
+到文件。
 
-\item The source file is decomposed into preprocessing
-tokens\iref{lex.pptoken} and sequences of whitespace characters
-(including comments). A source file shall not end in a partial
-preprocessing token or in a partial comment.
+\item 源文件被分解为预处理
+记号\iref{lex.pptoken} 和空白字符序列
+（包括注释）。源文件不应以部分
+预处理记号或部分注释结尾。
 \begin{footnote}
-A partial preprocessing
-token would arise from a source file
-ending in the first portion of a multi-character token that requires a
-terminating sequence of characters, such as a \grammarterm{header-name}
-that is missing the closing \tcode{"}
-or \tcode{>}. A partial comment
-would arise from a source file ending with an unclosed \tcode{/*}
-comment.
+部分预处理
+记号将来自源文件
+以需要终止字符序列的多字符记号的第一部分结尾，例如缺少
+右边的 \tcode{"}
+或 \tcode{>} 的 \grammarterm{header-name}。部分注释
+将来自以未闭合的 \tcode{/*}
+注释结尾的源文件。
 \end{footnote}
-Each comment\iref{lex.comment} is replaced by one space character. New-line characters are
-retained. Whether each nonempty sequence of whitespace characters other
-than new-line is retained or replaced by one space character is
-unspecified.
-As characters from the source file are consumed
-to form the next preprocessing token
-(i.e., not being consumed as part of a comment or other forms of whitespace),
-except when matching a
-\grammarterm{c-char-sequence},
-\grammarterm{s-char-sequence},
-\grammarterm{r-char-sequence},
-\grammarterm{h-char-sequence}, or
-\grammarterm{q-char-sequence},
-\grammarterm{universal-character-name}s are recognized\iref{lex.universal.char} and
-replaced by the designated element of the translation character set\iref{lex.charset}.
-The process of dividing a source file's
-characters into preprocessing tokens is context-dependent.
+每个注释\iref{lex.comment} 都被替换为一个空格字符。换行符被
+保留。每个非空的除换行符之外的空白字符序列
+是保留还是替换为一个空格字符是
+未指明的。
+当来自源文件的字符被消耗
+以形成下一个预处理记号时
+（即，不作为注释或其他形式的空白的一部分被消耗），
+除非匹配
+\grammarterm{c-char-sequence}、
+\grammarterm{s-char-sequence}、
+\grammarterm{r-char-sequence}、
+\grammarterm{h-char-sequence} 或
+\grammarterm{q-char-sequence}，
+\grammarterm{universal-character-name} 被识别\iref{lex.universal.char} 并
+替换为翻译字符集\iref{lex.charset} 的指定元素。
+将源文件的字符
+划分为预处理记号的过程是上下文相关的。
 \begin{example}
-See the handling of \tcode{<} within a \tcode{\#include} preprocessing
-directive\iref{cpp.include}.
+请参阅 \tcode{\#include} 预处理
+指令\iref{cpp.include} 中 \tcode{<} 的处理。
 \end{example}
 
-\item The source file is analyzed as a \grammarterm{preprocessing-file}\iref{cpp.pre}.
-Preprocessing directives\iref{cpp} are executed, macro invocations are
-expanded\iref{cpp.replace}, and \tcode{_Pragma} unary operator expressions are executed\iref{cpp.pragma.op}.
-A \tcode{\#include} preprocessing directive\iref{cpp.include} causes the named header or
-source file to be processed from phase 1 through phase 4, recursively.
-All preprocessing directives are then deleted.
+\item 源文件被分析为 \grammarterm{preprocessing-file}\iref{cpp.pre}。
+预处理指令\iref{cpp} 被执行，宏调用被
+展开\iref{cpp.replace}，并且 \tcode{_Pragma} 一元运算符表达式被执行\iref{cpp.pragma.op}。
+\tcode{\#include} 预处理指令\iref{cpp.include} 导致命名的头文件或
+源文件从阶段 1 到阶段 4 递归处理。
+然后删除所有预处理指令。
 
 \item
-For a sequence of two or more adjacent \grammarterm{string-literal} tokens,
-a common \grammarterm{encoding-prefix} is determined
-as specified in \ref{lex.string}.
-Each such \grammarterm{string-literal} token is then considered to have
-that common \grammarterm{encoding-prefix}.
+对于两个或多个相邻的 \grammarterm{string-literal} 记号序列，
+将按照 \ref{lex.string} 中指定的方式确定一个公共的 \grammarterm{encoding-prefix}。
+然后，每个这样的 \grammarterm{string-literal} 记号都被认为具有
+该公共的 \grammarterm{encoding-prefix}。
 
 \item
-Adjacent \grammarterm{string-literal} tokens are concatenated\iref{lex.string}.
+相邻的 \grammarterm{string-literal} 记号被连接起来\iref{lex.string}。
 
 \item
-Each preprocessing token is converted into a token\iref{lex.token}.
-Whitespace characters separating tokens are no longer significant.
-The resulting tokens constitute a \defn{translation unit} and
-are syntactically and
-semantically analyzed as a \grammarterm{translation-unit}\iref{basic.link} and
-translated.
+每个预处理记号都被转换为一个记号\iref{lex.token}。
+分隔记号的空白字符不再重要。
+生成的记号构成一个 \defn{翻译单元}，并且
+作为 \grammarterm{translation-unit}\iref{basic.link} 进行语法和
+语义分析并翻译。
 \begin{note}
-The process of analyzing and translating the tokens can occasionally
-result in one token being replaced by a sequence of other
-tokens\iref{temp.names}.
+分析和翻译记号的过程有时
+会导致一个记号被
+其他记号序列替换\iref{temp.names}。
 \end{note}
-It is
-\impldef{whether the sources for
-module units and header units
-on which the current translation unit has an interface
-dependency are required to be available during translation}
-whether the sources for
-module units and header units
-on which the current translation unit has an interface
-dependency\iref{module.unit,module.import}
-are required to be available.
+\impldef{是否需要
+当前翻译单元具有接口
+依赖关系的模块单元和头单元的源
+在翻译期间可用}
+当前翻译单元具有接口
+依赖关系\iref{module.unit,module.import}
+的模块单元和头单元的源
+是否需要在翻译期间可用.
 \begin{note}
-Source files, translation
-units and translated translation units need not necessarily be stored as
-files, nor need there be any one-to-one correspondence between these
-entities and any external representation. The description is conceptual
-only, and does not specify any particular implementation.
+源文件、翻译
+单元和已翻译的翻译单元不一定必须存储为
+文件，也不需要在这些实体和任何外部表示之间存在任何一一对应的关系。该描述仅是概念性的
+，并没有指定任何特定的实现。
 \end{note}
 
-\item Translated translation units and instantiation units are combined
-as follows:
+\item 翻译后的翻译单元和实例化单元组合
+如下：
 \begin{note}
-Some or all of these can be supplied from a
-library.
+其中一些或全部可以由
+库提供。
 \end{note}
-Each translated translation unit is examined to
-produce a list of required instantiations.
+检查每个翻译后的翻译单元以
+生成所需实例化的列表。
 \begin{note}
-This can include
-instantiations which have been explicitly
-requested\iref{temp.explicit}.
+这可以包括
+已显式请求的实例化\iref{temp.explicit}。
 \end{note}
-The definitions of the
-required templates are located. It is \impldef{whether source of translation units must
-be available to locate template definitions} whether the
-source of the translation units containing these definitions is required
-to be available.
+定位所需模板的定义。\impldef{是否需要翻译单元的源
+可用于定位模板定义}
+包含这些定义的翻译单元的源
+是否需要可用。
 \begin{note}
-An implementation can choose to encode sufficient
-information into the translated translation unit so as to ensure the
-source is not required here.
+实现可以选择将足够
+的信息编码到已翻译的翻译单元中，以确保
+此处不需要源。
 \end{note}
-All the required instantiations
-are performed to produce
-\defn{instantiation units}.
+执行所有必需的实例化
+以生成 \defn{实例化单元}。
 \begin{note}
-These are similar
-to translated translation units, but contain no references to
-uninstantiated templates and no template definitions.
+这些类似于
+已翻译的翻译单元，但不包含对
+未实例化模板的引用，也不包含模板定义。
 \end{note}
-The
-program is ill-formed if any instantiation fails.
+如果任何实例化失败，则程序是病构的。
 
-\item All external entity references are resolved. Library
-components are linked to satisfy external references to
-entities not defined in the current translation. All such translator
-output is collected into a program image which contains information
-needed for execution in its execution environment.%
+\item 解析所有外部实体引用。库
+组件被链接以满足对
+当前翻译中未定义的实体的外部引用。所有这些翻译器
+输出都被收集到一个程序映像中，该映像包含
+在其执行环境中执行所需的信息。%
 \indextext{translation!phases|)}
 \end{enumerate}
 
-\rSec1[lex.char]{Characters}%
+\rSec1[lex.char]{字符}%
 
-\rSec2[lex.charset]{Character sets}
+\rSec2[lex.charset]{字符集}
 
 \pnum
 \indextext{character set|(}%
-The \defnadj{translation}{character set} consists of the following elements:
+\defnadj{翻译}{字符集} 由以下元素组成：
 \begin{itemize}
 \item
-each abstract character assigned a code point in the Unicode codespace
-as specified in the Unicode Standard, and
+Unicode 标准中指定的 Unicode 代码空间中分配了代码点的每个抽象字符，以及
 \item
-a distinct character for each Unicode scalar value
-not assigned to an abstract character.
+未分配给抽象字符的每个 Unicode 标量值的不同字符。
 \end{itemize}
 \begin{note}
-Unicode code points are integers
-in the range $[0, \mathrm{10FFFF}]$ (hexadecimal).
-A surrogate code point is a value
-in the range $[\mathrm{D800}, \mathrm{DFFF}]$ (hexadecimal).
-A Unicode scalar value is any code point that is not a surrogate code point.
+Unicode 代码点是
+范围 $[0, \mathrm{10FFFF}]$（十六进制）中的整数。
+代理代码点是
+范围 $[\mathrm{D800}, \mathrm{DFFF}]$（十六进制）中的值。
+Unicode 标量值是任何不是代理代码点的代码点。
 \end{note}
 
 \pnum
-The \defnadj{basic}{character set} is a subset of the translation character set,
-consisting of 99 characters as specified in \tref{lex.charset.basic}.
+\defnadj{基本}{字符集} 是翻译字符集的子集，
+由 \tref{lex.charset.basic} 中指定的 99 个字符组成。
 \begin{note}
-Unicode short names are given only as a means to identifying the character;
-the numerical value has no other meaning in this context.
+Unicode 短名称仅作为识别字符的一种手段给出；
+数值在此上下文中没有其他含义。
 \end{note}
 
-\begin{floattable}{Basic character set}{lex.charset.basic}{lll}
+\begin{floattable}{基本字符集}{lex.charset.basic}{lll}
 \topline
-\lhdrx{2}{character} & \rhdr{glyph} \\ \capsep
+\lhdrx{2}{字符} & \rhdr{字形} \\ \capsep
 \ucode{0009} & \uname{character tabulation} & \\
 \ucode{000b} & \uname{line tabulation} & \\
 \ucode{000c} & \uname{form feed} & \\
@@ -330,13 +311,13 @@ the numerical value has no other meaning in this context.
 \end{floattable}
 
 \pnum
-The \defnadj{basic literal}{character set} consists of
-all characters of the basic character set,
-plus the control characters specified in \tref{lex.charset.literal}.
+\defnadj{基本字面}{字符集} 由
+基本字符集的所有字符，
+加上 \tref{lex.charset.literal} 中指定的控制字符组成。
 
-\begin{floattable}{Additional control characters in the basic literal character set}{lex.charset.literal}{ll}
+\begin{floattable}{基本字面字符集中的附加控制字符}{lex.charset.literal}{ll}
 \topline
-\ohdrx{2}{character} \\ \capsep
+\ohdrx{2}{字符} \\ \capsep
 \ucode{0000} & \uname{null} \\
 \ucode{0007} & \uname{alert} \\
 \ucode{0008} & \uname{backspace} \\
@@ -344,56 +325,52 @@ plus the control characters specified in \tref{lex.charset.literal}.
 \end{floattable}
 
 \pnum
-A \defn{code unit} is an integer value
-of character type\iref{basic.fundamental}.
-Characters in a \grammarterm{character-literal}
-other than a multicharacter or non-encodable character literal or
-in a \grammarterm{string-literal} are encoded as
-a sequence of one or more code units, as determined
-by the \grammarterm{encoding-prefix}\iref{lex.ccon,lex.string};
-this is termed the respective \defnadj{literal}{encoding}.
-The \defnadj{ordinary literal}{encoding} is
-the encoding applied to an ordinary character or string literal.
-The \defnadj{wide literal}{encoding} is the encoding applied
-to a wide character or string literal.
+\defn{码位单元} 是
+字符类型\iref{basic.fundamental}的整数值。
+\grammarterm{character-literal}（多字符字面量或不可编码字符字面量除外）
+或 \grammarterm{string-literal} 中的字符被编码为
+一个或多个码位单元的序列，由
+\grammarterm{encoding-prefix}\iref{lex.ccon,lex.string} 确定；
+这被称为相应的 \defnadj{字面量}{编码}。
+\defnadj{普通字面量}{编码} 是
+应用于普通字符或字符串字面量的编码。
+\defnadj{宽字面量}{编码} 是应用于
+宽字符或字符串字面量的编码。
 
 \pnum
-A literal encoding or a locale-specific encoding of one of
-the execution character sets\iref{character.seq}
-encodes each element of the basic literal character set as
-a single code unit with non-negative value,
-distinct from the code unit for any other such element.
+基本字面字符集的每个元素
+在字面量编码或执行字符集\iref{character.seq}之一的区域特定编码中，均被编码为具有非负值的
+单个码位单元，
+且与任何其他此类元素的码位单元不同。
 \begin{note}
-A character not in the basic literal character set
-can be encoded with more than one code unit;
-the value of such a code unit can be the same as
-that of a code unit for an element of the basic literal character set.
+不在基本字面字符集中的字符
+可以用多个码位单元编码；
+此类码位单元的值可以与
+基本字面字符集元素的码位单元的值相同。
 \end{note}
 \indextext{character!null}%
 \indextext{wide-character!null}%
-The \unicode{0000}{null} character is encoded as the value \tcode{0}.
-No other element of the translation character set
-is encoded with a code unit of value \tcode{0}.
-The code unit value of each decimal digit character after the digit \tcode{0} (\ucode{0030})
-shall be one greater than the value of the previous.
-The ordinary and wide literal encodings are otherwise
-\impldef{ordinary and wide literal encodings}.
+\unicode{0000}{null} 字符被编码为值 \tcode{0}。
+翻译字符集的任何其他元素
+都不会被编码为值为 \tcode{0} 的码位单元。
+数字 \tcode{0} (\ucode{0030}) 之后的每个十进制数字字符的码位单元值
+应比前一个数字大 1。
+普通和宽字面量编码在其他方面是
+\impldef{普通和宽字面量编码}。
 \indextext{UTF-8}%
 \indextext{UTF-16}%
 \indextext{UTF-32}%
-For a UTF-8, UTF-16, or UTF-32 literal,
-the implementation shall encode
-the Unicode scalar value
-corresponding to each character of the translation character set
-as specified in the Unicode Standard
-for the respective Unicode encoding form.
+对于 UTF-8、UTF-16 或 UTF-32 字面量，
+实现应按照 Unicode 标准
+中对相应 Unicode 编码形式的规定，对
+与翻译字符集的每个字符相对应的 Unicode 标量值进行编码。
 \indextext{character set|)}
 
-\rSec2[lex.universal.char]{Universal character names}
+\rSec2[lex.universal.char]{通用字符名}
 
 \begin{bnf}
 \nontermdef{n-char}\br
-     \textnormal{any member of the translation character set except the \unicode{007d}{right curly bracket} or new-line character}
+     \textnormal{翻译字符集中除 \unicode{007d}{右大括号} 或换行符之外的任何成员}
 \end{bnf}
 
 \begin{bnf}
@@ -425,72 +402,64 @@ for the respective Unicode encoding form.
 \end{bnf}
 
 \pnum
-The \grammarterm{universal-character-name} construct provides a way to name any
-element in the translation character set using just the basic character set.
-If a \grammarterm{universal-character-name} outside
-the \grammarterm{c-char-sequence}, \grammarterm{s-char-sequence}, or
-\grammarterm{r-char-sequence} of a \grammarterm{character-literal} or
-\grammarterm{string-literal}
-(in either case, including within a \grammarterm{user-defined-literal})
-corresponds to a control character or to a character in the basic character set,
-the program is ill-formed.
+\grammarterm{universal-character-name} 结构提供了一种仅使用基本字符集来命名翻译字符集中任何元素的方法。
+如果 \grammarterm{character-literal} 或
+\grammarterm{string-literal} 的 \grammarterm{c-char-sequence}、\grammarterm{s-char-sequence} 或
+\grammarterm{r-char-sequence} 之外的（在任一情况下，包括在 \grammarterm{user-defined-literal} 中）
+\grammarterm{universal-character-name}
+对应于控制字符或基本字符集中的字符，
+则程序是病构的。
 \begin{note}
-A sequence of characters resembling a \grammarterm{universal-character-name} in an
-\grammarterm{r-char-sequence}\iref{lex.string} does not form a
-\grammarterm{universal-character-name}.
+\grammarterm{r-char-sequence}\iref{lex.string} 中类似于 \grammarterm{universal-character-name} 的字符序列
+不构成 \grammarterm{universal-character-name}。
 \end{note}
 
 \pnum
-A \grammarterm{universal-character-name}
-of the form \tcode{\textbackslash u} \grammarterm{hex-quad},
-\tcode{\textbackslash U} \grammarterm{hex-quad} \grammarterm{hex-quad}, or
-\tcode{\textbackslash u\{\grammarterm{simple-hexadecimal-digit-sequence}\}}
-designates the character in the translation character set
-whose Unicode scalar value is the hexadecimal number represented by
-the sequence of \grammarterm{hexadecimal-digit}s
-in the \grammarterm{universal-character-name}.
-The program is ill-formed if that number is not a Unicode scalar value.
+形式为 \tcode{\textbackslash u} \grammarterm{hex-quad}、
+\tcode{\textbackslash U} \grammarterm{hex-quad} \grammarterm{hex-quad} 或
+\tcode{\textbackslash u\{\grammarterm{simple-hexadecimal-digit-sequence}\}} 的 \grammarterm{universal-character-name}
+指定翻译字符集中
+Unicode 标量值为
+\grammarterm{universal-character-name} 中
+\grammarterm{hexadecimal-digit} 序列表示的十六进制数的字符。
+如果该数字不是 Unicode 标量值，则程序是病构的。
 
 \pnum
-A \grammarterm{universal-character-name}
-that is a \grammarterm{named-universal-character}
-designates the corresponding character
-in the Unicode Standard (chapter 4.8 Name)
-if the \grammarterm{n-char-sequence} is equal
-to its character name or
-to one of its character name aliases of
-type ``control'', ``correction'', or ``alternate'';
-otherwise, the program is ill-formed.
+作为 \grammarterm{named-universal-character} 的 \grammarterm{universal-character-name}
+如果 \grammarterm{n-char-sequence} 等于
+其字符名称或
+其类型为“control”、“correction”或“alternate”的字符名称别名之一，
+则指定 Unicode 标准（第 4.8 章名称）中的相应字符；
+否则，程序是病构的。
 \begin{note}
-These aliases are listed in
-the Unicode Character Database's \tcode{NameAliases.txt}.
-None of these names or aliases have leading or trailing spaces.
+这些别名列在
+Unicode 字符数据库的 \tcode{NameAliases.txt} 中。
+这些名称或别名均不包含前导或尾随空格。
 \end{note}
 
-\rSec1[lex.comment]{Comments}
+\rSec1[lex.comment]{注释}
 
 \pnum
 \indextext{comment|(}%
 \indextext{comment!\tcode{/*} \tcode{*/}}%
 \indextext{comment!\tcode{//}}%
-The characters \tcode{/*} start a comment, which terminates with the
-characters \tcode{*/}. These comments do not nest.
+字符 \tcode{/*} 开始一个注释，该注释以
+字符 \tcode{*/} 终止。这些注释不嵌套。
 \indextext{comment!\tcode{//}}%
-The characters \tcode{//} start a comment, which terminates immediately before the
-next new-line character. If there is a form-feed or a vertical-tab
-character in such a comment, only whitespace characters shall appear
-between it and the new-line that terminates the comment; no diagnostic
-is required.
+字符 \tcode{//} 开始一个注释，该注释在
+下一个换行符之前立即终止。如果此类注释中存在换页符或垂直制表符
+字符，则在该字符和终止注释的换行符之间只能出现空白字符；
+不需要诊断。
 \begin{note}
-The comment characters \tcode{//}, \tcode{/*},
-and \tcode{*/} have no special meaning within a \tcode{//} comment and
-are treated just like other characters. Similarly, the comment
-characters \tcode{//} and \tcode{/*} have no special meaning within a
-\tcode{/*} comment.
+注释字符 \tcode{//}、\tcode{/*}
+和 \tcode{*/} 在 \tcode{//} 注释中没有特殊含义，
+并且像其他字符一样对待。类似地，注释
+字符 \tcode{//} 和 \tcode{/*} 在
+\tcode{/*} 注释中没有特殊含义。
 \end{note}
 \indextext{comment|)}
 
-\rSec1[lex.pptoken]{Preprocessing tokens}
+\rSec1[lex.pptoken]{预处理记号}
 
 \indextext{token!preprocessing|(}%
 \begin{bnf}
@@ -506,94 +475,88 @@ characters \tcode{//} and \tcode{/*} have no special meaning within a
     string-literal\br
     user-defined-string-literal\br
     preprocessing-op-or-punc\br
-    \textnormal{each non-whitespace character that cannot be one of the above}
+    \textnormal{每个不能是上述之一的非空白字符}
 \end{bnf}
 
 \pnum
-A preprocessing token is the minimal lexical element of the language in translation
-phases 3 through 6.
-In this document,
-glyphs are used to identify
-elements of the basic character set\iref{lex.charset}.
-The categories of preprocessing token are: header names,
-placeholder tokens produced by preprocessing \tcode{import} and \tcode{module} directives
-(\grammarterm{import-keyword}, \grammarterm{module-keyword}, and \grammarterm{export-keyword}),
-identifiers, preprocessing numbers, character literals (including user-defined character
-literals), string literals (including user-defined string literals), preprocessing
-operators and punctuators, and single non-whitespace characters that do not lexically
-match the other preprocessing token categories.
-If a \unicode{0027}{apostrophe} or a \unicode{0022}{quotation mark} character
-matches the last category, the program is ill-formed.
-If any character not in the basic character set matches the last category,
-the program is ill-formed.
-Preprocessing tokens can be separated by
+预处理记号是翻译阶段 3 到 6 中语言的最小词法元素。
+在本文档中，
+字形用于标识
+基本字符集\iref{lex.charset} 的元素。
+预处理记号的类别有：头文件名、
+由预处理 \tcode{import} 和 \tcode{module} 指令产生的占位符记号
+（\grammarterm{import-keyword}、\grammarterm{module-keyword} 和 \grammarterm{export-keyword}）、
+标识符、预处理数、字符字面量（包括用户定义的字符
+字面量）、字符串字面量（包括用户定义的字符串字面量）、预处理
+运算符和标点符号，以及不能在词法上
+与其他预处理记号类别匹配的单个非空白字符。
+如果 \unicode{0027}{撇号} 或 \unicode{0022}{引号} 字符
+与最后一个类别匹配，则程序是病构的。
+如果任何不在基本字符集中的字符与最后一个类别匹配，则该程序是病构的.
+预处理记号可以由
 \indextext{whitespace}%
-whitespace;
+空白分隔；
 \indextext{comment}%
-this consists of comments\iref{lex.comment}, or whitespace characters
-(\unicode{0020}{space},
-\unicode{0009}{character tabulation},
-new-line,
-\unicode{000b}{line tabulation}, and
-\unicode{000c}{form feed}), or both.
-As described in \ref{cpp}, in certain
-circumstances during translation phase 4, whitespace (or the absence
-thereof) serves as more than preprocessing token separation. Whitespace
-can appear within a preprocessing token only as part of a header name or
-between the quotation characters in a character literal or
-string literal.
+这包括注释\iref{lex.comment}，或空白字符
+（\unicode{0020}{空格}、
+\unicode{0009}{水平制表}、
+换行符、
+\unicode{000b}{垂直制表} 和
+\unicode{000c}{换页符}），或两者兼有。
+如 \ref{cpp} 中所述，在某些
+情况下，在翻译阶段 4 期间，空白（或其缺失）
+不仅仅用作预处理记号分隔。空白
+只能作为头文件名的一部分或
+字符字面量或字符串字面量中的引号之间出现在预处理记号中。
 
 \pnum
-Each preprocessing token that is converted to a token\iref{lex.token}
-shall have the lexical form of a keyword, an identifier, a literal,
-or an operator or punctuator.
+每个转换为记号\iref{lex.token} 的预处理记号
+都应具有关键字、标识符、字面量
+或运算符或标点符号的词法形式。
 
 \pnum
-The \grammarterm{import-keyword} is produced
-by processing an \keyword{import} directive\iref{cpp.import},
-the \grammarterm{module-keyword} is produced
-by preprocessing a \keyword{module} directive\iref{cpp.module}, and
-the \grammarterm{export-keyword} is produced
-by preprocessing either of the previous two directives.
+\grammarterm{import-keyword} 由
+处理 \keyword{import} 指令\iref{cpp.import} 产生，
+\grammarterm{module-keyword} 由预处理 \keyword{module} 指令\iref{cpp.module} 产生，
+\grammarterm{export-keyword} 由
+预处理前两个指令中的任何一个产生。
 \begin{note}
-None has any observable spelling.
+它们都没有任何可观察的拼写。
 \end{note}
 
 \pnum
-If the input stream has been parsed into preprocessing tokens up to a
-given character:
+如果输入流已被解析为预处理记号直到
+给定字符：
 \begin{itemize}
 \item
 \indextext{literal!string!raw}%
-If the next character begins a sequence of characters that could be the prefix
-and initial double quote of a raw string literal, such as \tcode{R"}, the next preprocessing
-token shall be a raw string literal. Between the initial and final
-double quote characters of the raw string, any transformations performed in phase
-2 (line splicing) are reverted; this reversion
-shall apply before any \grammarterm{d-char}, \grammarterm{r-char}, or delimiting
-parenthesis is identified. The raw string literal is defined as the shortest sequence
-of characters that matches the raw-string pattern
+如果下一个字符开始一个字符序列，该序列可能是原始字符串字面量的前缀
+和初始双引号，例如 \tcode{R"}，则下一个预处理
+记号应是原始字符串字面量。在原始字符串的初始和最终
+双引号字符之间，在阶段 2 中执行的任何转换（行拼接）
+都会被还原；此还原
+应在任何 \grammarterm{d-char}、\grammarterm{r-char} 或定界
+括号被识别之前应用。原始字符串字面量被定义为与 raw-string 模式匹配的最短字符序列
 \begin{ncbnf}
 \opt{encoding-prefix} \terminal{R} raw-string
 \end{ncbnf}
 
-\item Otherwise, if the next three characters are \tcode{<::} and the subsequent character
-is neither \tcode{:} nor \tcode{>}, the \tcode{<} is treated as a preprocessing token by
-itself and not as the first character of the alternative token \tcode{<:}.
+\item 否则，如果接下来的三个字符是 \tcode{<::} 并且后续字符
+既不是 \tcode{:} 也不是 \tcode{>}，则 \tcode{<} 被视为一个预处理记号，
+而不是替代记号 \tcode{<:} 的第一个字符。
 
-\item Otherwise,
-the next preprocessing token is the longest sequence of
-characters that could constitute a preprocessing token, even if that
-would cause further lexical analysis to fail,
-except that a \grammarterm{header-name}\iref{lex.header} is only formed
+\item 否则，
+下一个预处理记号是
+可以构成预处理记号的最长字符序列，即使这
+会导致进一步的词法分析失败，
+但 \grammarterm{header-name}\iref{lex.header} 仅在以下情况下形成
 \begin{itemize}
 \item
-after the \tcode{include} or \tcode{import} preprocessing token in a
-\tcode{\#include}\iref{cpp.include} or
-\tcode{import}\iref{cpp.import} directive, or
+在 \tcode{\#include}\iref{cpp.include} 或
+\tcode{import}\iref{cpp.import} 指令中的 \tcode{include} 或 \tcode{import} 预处理记号之后，或
 
 \item
-within a \grammarterm{has-include-expression}.
+在 \grammarterm{has-include-expression} 中。
 
 \end{itemize}
 \end{itemize}
@@ -602,33 +565,33 @@ within a \grammarterm{has-include-expression}.
 \begin{example}
 \begin{codeblock}
 #define R "x"
-const char* s = R"y";           // ill-formed raw string, not \tcode{"x" "y"}
+const char* s = R"y";           // 病构的原始字符串，不是 \tcode{"x" "y"}
 \end{codeblock}
 \end{example}
 
 \pnum
 \begin{example}
-The program fragment \tcode{0xe+foo} is parsed as a
-preprocessing number token (one that is not a valid
-\grammarterm{integer-literal} or \grammarterm{floating-point-literal} token),
-even though a parse as three preprocessing tokens
-\tcode{0xe}, \tcode{+}, and \tcode{foo} can produce a valid expression (for example,
-if \tcode{foo} is a macro defined as \tcode{1}). Similarly, the
-program fragment \tcode{1E1} is parsed as a preprocessing number (one
-that is a valid \grammarterm{floating-point-literal} token),
-whether or not \tcode{E} is a macro name.
+程序片段 \tcode{0xe+foo} 被解析为
+预处理数记号（一个不是有效的
+\grammarterm{integer-literal} 或 \grammarterm{floating-point-literal} 记号的记号），
+即使解析为三个预处理记号
+\tcode{0xe}、\tcode{+} 和 \tcode{foo} 可以产生有效的表达式（例如，
+如果 \tcode{foo} 是定义为 \tcode{1} 的宏）。类似地，
+程序片段 \tcode{1E1} 被解析为预处理数（一个
+是有效的 \grammarterm{floating-point-literal} 记号），
+无论 \tcode{E} 是否是宏名称。
 \end{example}
 
 \pnum
 \begin{example}
-The program fragment \tcode{x+++++y} is parsed as \tcode{x
-++ ++ + y}, which, if \tcode{x} and \tcode{y} have integral types,
-violates a constraint on increment operators, even though the parse
-\tcode{x ++ + ++ y} can yield a correct expression.
+程序片段 \tcode{x+++++y} 被解析为 \tcode{x
+++ ++ + y}，如果 \tcode{x} 和 \tcode{y} 具有整型，
+则违反了对增量运算符的约束，即使解析
+\tcode{x ++ + ++ y} 可以产生正确的表达式。
 \end{example}
 \indextext{token!preprocessing|)}
 
-\rSec1[lex.header]{Header names}
+\rSec1[lex.header]{头文件名}
 
 \indextext{header!name|(}%
 \begin{bnf}
@@ -645,7 +608,7 @@ violates a constraint on increment operators, even though the parse
 
 \begin{bnf}
 \nontermdef{h-char}\br
-    \textnormal{any member of the translation character set except new-line and \unicode{003e}{greater-than sign}}
+    \textnormal{翻译字符集中除换行符和 \unicode{003e}{右尖括号}} 之外的任何成员
 \end{bnf}
 
 \begin{bnf}
@@ -655,38 +618,38 @@ violates a constraint on increment operators, even though the parse
 
 \begin{bnf}
 \nontermdef{q-char}\br
-    \textnormal{any member of the translation character set except new-line and \unicode{0022}{quotation mark}}
+    \textnormal{翻译字符集中除换行符和 \unicode{0022}{引号}} 之外的任何成员
 \end{bnf}
 
 \pnum
-The sequences in both forms of \grammarterm{header-name}{s} are mapped in an
-\impldef{mapping header name to header or external source file} manner to headers or to
-external source file names as specified in~\ref{cpp.include}.
+两种形式的 \grammarterm{header-name} 中的序列都以
+\impldef{将头文件名映射到头文件或外部源文件} 方式映射到头文件或
+外部源文件名，如 \ref{cpp.include} 中所述。
 \begin{note}
-Header name preprocessing tokens appear only within
-a \tcode{\#include} preprocessing directive,
-a \tcode{__has_include} preprocessing expression, or
-after certain occurrences of an \tcode{import} token
-(see~\ref{lex.pptoken}).
+头文件名预处理记号仅出现在
+\tcode{\#include} 预处理指令、
+\tcode{__has_include} 预处理表达式中，或
+在 \tcode{import} 记号的某些出现之后
+（参见 \ref{lex.pptoken}）。
 \end{note}
 
 \pnum
-The appearance of either of the characters \tcode{'} or \tcode{\textbackslash} or of
-either of the character sequences \tcode{/*} or \tcode{//} in a
-\grammarterm{q-char-sequence} or an \grammarterm{h-char-sequence}
-is conditionally-supported with \impldef{meaning of \tcode{'}, \tcode{\textbackslash},
-\tcode{/*}, or \tcode{//} in a \grammarterm{q-char-sequence} or an
-\grammarterm{h-char-sequence}} semantics, as is the appearance of the character
-\tcode{"} in an \grammarterm{h-char-sequence}.
+字符 \tcode{'} 或 \tcode{\textbackslash} 或
+字符序列 \tcode{/*} 或 \tcode{//} 中的任何一个出现在
+\grammarterm{q-char-sequence} 或 \grammarterm{h-char-sequence} 中
+是条件支持的，具有 \impldef{\tcode{'}、\tcode{\textbackslash}、
+\tcode{/*} 或 \tcode{//} 在 \grammarterm{q-char-sequence} 或
+\grammarterm{h-char-sequence} 中的含义} 语义，字符
+\tcode{"} 出现在 \grammarterm{h-char-sequence} 中也是如此。
 \begin{note}
-Thus, a sequence of characters
-that resembles an escape sequence can result in an error, be interpreted as the
-character corresponding to the escape sequence, or have a completely different meaning,
-depending on the implementation.
+因此，字符序列
+类似于转义序列可能会导致错误，被解释为
+与转义序列相对应的字符，或具有完全不同的含义，
+具体取决于实现。
 \end{note}
 \indextext{header!name|)}
 
-\rSec1[lex.ppnumber]{Preprocessing numbers}
+\rSec1[lex.ppnumber]{预处理数}
 
 \indextext{number!preprocessing|(}%
 \begin{bnf}
@@ -704,25 +667,24 @@ depending on the implementation.
 \end{bnf}
 
 \pnum
-Preprocessing number tokens lexically include
-all \grammarterm{integer-literal} tokens\iref{lex.icon} and
-all \grammarterm{floating-point-literal} tokens\iref{lex.fcon}.
+预处理数记号在词法上包括
+所有 \grammarterm{integer-literal} 记号\iref{lex.icon} 和
+所有 \grammarterm{floating-point-literal} 记号\iref{lex.fcon}。
 
 \pnum
-A preprocessing number does not have a type or a value; it acquires both
-after a successful conversion to
-an \grammarterm{integer-literal} token or
-a \grammarterm{floating-point-literal} token.%
+预处理数没有类型或值；它在成功转换为
+\grammarterm{integer-literal} 记号或
+\grammarterm{floating-point-literal} 记号后获得两者。%
 \indextext{number!preprocessing|)}
 
-\rSec1[lex.operators]{Operators and punctuators}
+\rSec1[lex.operators]{运算符和标点符号}
 
 \pnum
 \indextext{operator|(}%
 \indextext{punctuator|(}%
-The lexical representation of \Cpp{} programs includes a number of
-preprocessing tokens that are used in the syntax of the preprocessor or
-are converted into tokens for operators and punctuators:
+\Cpp{} 程序的词法表示包括许多
+在预处理器的语法中使用的预处理记号，或
+被转换为运算符和标点符号的记号：
 
 \begin{bnf}
 \nontermdef{preprocessing-op-or-punc}\br
@@ -751,39 +713,36 @@ are converted into tokens for operators and punctuators:
     \terminal{\keyword{and_eq}   \keyword{or_eq}    \keyword{xor_eq}   \keyword{not_eq}}
 \end{bnf}
 
-Each \grammarterm{operator-or-punctuator} is converted to a single token
-in translation phase 7\iref{lex.phases}.%
+每个 \grammarterm{operator-or-punctuator} 在翻译阶段 7\iref{lex.phases} 中都被转换为单个记号。%
 \indextext{punctuator|)}%
 \indextext{operator|)}
 
-\rSec1[lex.digraph]{Alternative tokens}
+\rSec1[lex.digraph]{替代记号}
 
 \pnum
 \indextext{token!alternative|(}%
-Alternative token representations are provided for some operators and
-punctuators.
+为某些运算符和
+标点符号提供了替代的记号表示。
 \begin{footnote}
 \indextext{digraph}%
-These include ``digraphs'' and additional reserved words. The term
-``digraph'' (token consisting of two characters) is not perfectly
-descriptive, since one of the alternative \grammarterm{preprocessing-token}s is
-\tcode{\%:\%:} and of course several primary tokens contain two
-characters. Nonetheless, those alternative tokens that aren't lexical
-keywords are colloquially known as ``digraphs''.
+这些包括“双字符组”和附加的保留字。术语
+“双字符组”（由两个字符组成的记号）并不是完全
+描述性的，因为其中一个替代的 \grammarterm{preprocessing-token} 是
+\tcode{\%:\%:}，当然还有几个主要的记号包含两个
+字符。尽管如此，那些不是词法关键字的替代记号通常被称为“双字符组”。
 \end{footnote}
 
 \pnum
-In all respects of the language, each alternative token behaves the
-same, respectively, as its primary token, except for its spelling.
+在语言的所有方面，每个替代记号的行为分别与其主要记号相同，
+除了其拼写。
 \begin{footnote}
-Thus the ``stringized'' values\iref{cpp.stringize} of
-\tcode{[} and \tcode{<:} will be different, maintaining the source
-spelling, but the tokens can otherwise be freely interchanged.
+因此，\tcode{[} 和 \tcode{<:} 的“字符串化”值\iref{cpp.stringize}
+将不同，保持源拼写，但记号在其他方面可以自由互换。
 \end{footnote}
-The set of alternative tokens is defined in
-\tref{lex.digraph}.
+替代记号集在
+\tref{lex.digraph} 中定义。
 
-\begin{tokentable}{Alternative tokens}{lex.digraph}{Alternative}{Primary}
+\begin{tokentable}{替代记号}{lex.digraph}{替代}{主要}
 \tcode{<\%}             &   \tcode{\{}         &
 \keyword{and}           &   \tcode{\&\&}       &
 \keyword{and_eq}        &   \tcode{\&=}        \\ \rowsep
@@ -805,7 +764,7 @@ The set of alternative tokens is defined in
 \end{tokentable}%
 \indextext{token!alternative|)}
 
-\rSec1[lex.token]{Tokens}
+\rSec1[lex.token]{记号}
 
 \indextext{token|(}%
 \begin{bnf}
@@ -818,22 +777,22 @@ The set of alternative tokens is defined in
 
 \pnum
 \indextext{\idxgram{token}}%
-There are five kinds of tokens: identifiers, keywords, literals,%
+有五种记号：标识符、关键字、字面量、%
 \begin{footnote}
-Literals include strings and character and numeric literals.
+字面量包括字符串、字符和数字字面量。
 \end{footnote}
-operators, and other separators.
+运算符和其他分隔符。
 \indextext{whitespace}%
-Blanks, horizontal and vertical tabs, newlines, formfeeds, and comments
-(collectively, ``whitespace''), as described below, are ignored except
-as they serve to separate tokens.
+空格、水平和垂直制表符、换行符、换页符和注释
+（统称为“空白”），如下所述，除了
+用于分隔记号外，将被忽略。
 \begin{note}
-Whitespace can separate otherwise adjacent identifiers, keywords, numeric
-literals, and alternative tokens containing alphabetic characters.
+空白可以分隔原本相邻的标识符、关键字、数字
+字面量和包含字母字符的替代记号。
 \end{note}
 \indextext{token|)}
 
-\rSec1[lex.name]{Identifiers}
+\rSec1[lex.name]{标识符}
 
 \indextext{identifier|(}%
 \begin{bnf}
@@ -845,14 +804,14 @@ literals, and alternative tokens containing alphabetic characters.
 \begin{bnf}
 \nontermdef{identifier-start}\br
     nondigit\br
-    \textnormal{an element of the translation character set with the Unicode property XID_Start}
+    \textnormal{具有 Unicode 属性 XID_Start 的翻译字符集的元素}
 \end{bnf}
 
 \begin{bnf}
 \nontermdef{identifier-continue}\br
     digit\br
     nondigit\br
-    \textnormal{an element of the translation character set with the Unicode property XID_Continue}
+    \textnormal{具有 Unicode 属性 XID_Continue 的翻译字符集的元素}
 \end{bnf}
 
 \begin{bnf}
@@ -872,34 +831,31 @@ literals, and alternative tokens containing alphabetic characters.
 \indextext{name!length of}%
 \indextext{name}%
 \begin{note}
-The character properties XID_Start and XID_Continue are described by \UAX{44} of the Unicode Standard.
+字符属性 XID_Start 和 XID_Continue 由 Unicode 标准的 \UAX{44} 描述。
 \begin{footnote}
-On systems in which linkers cannot accept extended
-characters, an encoding of the \grammarterm{universal-character-name} can be used in
-forming valid external identifiers. For example, some otherwise unused
-character or sequence of characters can be used to encode the
-\tcode{\textbackslash u} in a \grammarterm{universal-character-name}. Extended
-characters can produce a long external identifier, but \Cpp{} does not
-place a translation limit on significant characters for external
-identifiers.
+在链接器无法接受扩展
+字符的系统上，可以在
+形成有效的外部标识符时使用 \grammarterm{universal-character-name} 的编码。例如，可以使用一些原本未使用的
+字符或字符序列来编码
+\grammarterm{universal-character-name} 中的 \tcode{\textbackslash u}。扩展
+字符可能会产生较长的外部标识符，但 \Cpp{} 并未
+对外部标识符的有效字符设置翻译限制。
 \end{footnote}
 \end{note}
-The program is ill-formed
-if an \grammarterm{identifier} does not conform to
-Normalization Form C as specified in the Unicode Standard.
+如果 \grammarterm{identifier} 不符合 Unicode 标准中指定的
+规范化形式 C，则程序是病构的。
 \begin{note}
-Identifiers are case-sensitive.
+标识符区分大小写。
 \end{note}
 \begin{note}
-\ref{uaxid} compares the requirements of \UAX{31} of the Unicode Standard
-with the \Cpp{} rules for identifiers.
+\ref{uaxid} 将 Unicode 标准的 \UAX{31} 的要求
+与 \Cpp{} 的标识符规则进行了比较。
 \end{note}
 \begin{note}
-In translation phase 4,
-\grammarterm{identifier} also includes
-those \grammarterm{preprocessing-token}s\iref{lex.pptoken}
-differentiated as keywords\iref{lex.key}
-in the later translation phase 7\iref{lex.token}.
+在翻译阶段 4 中，
+\grammarterm{identifier} 还包括
+那些在稍后的翻译阶段 7\iref{lex.token} 中
+区分为关键字\iref{lex.key} 的 \grammarterm{preprocessing-token}。
 \end{note}
 
 \pnum
@@ -907,14 +863,14 @@ in the later translation phase 7\iref{lex.token}.
 \indextext{\idxcode{final}}%
 \indextext{\idxcode{module}}%
 \indextext{\idxcode{override}}%
-The identifiers in \tref{lex.name.special} have a special meaning when
-appearing in a certain context. When referred to in the grammar, these identifiers
-are used explicitly rather than using the \grammarterm{identifier} grammar production.
-Unless otherwise specified, any ambiguity as to whether a given
-\grammarterm{identifier} has a special meaning is resolved to interpret the
-token as a regular \grammarterm{identifier}.
+\tref{lex.name.special} 中的标识符在
+出现在特定上下文中时具有特殊含义。当在语法中引用时，这些标识符
+被显式使用，而不是使用 \grammarterm{identifier} 语法产生式。
+除非另有说明，否则对于给定的
+\grammarterm{identifier} 是否具有特殊含义的任何歧义都将解析为将该
+记号解释为常规的 \grammarterm{identifier}。
 
-\begin{multicolfloattable}{Identifiers with special meaning}{lex.name.special}
+\begin{multicolfloattable}{具有特殊含义的标识符}{lex.name.special}
 {llll}
 \keyword{final}           \\
 \columnbreak
@@ -929,31 +885,30 @@ token as a regular \grammarterm{identifier}.
 \indextext{\idxcode{_}|see{character, underscore}}%
 \indextext{character!underscore!in identifier}%
 \indextext{reserved identifier}%
-In addition, some identifiers
-appearing as a \grammarterm{token} or \grammarterm{preprocessing-token}
-are reserved for use by \Cpp{}
-implementations and shall
-not be used otherwise; no diagnostic is required.
+此外，一些作为 \grammarterm{token} 或 \grammarterm{preprocessing-token} 出现的标识符
+保留供 \Cpp{}
+实现使用，不得
+以其他方式使用；不需要诊断。
 \begin{itemize}
 \item
-Each identifier that contains a double underscore
+每个包含双下划线
 \tcode{\unun}
 \indextext{character!underscore}%
-or begins with an underscore followed by
-an uppercase letter,
-other than those specified in this document
-(for example, \xname{cplusplus}\iref{cpp.predefined}),
+或以下划线后跟
+大写字母开头的标识符，
+本文档中指定的除外
+（例如，\xname{cplusplus}\iref{cpp.predefined}），
 \indextext{uppercase}%
-is reserved to the implementation for any use.
+都保留给实现以供任何使用。
 \item
-Each identifier that begins with an underscore is
+每个以下划线开头的标识符
 \indextext{character!underscore}%
-reserved to the implementation for use as a name in the global namespace.%
+都保留给实现，用作全局命名空间中的名称。%
 \indextext{namespace!global}
 \end{itemize}%
 \indextext{identifier|)}
 
-\rSec1[lex.key]{Keywords}
+\rSec1[lex.key]{关键字}
 
 \begin{bnf}
 \nontermdef{keyword}\br
@@ -965,15 +920,15 @@ reserved to the implementation for use as a name in the global namespace.%
 
 \pnum
 \indextext{keyword|(}%
-The identifiers shown in \tref{lex.key} are reserved for use
-as keywords (that is, they are unconditionally treated as keywords in
-phase 7) except in an \grammarterm{attribute-token}\iref{dcl.attr.grammar}.
+\tref{lex.key} 中显示的标识符保留用作
+关键字（即，它们在阶段 7 中无条件地被视为关键字），
+除非在 \grammarterm{attribute-token}\iref{dcl.attr.grammar} 中。
 \begin{note}
-The \keyword{register} keyword is unused but
-is reserved for future use.
+\keyword{register} 关键字未使用，但
+保留以供将来使用。
 \end{note}
 
-\begin{multicolfloattable}{Keywords}{lex.key}
+\begin{multicolfloattable}{关键字}{lex.key}
 {lllll}
 \keyword{alignas} \\
 \keyword{alignof} \\
@@ -1063,12 +1018,12 @@ is reserved for future use.
 \end{multicolfloattable}
 
 \pnum
-Furthermore, the alternative representations shown in
-\tref{lex.key.digraph} for certain operators and
-punctuators\iref{lex.digraph} are reserved and shall not be used
-otherwise.
+此外，
+\tref{lex.key.digraph} 中显示的某些运算符和
+标点符号\iref{lex.digraph} 的替代表示是保留的，不得
+以其他方式使用。
 
-\begin{floattable}{Alternative representations}{lex.key.digraph}
+\begin{floattable}{替代表示}{lex.key.digraph}
 {llllll}
 \topline
 \keyword{and}     &   \keyword{and_eq}  &   \keyword{bitand}  &   \keyword{bitor}   &   \keyword{compl}   &   \keyword{not} \\
@@ -1077,18 +1032,18 @@ otherwise.
 \indextext{keyword|)}%
 
 
-\rSec1[lex.literal]{Literals}%
+\rSec1[lex.literal]{字面量}%
 \indextext{literal|(}
 
-\rSec2[lex.literal.kinds]{Kinds of literals}
+\rSec2[lex.literal.kinds]{字面量的种类}
 
 \pnum
 \indextext{constant}%
 \indextext{literal!constant}%
-There are several kinds of literals.
+有几种字面量。
 \begin{footnote}
-The term ``literal'' generally designates, in this
-document, those tokens that are called ``constants'' in C.
+术语“字面量”通常指
+本文档中在 C 中被称为“常量”的那些记号。
 \end{footnote}
 
 \begin{bnf}
@@ -1102,11 +1057,11 @@ document, those tokens that are called ``constants'' in C.
     user-defined-literal
 \end{bnf}
 \begin{note}
-When appearing as an \grammarterm{expression},
-a literal has a type and a value category\iref{expr.prim.literal}.
+当作为 \grammarterm{expression} 出现时，
+字面量具有类型和值类别\iref{expr.prim.literal}。
 \end{note}
 
-\rSec2[lex.icon]{Integer literals}
+\rSec2[lex.icon]{整数字面量}
 
 \indextext{literal!integer}%
 \begin{bnf}
@@ -1208,25 +1163,23 @@ a literal has a type and a value category\iref{expr.prim.literal}.
 \indextext{literal!\idxcode{unsigned}}%
 \indextext{literal!\idxcode{long}}%
 \indextext{literal!base of integer}%
-In an \grammarterm{integer-literal},
-the sequence of
-\grammarterm{binary-digit}s,
-\grammarterm{octal-digit}s,
-\grammarterm{digit}s, or
-\grammarterm{hexadecimal-digit}s
-is interpreted as a base $N$ integer as shown in \tref{lex.icon.base};
-the lexically first digit of the sequence of digits is the most significant.
+在 \grammarterm{integer-literal} 中，
+\grammarterm{binary-digit}s、
+\grammarterm{octal-digit}s、
+\grammarterm{digit}s 或
+\grammarterm{hexadecimal-digit}s 的序列
+被解释为 \tref{lex.icon.base} 中所示的以 $N$ 为基数的整数；
+数字序列中词法上的第一个数字是最高有效位。
 \begin{note}
-The prefix and any optional separating single quotes are ignored
-when determining the value.
+在确定值时，前缀和任何可选的单引号分隔符都将被忽略。
 \end{note}
 
 \begin{simpletypetable}
-{Base of \grammarterm{integer-literal}{s}}
+{\grammarterm{integer-literal} 的基数}
 {lex.icon.base}
 {lr}
 \topline
-\lhdr{Kind of \grammarterm{integer-literal}} & \rhdr{base $N$} \\ \capsep
+\lhdr{\grammarterm{integer-literal} 的种类} & \rhdr{基数 $N$} \\ \capsep
 \grammarterm{binary-literal} & 2 \\
 \grammarterm{octal-literal} & 8 \\
 \grammarterm{decimal-literal} & 10 \\
@@ -1234,14 +1187,14 @@ when determining the value.
 \end{simpletypetable}
 
 \pnum
-The \grammarterm{hexadecimal-digit}s
-\tcode{a} through \tcode{f} and \tcode{A} through \tcode{F}
-have decimal values ten through fifteen.
+\grammarterm{hexadecimal-digit}
+\tcode{a} 到 \tcode{f} 和 \tcode{A} 到 \tcode{F}
+的十进制值分别为 10 到 15。
 \begin{example}
-The number twelve can be written \tcode{12}, \tcode{014},
-\tcode{0XC}, or \tcode{0b1100}. The \grammarterm{integer-literal}s \tcode{1048576},
-\tcode{1'048'576}, \tcode{0X100000}, \tcode{0x10'0000}, and
-\tcode{0'004'000'000} all have the same value.
+数字 12 可以写成 \tcode{12}、\tcode{014}、
+\tcode{0XC} 或 \tcode{0b1100}。\grammarterm{integer-literal} \tcode{1048576}、
+\tcode{1'048'576}、\tcode{0X100000}、\tcode{0x10'0000} 和
+\tcode{0'004'000'000} 都具有相同的值。
 \end{example}
 
 \pnum
@@ -1253,14 +1206,14 @@ The number twelve can be written \tcode{12}, \tcode{014},
 \indextext{suffix!\idxcode{U}}%
 \indextext{suffix!\idxcode{l}}%
 \indextext{suffix!\idxcode{u}}%
-The type of an \grammarterm{integer-literal} is
-the first type in the list in \tref{lex.icon.type}
-corresponding to its optional \grammarterm{integer-suffix}
-in which its value can be represented.
+\grammarterm{integer-literal} 的类型是
+\tref{lex.icon.type} 中与其可选的 \grammarterm{integer-suffix}
+相对应的列表中
+可以表示其值的第一个类型。
 
-\begin{floattable}{Types of \grammarterm{integer-literal}s}{lex.icon.type}{l|l|l}
+\begin{floattable}{\grammarterm{integer-literal} 的类型}{lex.icon.type}{l|l|l}
 \topline
-\lhdr{\grammarterm{integer-suffix}} & \chdr{\grammarterm{decimal-literal}}  & \rhdr{\grammarterm{integer-literal} other than \grammarterm{decimal-literal}}   \\  \capsep
+\lhdr{\grammarterm{integer-suffix}} & \chdr{\grammarterm{decimal-literal}}  & \rhdr{非 \grammarterm{decimal-literal} 的 \grammarterm{integer-literal}}   \\  \capsep
 none    &
   \tcode{int} &
   \tcode{int}\\
@@ -1319,13 +1272,10 @@ and \tcode{ll} or \tcode{LL}  &
                               &
                               \\\hline
 \tcode{z} or \tcode{Z}                  &
-  the signed integer type corresponding &
-  the signed integer type \\
+  对应于 \tcode{std::size_t}\iref{support.types.layout} 的有符号整型 &
+  对应于 \tcode{std::size_t} 的有符号整型 \\
                                         &
-  \qquad to \tcode{std::size_t}\iref{support.types.layout} &
-  \qquad corresponding to \tcode{std::size_t} \\
-                                        &
-                                        &
+  &
   \tcode{std::size_t}\\\hline
 Both \tcode{u} or \tcode{U}   &
   \tcode{std::size_t}         &
@@ -1336,29 +1286,29 @@ and \tcode{z} or \tcode{Z}  &
 \end{floattable}
 
 \pnum
-Except for \grammarterm{integer-literal}{s} containing
-a \grammarterm{size-suffix},
-if the value of an \grammarterm{integer-literal}
-cannot be represented by any type in its list and
-an extended integer type\iref{basic.fundamental} can represent its value,
-it may have that extended integer type.
-If all of the types in the list for the \grammarterm{integer-literal}
-are signed,
-the extended integer type is signed.
-If all of the types in the list for the \grammarterm{integer-literal}
-are unsigned,
-the extended integer type is unsigned.
-If the list contains both signed and unsigned types,
-the extended integer type may be signed or unsigned.
-If an \grammarterm{integer-literal}
-cannot be represented by any of the allowed types,
-the program is ill-formed.
+除了包含
+\grammarterm{size-suffix} 的 \grammarterm{integer-literal} 外，
+如果 \grammarterm{integer-literal} 的值
+无法用其列表中的任何类型表示，并且
+扩展整数类型\iref{basic.fundamental} 可以表示其值，
+则它可以具有该扩展整数类型。
+如果 \grammarterm{integer-literal} 的列表中的所有类型
+都是有符号的，
+则扩展整数类型是有符号的。
+如果 \grammarterm{integer-literal} 的列表中的所有类型
+都是无符号的，
+则扩展整数类型是无符号的。
+如果列表同时包含有符号和无符号类型，
+则扩展整数类型可以是有符号或无符号的。
+如果 \grammarterm{integer-literal}
+不能用任何允许的类型表示，
+则程序是病构的。
 \begin{note}
-An \grammarterm{integer-literal} with a \tcode{z} or \tcode{Z} suffix
-is ill-formed if it cannot be represented by \tcode{std::size_t}.
+带有 \tcode{z} 或 \tcode{Z} 后缀的 \grammarterm{integer-literal}
+如果不能用 \tcode{std::size_t} 表示，则它是病构的。
 \end{note}
 
-\rSec2[lex.ccon]{Character literals}
+\rSec2[lex.ccon]{字符字面量}
 
 \indextext{literal!character}%
 \begin{bnf}
@@ -1385,8 +1335,8 @@ is ill-formed if it cannot be represented by \tcode{std::size_t}.
 
 \begin{bnf}
 \nontermdef{basic-c-char}\br
-    \textnormal{any member of the translation character set except the \unicode{0027}{apostrophe},}\br
-    \bnfindent\textnormal{\unicode{005c}{reverse solidus}, or new-line character}
+    \textnormal{除 \unicode{0027}{撇号}、}\br
+    \bnfindent\textnormal{\unicode{005c}{反斜杠} 或换行符之外的翻译字符集的任何成员}
 \end{bnf}
 
 \begin{bnf}
@@ -1438,7 +1388,7 @@ is ill-formed if it cannot be represented by \tcode{std::size_t}.
 
 \begin{bnf}
 \nontermdef{conditional-escape-sequence-char}\br
-    \textnormal{any member of the basic character set that is not an} octal-digit\textnormal{, a} simple-escape-sequence-char\textnormal{, or the characters \terminal{N}, \terminal{o}, \terminal{u}, \terminal{U}, or \terminal{x}}
+    \textnormal{不是} octal-digit\textnormal{、} simple-escape-sequence-char\textnormal{ 或字符 \terminal{N}、\terminal{o}、\terminal{u}、\terminal{U} 或 \terminal{x} 的基本字符集的任何成员}
 \end{bnf}
 
 \pnum
@@ -1452,134 +1402,128 @@ is ill-formed if it cannot be represented by \tcode{std::size_t}.
 \indextext{type!\idxcode{char32_t}}%
 \indextext{wide-character}%
 \indextext{type!\idxcode{wchar_t}}%
-A \defnadj{multicharacter}{literal} is a \grammarterm{character-literal}
-whose \grammarterm{c-char-sequence} consists of
-more than one \grammarterm{c-char}.
-A multicharacter literal shall not have an \grammarterm{encoding-prefix}.
-If a multicharacter literal contains a \grammarterm{c-char}
-that is not encodable as a single code unit in the ordinary literal encoding,
-the program is ill-formed.
-Multicharacter literals are conditionally-supported.
+\defnadj{多字符}{字面量} 是一个 \grammarterm{character-literal}，
+其 \grammarterm{c-char-sequence} 由
+多个 \grammarterm{c-char} 组成。
+多字符字面量不应具有 \grammarterm{encoding-prefix}。
+如果多字符字面量包含一个
+无法在普通字面量编码中编码为单个码位单元的 \grammarterm{c-char}，
+则程序是病构的。
+多字符字面量是条件支持的。
 
 \pnum
-The kind of a \grammarterm{character-literal},
-its type, and its associated character encoding\iref{lex.charset}
-are determined by
-its \grammarterm{encoding-prefix} and its \grammarterm{c-char-sequence}
-as defined by \tref{lex.ccon.literal}.
+\grammarterm{character-literal} 的种类、
+其类型及其关联的字符编码\iref{lex.charset}
+由
+其 \grammarterm{encoding-prefix} 和 \grammarterm{c-char-sequence} 确定，
+如 \tref{lex.ccon.literal} 所定义。
 
-\begin{floattable}{Character literals}{lex.ccon.literal}
+\begin{floattable}{字符字面量}{lex.ccon.literal}
 {l|l|l|l|l}
 \topline
-\lhdr{Encoding} & \chdr{Kind} & \chdr{Type} & \chdr{Associated char-} & \rhdr{Example} \\
-\lhdr{prefix} & \chdr{} & \chdr{} & \chdr{acter encoding} & \\
+\lhdr{编码} & \chdr{种类} & \chdr{类型} & \chdr{关联的字符} & \rhdr{示例} \\
+\lhdr{前缀} & \chdr{} & \chdr{} & \chdr{编码} & \\
 \capsep
 none &
-\defnx{ordinary character literal}{literal!character!ordinary} &
+\defnx{普通字符字面量}{literal!character!ordinary} &
 \keyword{char} &
-ordinary literal &
+普通字面量 &
 \tcode{'v'} \\ \cline{2-3}\cline{5-5}
  &
-multicharacter literal &
+多字符字面量 &
 \keyword{int} &
-encoding &
+编码 &
 \tcode{'abcd'} \\ \hline
 \tcode{L} &
-\defnx{wide character literal}{literal!character!wide} &
+\defnx{宽字符字面量}{literal!character!wide} &
 \keyword{wchar_t} &
-wide literal &
+宽字面量 &
 \tcode{L'w'} \\
- & & & encoding & \\ \hline
+ & & & 编码 & \\ \hline
 \tcode{u8} &
-\defnx{UTF-8 character literal}{literal!character!UTF-8} &
+\defnx{UTF-8 字符字面量}{literal!character!UTF-8} &
 \keyword{char8_t} &
 UTF-8 &
 \tcode{u8'x'} \\ \hline
 \tcode{u} &
-\defnx{UTF-16 character literal}{literal!character!UTF-16} &
+\defnx{UTF-16 字符字面量}{literal!character!UTF-16} &
 \keyword{char16_t} &
 UTF-16 &
 \tcode{u'y'} \\ \hline
 \tcode{U} &
-\defnx{UTF-32 character literal}{literal!character!UTF-32} &
+\defnx{UTF-32 字符字面量}{literal!character!UTF-32} &
 \keyword{char32_t} &
 UTF-32 &
 \tcode{U'z'} \\
 \end{floattable}
 
 \pnum
-In translation phase 4,
-the value of a \grammarterm{character-literal} is determined
-using the range of representable values
-of the \grammarterm{character-literal}'s type in translation phase 7.
-A multicharacter literal has an
-\impldef{value of non-encodable character literal or multicharacter literal}
-value.
-The value of any other kind of \grammarterm{character-literal}
-is determined as follows:
+在翻译阶段 4 中，
+使用翻译阶段 7 中 \grammarterm{character-literal} 类型的可表示值范围来确定
+\grammarterm{character-literal} 的值。
+多字符字面量具有
+\impldef{不可编码字符字面量或多字符字面量的值}
+值。
+任何其他类型的 \grammarterm{character-literal}
+的值确定如下：
 \begin{itemize}
 \item
-A \grammarterm{character-literal} with
-a \grammarterm{c-char-sequence} consisting of a single
-\grammarterm{basic-c-char},
-\grammarterm{simple-escape-sequence}, or
-\grammarterm{universal-character-name}
-is the code unit value of the specified character
-as encoded in the literal's associated character encoding.
-If the specified character lacks
-representation in the literal's associated character encoding or
-if it cannot be encoded as a single code unit,
-then the program is ill-formed.
+具有由单个
+\grammarterm{basic-c-char}、
+\grammarterm{simple-escape-sequence} 或
+\grammarterm{universal-character-name} 组成的 \grammarterm{c-char-sequence} 的 \grammarterm{character-literal}
+是指定字符
+在字面量的关联字符编码中编码的码位单元值。
+如果指定字符
+在字面量的关联字符编码中缺少表示，或者
+如果它不能被编码为单个码位单元，
+则程序是病构的。
 \item
-A \grammarterm{character-literal} with
-a \grammarterm{c-char-sequence} consisting of
-a single \grammarterm{numeric-escape-sequence}
-has a value as follows:
+具有由
+单个 \grammarterm{numeric-escape-sequence} 组成的 \grammarterm{c-char-sequence}
+的 \grammarterm{character-literal} 具有如下值：
 \begin{itemize}
 \item
-Let $v$ be the integer value represented by
-the octal number comprising
-the sequence of \grammarterm{octal-digit}{s} in
-an \grammarterm{octal-escape-sequence} or by
-the hexadecimal number comprising
-the sequence of \grammarterm{hexadecimal-digit}{s} in
-a \grammarterm{hexadecimal-escape-sequence}.
+设 $v$ 为由
+\grammarterm{octal-escape-sequence} 中
+\grammarterm{octal-digit} 序列组成的八进制数或由
+\grammarterm{hexadecimal-escape-sequence} 中
+\grammarterm{hexadecimal-digit} 序列组成的十六进制数表示的整数值。
 \item
-If $v$ does not exceed
-the range of representable values of the \grammarterm{character-literal}'s type,
-then the value is $v$.
+如果 $v$ 不超过
+\grammarterm{character-literal} 类型的可表示值范围，
+则值为 $v$。
 \item
-Otherwise,
-if the \grammarterm{character-literal}'s \grammarterm{encoding-prefix}
-is absent or \tcode{L}, and
-$v$ does not exceed the range of representable values of the corresponding unsigned type for the underlying type of the \grammarterm{character-literal}'s type,
-then the value is the unique value of the \grammarterm{character-literal}'s type \tcode{T} that is congruent to $v$ modulo $2^N$, where $N$ is the width of \tcode{T}.
+否则，
+如果 \grammarterm{character-literal} 的 \grammarterm{encoding-prefix}
+不存在或为 \tcode{L}，并且
+$v$ 不超过 \grammarterm{character-literal} 类型的底层类型对应的无符号类型的可表示值范围，
+则该值为 \grammarterm{character-literal} 的类型 \tcode{T} 中与 $v$ 模 $2^N$ 同余的唯一值，其中 $N$ 是 \tcode{T} 的宽度。
 \item
-Otherwise, the program is ill-formed.
+否则，程序是病构的。
 \end{itemize}
 \item
-A \grammarterm{character-literal} with
-a \grammarterm{c-char-sequence} consisting of
-a single \grammarterm{conditional-escape-sequence}
-is conditionally-supported and
-has an \impldef{value of \grammarterm{conditional-escape-sequence}} value.
+具有由
+单个 \grammarterm{conditional-escape-sequence} 组成的 \grammarterm{c-char-sequence}
+的 \grammarterm{character-literal}
+是条件支持的，并且
+具有 \impldef{\grammarterm{conditional-escape-sequence} 的值} 值。
 \end{itemize}
 
 \pnum
 \indextext{backslash character}%
 \indextext{\idxcode{\textbackslash}|see{backslash character}}%
 \indextext{escape character|see{backslash character}}%
-The character specified by a \grammarterm{simple-escape-sequence}
-is specified in \tref{lex.ccon.esc}.
+\grammarterm{simple-escape-sequence} 指定的字符
+在 \tref{lex.ccon.esc} 中指定。
 \begin{note}
-Using an escape sequence for a question mark
-is supported for compatibility with \CppXIV{} and C.
+为了与 \CppXIV{} 和 C 兼容，支持使用问号的转义序列。
 \end{note}
 
-\begin{floattable}{Simple escape sequences}{lex.ccon.esc}
+\begin{floattable}{简单转义序列}{lex.ccon.esc}
 {lll}
 \topline
-\lhdrx{2}{character} &  \rhdr{\grammarterm{simple-escape-sequence}} \\ \capsep
+\lhdrx{2}{字符} &  \rhdr{\grammarterm{simple-escape-sequence}} \\ \capsep
 \ucode{000a} & \uname{line feed}            & \tcode{\textbackslash n} \\
 \ucode{0009} & \uname{character tabulation} & \tcode{\textbackslash t} \\
 \ucode{000b} & \uname{line tabulation}      & \tcode{\textbackslash v} \\
@@ -1592,8 +1536,7 @@ is supported for compatibility with \CppXIV{} and C.
 \ucode{0027} & \uname{apostrophe}           & \tcode{\textbackslash '} \\
 \ucode{0022} & \uname{quotation mark}       & \tcode{\textbackslash "} \\
 \end{floattable}
-
-\rSec2[lex.fcon]{Floating-point literals}
+\rSec2[lex.fcon]{浮点数字面量}
 
 \indextext{literal!floating-point}%
 \begin{bnf}
@@ -1662,22 +1605,21 @@ is supported for compatibility with \CppXIV{} and C.
 \indextext{suffix!\idxcode{L}}%
 \indextext{suffix!\idxcode{l}}%
 \indextext{literal!\idxcode{long double}}%
-The type of
-a \grammarterm{floating-point-literal}\iref{basic.fundamental,basic.extended.fp}
-is determined by
-its \grammarterm{floating-point-suffix} as specified in \tref{lex.fcon.type}.
+\grammarterm{floating-point-literal}\iref{basic.fundamental,basic.extended.fp}
+的类型由
+其 \grammarterm{floating-point-suffix} 确定，如 \tref{lex.fcon.type} 中所述。
 \begin{note}
-The floating-point suffixes
-\tcode{f16}, \tcode{f32}, \tcode{f64}, \tcode{f128}, \tcode{bf16},
-\tcode{F16}, \tcode{F32}, \tcode{F64}, \tcode{F128}, and \tcode{BF16}
-are conditionally-supported. See \ref{basic.extended.fp}.
+浮点后缀
+\tcode{f16}、\tcode{f32}、\tcode{f64}、\tcode{f128}、\tcode{bf16}、
+\tcode{F16}、\tcode{F32}、\tcode{F64}、\tcode{F128} 和 \tcode{BF16}
+是条件支持的。参见 \ref{basic.extended.fp}。
 \end{note}
 \begin{simpletypetable}
-{Types of \grammarterm{floating-point-literal}{s}}
+{\grammarterm{floating-point-literal} 的类型}
 {lex.fcon.type}
 {ll}
 \topline
-\lhdr{\grammarterm{floating-point-suffix}} & \rhdr{type} \\ \capsep
+\lhdr{\grammarterm{floating-point-suffix}} & \rhdr{类型} \\ \capsep
 none & \keyword{double} \\
 \tcode{f} or \tcode{F} & \keyword {float} \\
 \tcode{l} or \tcode{L} & \keyword{long} \keyword{double} \\
@@ -1690,48 +1632,42 @@ none & \keyword{double} \\
 
 \pnum
 \indextext{literal!floating-point}%
-The \defn{significand} of a \grammarterm{floating-point-literal}
-is the \grammarterm{fractional-constant} or \grammarterm{digit-sequence}
-of a \grammarterm{decimal-floating-point-literal}
-or the \grammarterm{hexadecimal-fractional-constant}
-or \grammarterm{hexadecimal-digit-sequence}
-of a \grammarterm{hexadecimal-floating-point-literal}.
-In the significand,
-the sequence of \grammarterm{digit}s or \grammarterm{hexadecimal-digit}s
-and optional period are interpreted as a base $N$ real number $s$,
-where $N$ is 10 for a \grammarterm{decimal-floating-point-literal} and
-16 for a \grammarterm{hexadecimal-floating-point-literal}.
+\grammarterm{floating-point-literal} 的 \defn{有效数}
+是 \grammarterm{decimal-floating-point-literal} 的 \grammarterm{fractional-constant} 或 \grammarterm{digit-sequence}
+或 \grammarterm{hexadecimal-floating-point-literal} 的 \grammarterm{hexadecimal-fractional-constant}
+或 \grammarterm{hexadecimal-digit-sequence}。
+在有效数中，
+\grammarterm{digit} 或 \grammarterm{hexadecimal-digit} 的序列
+和可选的小数点被解释为以 $N$ 为基数的实数 $s$，
+其中 \grammarterm{decimal-floating-point-literal} 的 $N$ 为 10，
+\grammarterm{hexadecimal-floating-point-literal} 的 $N$ 为 16。
 \begin{note}
-Any optional separating single quotes are ignored when determining the value.
+在确定值时，任何可选的单引号分隔符都将被忽略。
 \end{note}
-If an \grammarterm{exponent-part} or \grammarterm{binary-exponent-part}
-is present,
-the exponent $e$ of the \grammarterm{floating-point-literal}
-is the result of interpreting
-the sequence of an optional \grammarterm{sign} and the \grammarterm{digit}s
-as a base 10 integer.
-Otherwise, the exponent $e$ is 0.
-The scaled value of the literal is
-$s \times 10^e$ for a \grammarterm{decimal-floating-point-literal} and
-$s \times 2^e$ for a \grammarterm{hexadecimal-floating-point-literal}.
+如果存在 \grammarterm{exponent-part} 或 \grammarterm{binary-exponent-part}，
+则 \grammarterm{floating-point-literal} 的指数 $e$ 是将
+可选 \grammarterm{sign} 和 \grammarterm{digit} 序列解释为以 10 为基数的整数的结果。
+否则，指数 $e$ 为 0。
+对于 \grammarterm{decimal-floating-point-literal}，字面量的缩放值为
+$s \times 10^e$，对于 \grammarterm{hexadecimal-floating-point-literal}，则为
+$s \times 2^e$。
 \begin{example}
-The \grammarterm{floating-point-literal}{s}
-\tcode{49.625} and \tcode{0xC.68p+2} have the same value.
-The \grammarterm{floating-point-literal}{s}
-\tcode{1.602'176'565e-19} and \tcode{1.602176565e-19}
-have the same value.
+\grammarterm{floating-point-literal}
+\tcode{49.625} 和 \tcode{0xC.68p+2} 具有相同的值。
+\grammarterm{floating-point-literal}
+\tcode{1.602'176'565e-19} 和 \tcode{1.602176565e-19}
+具有相同的值。
 \end{example}
 
 \pnum
-If the scaled value is not in the range of representable
-values for its type, the program is ill-formed.
-Otherwise, the value of a \grammarterm{floating-point-literal}
-is the scaled value if representable,
-else the larger or smaller representable value nearest the scaled value,
-chosen in an \impldef{choice of larger or smaller value of
-\grammarterm{floating-point-literal}} manner.
+如果缩放值不在其类型的可表示值范围内，
+则程序是病构的。
+否则，\grammarterm{floating-point-literal} 的值
+是可表示的缩放值，
+否则是与缩放值最接近的较大或较小的可表示值，
+以 \impldef{选择 \grammarterm{floating-point-literal} 的较大或较小值的方式} 选择。
 
-\rSec2[lex.string]{String literals}
+\rSec2[lex.string]{字符串字面量}
 
 \indextext{literal!string}%
 \begin{bnf}
@@ -1754,8 +1690,8 @@ chosen in an \impldef{choice of larger or smaller value of
 
 \begin{bnf}
 \nontermdef{basic-s-char}\br
-    \textnormal{any member of the translation character set except the \unicode{0022}{quotation mark},}\br
-    \bnfindent\textnormal{\unicode{005c}{reverse solidus}, or new-line character}
+    \textnormal{除 \unicode{0022}{引号}、}\br
+    \bnfindent\textnormal{\unicode{005c}{反斜杠} 或换行符之外的翻译字符集的任何成员}
 \end{bnf}
 
 \begin{bnf}
@@ -1770,8 +1706,8 @@ chosen in an \impldef{choice of larger or smaller value of
 
 \begin{bnf}
 \nontermdef{r-char}\br
-    \textnormal{any member of the translation character set, except a \unicode{0029}{right parenthesis} followed by}\br
-    \bnfindent\textnormal{the initial \grammarterm{d-char-sequence} (which may be empty) followed by a \unicode{0022}{quotation mark}}
+    \textnormal{翻译字符集的任何成员，但 \unicode{0029}{右括号} 后跟}\br
+    \bnfindent\textnormal{初始 \grammarterm{d-char-sequence}（可以为空）后跟 \unicode{0022}{引号} 除外}
 \end{bnf}
 
 \begin{bnf}
@@ -1781,9 +1717,9 @@ chosen in an \impldef{choice of larger or smaller value of
 
 \begin{bnf}
 \nontermdef{d-char}\br
-    \textnormal{any member of the basic character set except:}\br
-    \bnfindent\textnormal{\unicode{0020}{space}, \unicode{0028}{left parenthesis}, \unicode{0029}{right parenthesis}, \unicode{005c}{reverse solidus},}\br
-    \bnfindent\textnormal{\unicode{0009}{character tabulation}, \unicode{000b}{line tabulation}, \unicode{000c}{form feed}, and new-line}
+    \textnormal{除以下字符外的基本字符集的任何成员：}\br
+    \bnfindent\textnormal{\unicode{0020}{空格}、\unicode{0028}{左括号}、\unicode{0029}{右括号}、\unicode{005c}{反斜杠}、}\br
+    \bnfindent\textnormal{\unicode{0009}{水平制表}、\unicode{000b}{垂直制表}、\unicode{000c}{换页符} 和换行符}
 \end{bnf}
 
 \pnum
@@ -1796,48 +1732,48 @@ chosen in an \impldef{choice of larger or smaller value of
 \indextext{type!\idxcode{char16_t}}%
 \indextext{literal!string!\idxcode{char32_t}}%
 \indextext{type!\idxcode{char32_t}}%
-The kind of a \grammarterm{string-literal},
-its type, and
-its associated character encoding\iref{lex.charset}
-are determined by its encoding prefix and sequence of
-\grammarterm{s-char}s or \grammarterm{r-char}s
-as defined by \tref{lex.string.literal}
-where $n$ is the number of encoded code units as described below.
+\grammarterm{string-literal} 的种类、
+其类型和
+其关联的字符编码\iref{lex.charset}
+由其编码前缀和
+\grammarterm{s-char} 或 \grammarterm{r-char} 序列确定，
+如 \tref{lex.string.literal} 所定义，
+其中 $n$ 是如下所述的编码码位单元的数量。
 
-\begin{floattable}{String literals}{lex.string.literal}
+\begin{floattable}{字符串字面量}{lex.string.literal}
 {llp{2.6cm}p{2.3cm}p{4.7cm}}
 \topline
-\lhdr{Enco-} & \chdr{Kind} & \chdr{Type} & \chdr{Associated} & \rhdr{Examples} \\
-\lhdr{ding}   & \chdr{} & \chdr{} & \chdr{character}  & \rhdr{} \\
-\lhdr{prefix}         & \chdr{} & \chdr{} & \chdr{encoding}   & \rhdr{} \\
+\lhdr{编码} & \chdr{种类} & \chdr{类型} & \chdr{关联的} & \rhdr{示例} \\
+\lhdr{前缀}   & \chdr{} & \chdr{} & \chdr{字符}  & \rhdr{} \\
+\lhdr{}         & \chdr{} & \chdr{} & \chdr{编码}   & \rhdr{} \\
 \capsep
 none &
-\defnx{ordinary string literal}{literal!string!ordinary} &
-array of $n$\newline \tcode{\keyword{const} \keyword{char}} &
-ordinary literal encoding &
+\defnx{普通字符串字面量}{literal!string!ordinary} &
+$n$ 个\newline \tcode{\keyword{const} \keyword{char}} 的数组 &
+普通字面量编码 &
 \tcode{"ordinary string"}\newline
 \tcode{R"(ordinary raw string)"} \\
 \tcode{L} &
-\defnx{wide string literal}{literal!string!wide} &
-array of $n$\newline \tcode{\keyword{const} \keyword{wchar_t}} &
-wide literal\newline encoding &
+\defnx{宽字符串字面量}{literal!string!wide} &
+$n$ 个\newline \tcode{\keyword{const} \keyword{wchar_t}} 的数组 &
+宽字面量\newline 编码 &
 \tcode{L"wide string"}\newline
 \tcode{LR"w(wide raw string)w"} \\
 \tcode{u8} &
-\defnx{UTF-8 string literal}{literal!string!UTF-8} &
-array of $n$\newline \tcode{\keyword{const} \keyword{char8_t}} &
+\defnx{UTF-8 字符串字面量}{literal!string!UTF-8} &
+$n$ 个\newline \tcode{\keyword{const} \keyword{char8_t}} 的数组 &
 UTF-8 &
 \tcode{u8"UTF-8 string"}\newline
 \tcode{u8R"x(UTF-8 raw string)x"} \\
 \tcode{u} &
-\defnx{UTF-16 string literal}{literal!string!UTF-16} &
-array of $n$\newline \tcode{\keyword{const} \keyword{char16_t}} &
+\defnx{UTF-16 字符串字面量}{literal!string!UTF-16} &
+$n$ 个\newline \tcode{\keyword{const} \keyword{char16_t}} 的数组 &
 UTF-16 &
 \tcode{u"UTF-16 string"}\newline
 \tcode{uR"y(UTF-16 raw string)y"} \\
 \tcode{U} &
-\defnx{UTF-32 string literal}{literal!string!UTF-32} &
-array of $n$\newline \tcode{\keyword{const} \keyword{char32_t}} &
+\defnx{UTF-32 字符串字面量}{literal!string!UTF-32} &
+$n$ 个\newline \tcode{\keyword{const} \keyword{char32_t}} 的数组 &
 UTF-32 &
 \tcode{U"UTF-32 string"}\newline
 \tcode{UR"z(UTF-32 raw string)z"} \\
@@ -1845,26 +1781,26 @@ UTF-32 &
 
 \pnum
 \indextext{literal!string!raw}%
-A \grammarterm{string-literal} that has an \tcode{R}
+前缀中包含 \tcode{R} 的 \grammarterm{string-literal}
 \indextext{prefix!\idxcode{R}}%
-in the prefix is a \defn{raw string literal}. The
-\grammarterm{d-char-sequence} serves as a delimiter. The terminating
-\grammarterm{d-char-sequence} of a \grammarterm{raw-string} is the same sequence of
-characters as the initial \grammarterm{d-char-sequence}. A \grammarterm{d-char-sequence}
-shall consist of at most 16 characters.
+是 \defn{原始字符串字面量}。
+\grammarterm{d-char-sequence} 用作分隔符。
+\grammarterm{raw-string} 的终止 \grammarterm{d-char-sequence} 与
+初始 \grammarterm{d-char-sequence} 是相同的字符序列。\grammarterm{d-char-sequence}
+最多应包含 16 个字符。
 
 \pnum
 \begin{note}
-The characters \tcode{'('} and \tcode{')'} can appear in a
-\grammarterm{raw-string}. Thus, \tcode{R"delimiter((a|b))delimiter"} is equivalent to
-\tcode{"(a|b)"}.
+字符 \tcode{'('} 和 \tcode{')'} 可以出现在
+\grammarterm{raw-string} 中。因此，\tcode{R"delimiter((a|b))delimiter"} 等价于
+\tcode{"(a|b)"}。
 \end{note}
 
 \pnum
 \begin{note}
-A source-file new-line in a raw string literal results in a new-line in the
-resulting execution string literal. Assuming no
-whitespace at the beginning of lines in the following example, the assert will succeed:
+原始字符串字面量中源文件换行符会导致
+生成的执行字符串字面量中出现换行符。假设以下示例中行的开头没有
+空格，则断言将成功：
 \begin{codeblock}
 const char* p = R"(a\
 b
@@ -1875,71 +1811,67 @@ assert(std::strcmp(p, "a\\\nb\nc") == 0);
 
 \pnum
 \begin{example}
-The raw string
+原始字符串
 \begin{codeblock}
 R"a(
 )\
 a"
 )a"
 \end{codeblock}
-is equivalent to \tcode{"\textbackslash n)\textbackslash \textbackslash \textbackslash na\textbackslash"\textbackslash n"}. The raw string
+等价于 \tcode{"\textbackslash n)\textbackslash \textbackslash \textbackslash na\textbackslash"\textbackslash n"}。原始字符串
 \begin{codeblock}
 R"(x = "\"y\"")"
 \end{codeblock}
-is equivalent to \tcode{"x = \textbackslash "\textbackslash\textbackslash\textbackslash "y\textbackslash\textbackslash\textbackslash "\textbackslash ""}.
+等价于 \tcode{"x = \textbackslash "\textbackslash\textbackslash\textbackslash "y\textbackslash\textbackslash\textbackslash "\textbackslash ""}.
 \end{example}
 
 \pnum
 \indextext{literal!narrow-character}%
-Ordinary string literals and UTF-8 string literals are
-also referred to as \defnx{narrow string literals}{literal!string!narrow}.
+普通字符串字面量和 UTF-8 字符串字面量
+也被称为 \defnx{窄字符串字面量}{literal!string!narrow}。
 
 \pnum
 \indextext{concatenation!string}%
-The \grammarterm{string-literal}{s} in
-any sequence of adjacent \grammarterm{string-literal}{s}
-shall have at most one unique \grammarterm{encoding-prefix} among them.
-The common \grammarterm{encoding-prefix} of the sequence is
-that \grammarterm{encoding-prefix}, if any.
+任何相邻 \grammarterm{string-literal} 序列中的 \grammarterm{string-literal}
+最多应具有一个唯一的 \grammarterm{encoding-prefix}。
+序列的公共 \grammarterm{encoding-prefix} 是
+该 \grammarterm{encoding-prefix}（如果有）。
 \begin{note}
-A \grammarterm{string-literal}'s rawness has
-no effect on the determination of the common \grammarterm{encoding-prefix}.
+\grammarterm{string-literal} 的原始性
+对确定公共 \grammarterm{encoding-prefix} 没有影响。
 \end{note}
 
 \pnum
-In translation phase 6\iref{lex.phases},
-adjacent \grammarterm{string-literal}s are concatenated.
-The lexical structure and grouping of
-the contents of the individual \grammarterm{string-literal}s is retained.
+在翻译阶段 6\iref{lex.phases} 中，
+相邻的 \grammarterm{string-literal} 被连接起来。
+保留各个 \grammarterm{string-literal} 内容的词法结构和分组。
 \begin{example}
 \begin{codeblock}
 "\xA" "B"
 \end{codeblock}
-represents
-the code unit \tcode{'\textbackslash xA'} and the character \tcode{'B'}
-after concatenation
-(and not the single code unit \tcode{'\textbackslash xAB'}).
-Similarly,
+表示
+连接后的码位单元 \tcode{'\textbackslash xA'} 和字符 \tcode{'B'}
+（而不是单个码位单元 \tcode{'\textbackslash xAB'}）。
+类似地，
 \begin{codeblock}
 R"(\u00)" "41"
 \end{codeblock}
-represents six characters,
-starting with a backslash and ending with the digit \tcode{1}
-(and not the single character \tcode{'A'}
-specified by a \grammarterm{universal-character-name}).
+表示六个字符，
+以反斜杠开头，以数字 \tcode{1} 结尾
+（而不是由 \grammarterm{universal-character-name} 指定的单个字符 \tcode{'A'}）。
 
-\tref{lex.string.concat} has some examples of valid concatenations.
+\tref{lex.string.concat} 有一些有效连接的示例。
 \end{example}
 
-\begin{floattable}{String literal concatenations}{lex.string.concat}
+\begin{floattable}{字符串字面量连接}{lex.string.concat}
 {lll|lll|lll}
 \topline
-\multicolumn{2}{|c}{Source} &
-Means &
-\multicolumn{2}{c}{Source} &
-Means &
-\multicolumn{2}{c}{Source} &
-Means \\
+\multicolumn{2}{|c}{源} &
+含义 &
+\multicolumn{2}{c}{源} &
+含义 &
+\multicolumn{2}{c}{源} &
+含义 \\
 \tcode{u"a"} & \tcode{u"b"} & \tcode{u"ab"} &
 \tcode{U"a"} & \tcode{U"b"} & \tcode{U"ab"} &
 \tcode{L"a"} & \tcode{L"b"} & \tcode{L"ab"} \\
@@ -1952,96 +1884,82 @@ Means \\
 \end{floattable}
 
 \pnum
-Evaluating a \grammarterm{string-literal} results in a string literal object
-with static storage duration\iref{basic.stc}.
+求值 \grammarterm{string-literal} 会产生一个具有静态存储期\iref{basic.stc} 的字符串字面量对象。
 \begin{note}
-String literal objects are potentially non-unique\iref{intro.object}.
-Whether successive evaluations of a
-\grammarterm{string-literal} yield the same or a different object is
-unspecified.
+字符串字面量对象可能是非唯一的\iref{intro.object}。
+\grammarterm{string-literal} 的连续求值是产生相同对象还是不同对象是
+未指明的。
 \end{note}
 \begin{note}
 \indextext{literal!string!undefined change to}%
-The effect of attempting to modify a string literal object is undefined.
+尝试修改字符串字面量对象的效果是未定义的。
 \end{note}
 
 \pnum
 \indextext{\idxcode{0}!string terminator}%
 \indextext{\idxcode{0}!null character|see {character, null}}%
-String literal objects are initialized with
-the sequence of code unit values
-corresponding to the \grammarterm{string-literal}'s sequence of
-\grammarterm{s-char}s (originally from non-raw string literals) and
-\grammarterm{r-char}s (originally from raw string literals),
-plus a terminating \unicode{0000}{null} character,
-in order as follows:
+字符串字面量对象使用
+与 \grammarterm{string-literal} 的 \grammarterm{s-char} 序列（最初来自非原始字符串字面量）和
+\grammarterm{r-char} 序列（最初来自原始字符串字面量）相对应的码位单元值序列，
+加上一个终止的 \unicode{0000}{null} 字符，
+按以下顺序初始化：
 \begin{itemize}
 \item
-The sequence of characters denoted by each contiguous sequence of
-\grammarterm{basic-s-char}s,
-\grammarterm{r-char}s,
-\grammarterm{simple-escape-sequence}s\iref{lex.ccon}, and
-\grammarterm{universal-character-name}s\iref{lex.charset}
-is encoded to a code unit sequence
-using the \grammarterm{string-literal}'s associated character encoding.
-If a character lacks representation in the associated character encoding,
-then the program is ill-formed.
+由每个连续的
+\grammarterm{basic-s-char}、
+\grammarterm{r-char}、
+\grammarterm{simple-escape-sequence}\iref{lex.ccon} 和
+\grammarterm{universal-character-name}\iref{lex.charset} 序列表示的字符序列
+使用 \grammarterm{string-literal} 的关联字符编码编码为码位单元序列。
+如果字符在关联的字符编码中缺少表示，
+则程序是病构的。
 \begin{note}
-No character lacks representation in any Unicode encoding form.
+任何字符在任何 Unicode 编码形式中都没有缺少表示。
 \end{note}
-When encoding a stateful character encoding,
-implementations should encode the first such sequence
-beginning with the initial encoding state and
-encode subsequent sequences
-beginning with the final encoding state of the prior sequence.
+当编码有状态字符编码时，
+实现应以初始编码状态开始对第一个这样的序列进行编码，并以
+前一个序列的最终编码状态开始对后续序列进行编码。
 \begin{note}
-The encoded code unit sequence can differ from
-the sequence of code units that would be obtained by
-encoding each character independently.
+编码的码位单元序列可能与
+通过独立编码每个字符获得的码位单元序列不同。
 \end{note}
 \item
-Each \grammarterm{numeric-escape-sequence}\iref{lex.ccon}
-contributes a single code unit with a value as follows:
+每个 \grammarterm{numeric-escape-sequence}\iref{lex.ccon}
+贡献一个具有以下值的单个码位单元：
 \begin{itemize}
 \item
-Let $v$ be the integer value represented by
-the octal number comprising
-the sequence of \grammarterm{octal-digit}{s} in
-an \grammarterm{octal-escape-sequence} or by
-the hexadecimal number comprising
-the sequence of \grammarterm{hexadecimal-digit}{s} in
-a \grammarterm{hexadecimal-escape-sequence}.
+设 $v$ 为由
+\grammarterm{octal-escape-sequence} 中
+\grammarterm{octal-digit} 序列组成的八进制数或由
+\grammarterm{hexadecimal-escape-sequence} 中
+\grammarterm{hexadecimal-digit} 序列组成的十六进制数表示的整数值。
 \item
-If $v$ does not exceed the range of representable values of
-the \grammarterm{string-literal}'s array element type,
-then the value is $v$.
+如果 $v$ 不超过
+\grammarterm{string-literal} 的数组元素类型的可表示值范围，
+则值为 $v$。
 \item
-Otherwise,
-if the \grammarterm{string-literal}'s \grammarterm{encoding-prefix}
-is absent or \tcode{L}, and
-$v$ does not exceed the range of representable values of
-the corresponding unsigned type for the underlying type of
-the \grammarterm{string-literal}'s array element type,
-then the value is the unique value of
-the \grammarterm{string-literal}'s array element type \tcode{T}
-that is congruent to $v$ modulo $2^N$, where $N$ is the width of \tcode{T}.
+否则，
+如果 \grammarterm{string-literal} 的 \grammarterm{encoding-prefix}
+不存在或为 \tcode{L}，并且
+$v$ 不超过 \grammarterm{string-literal} 的数组元素类型的底层类型对应的无符号类型的可表示值范围，
+则该值为 \grammarterm{string-literal} 的数组元素类型 \tcode{T}
+中与 $v$ 模 $2^N$ 同余的唯一值，其中 $N$ 是 \tcode{T} 的宽度。
 \item
-Otherwise, the program is ill-formed.
+否则，程序是病构的。
 \end{itemize}
-When encoding a stateful character encoding,
-these sequences should have no effect on encoding state.
+当编码有状态字符编码时，
+这些序列应对编码状态没有影响。
 \item
-Each \grammarterm{conditional-escape-sequence}\iref{lex.ccon}
-contributes an
-\impldef{code unit sequence for \grammarterm{conditional-escape-sequence}}
-code unit sequence.
-When encoding a stateful character encoding,
-it is
-\impldef{effect of \grammarterm{conditional-escape-sequence} on encoding state}
-what effect these sequences have on encoding state.
+每个 \grammarterm{conditional-escape-sequence}\iref{lex.ccon}
+贡献一个
+\impldef{\grammarterm{conditional-escape-sequence} 的码位单元序列}
+码位单元序列。
+当编码有状态字符编码时，
+\impldef{\grammarterm{conditional-escape-sequence} 对编码状态的影响}
+这些序列对编码状态有什么影响。
 \end{itemize}
 
-\rSec2[lex.string.uneval]{Unevaluated strings}
+\rSec2[lex.string.uneval]{未求值字符串}
 
 \begin{bnf}
 \nontermdef{unevaluated-string}\br
@@ -2049,21 +1967,22 @@ what effect these sequences have on encoding state.
 \end{bnf}
 
 \pnum
-An \grammarterm{unevaluated-string} shall have no \grammarterm{encoding-prefix}.
+\grammarterm{unevaluated-string} 不应具有 \grammarterm{encoding-prefix}。
 
 \pnum
-Each \grammarterm{universal-character-name} and each \grammarterm{simple-escape-sequence} in an \grammarterm{unevaluated-string} is
-replaced by the member of the translation character set it denotes.
-An \grammarterm{unevaluated-string} that contains
-a \grammarterm{numeric-escape-sequence} or
-a \grammarterm{conditional-escape-sequence}
-is ill-formed.
+\grammarterm{unevaluated-string} 中的每个 \grammarterm{universal-character-name} 和每个 \grammarterm{simple-escape-sequence} 都被
+它表示的翻译字符集的成员替换。
+包含
+\grammarterm{numeric-escape-sequence} 或
+\grammarterm{conditional-escape-sequence} 的
+\grammarterm{unevaluated-string}
+是病构的。
 
 \pnum
-An \grammarterm{unevaluated-string} is never evaluated and
-its interpretation depends on the context in which it appears.
+\grammarterm{unevaluated-string} 从不求值，
+其解释取决于它出现的上下文。
 
-\rSec2[lex.bool]{Boolean literals}
+\rSec2[lex.bool]{布尔字面量}
 
 \indextext{literal!boolean}%
 \begin{bnf}
@@ -2074,10 +1993,10 @@ its interpretation depends on the context in which it appears.
 
 \pnum
 \indextext{Boolean literal}%
-The Boolean literals are the keywords \tcode{false} and \tcode{true}.
-Such literals have type \tcode{bool}.
+布尔字面量是关键字 \tcode{false} 和 \tcode{true}。
+此类字面量具有类型 \tcode{bool}。
 
-\rSec2[lex.nullptr]{Pointer literals}
+\rSec2[lex.nullptr]{指针字面量}
 
 \indextext{literal!pointer}%
 \begin{bnf}
@@ -2086,16 +2005,16 @@ Such literals have type \tcode{bool}.
 \end{bnf}
 
 \pnum
-The pointer literal is the keyword \keyword{nullptr}. It has type
-\tcode{std::nullptr_t}.
+指针字面量是关键字 \keyword{nullptr}。它具有类型
+\tcode{std::nullptr_t}。
 \begin{note}
-\tcode{std::nullptr_t} is a distinct type that is neither a pointer type nor a pointer-to-member type;
-rather, a prvalue of this type is a null pointer constant and can be
-converted to a null pointer value or null member pointer value. See~\ref{conv.ptr}
-and~\ref{conv.mem}.
+\tcode{std::nullptr_t} 是一种既不是指针类型也不是成员指针类型的不同类型；
+相反，此类型的纯右值是一个空指针常量，可以
+转换为一个空指针值或空成员指针值。参见 \ref{conv.ptr}
+和 \ref{conv.mem}。
 \end{note}
 
-\rSec2[lex.ext]{User-defined literals}
+\rSec2[lex.ext]{用户定义字面量}
 
 \indextext{literal!user-defined}%
 \begin{bnf}
@@ -2138,104 +2057,100 @@ and~\ref{conv.mem}.
 \end{bnf}
 
 \pnum
-If a token matches both \grammarterm{user-defined-literal} and another \grammarterm{literal} kind, it
-is treated as the latter.
+如果一个记号同时匹配 \grammarterm{user-defined-literal} 和另一个 \grammarterm{literal} 种类，则
+将其视为后者。
 \begin{example}
 \tcode{123_km}
-is a \grammarterm{user-defined-literal}, but \tcode{12LL} is an
-\grammarterm{integer-literal}.
+是一个 \grammarterm{user-defined-literal}，但 \tcode{12LL} 是一个
+\grammarterm{integer-literal}。
 \end{example}
-The syntactic non-terminal preceding the \grammarterm{ud-suffix} in a
-\grammarterm{user-defined-literal} is taken to be the longest sequence of
-characters that could match that non-terminal.
+\grammarterm{user-defined-literal} 中 \grammarterm{ud-suffix} 之前的语法非终结符被认为是
+可以匹配该非终结符的最长字符序列。
 
 \pnum
-A \grammarterm{user-defined-literal} is treated as a call to a literal operator or
-literal operator template\iref{over.literal}.
-To determine the form of this call for
-a given \grammarterm{user-defined-literal} \placeholder{L}
-with \grammarterm{ud-suffix} \placeholder{X},
-first let \placeholder{S} be the set of declarations
-found by unqualified lookup for the \grammarterm{literal-operator-id}
-whose literal suffix identifier is \placeholder{X}\iref{basic.lookup.unqual}.
-\placeholder{S} shall not be empty.
+\grammarterm{user-defined-literal} 被视为对字面量运算符或
+字面量运算符模板\iref{over.literal} 的调用。
+要确定具有 \grammarterm{ud-suffix} \placeholder{X} 的给定 \grammarterm{user-defined-literal} 占位符 {L} 的此调用的形式，
+首先让 \placeholder{S} 为通过对字面量后缀标识符为 \placeholder{X} 的 \grammarterm{literal-operator-id}
+进行非限定查找\iref{basic.lookup.unqual} 找到的声明集。
+\placeholder{S} 不应为空。
 
 \pnum
-If \placeholder{L} is a \grammarterm{user-defined-integer-literal}, let \placeholder{n} be the literal
-without its \grammarterm{ud-suffix}. If \placeholder{S} contains a literal operator with
-parameter type \tcode{unsigned long long}, the literal \placeholder{L} is treated as a call of
-the form
+如果 \placeholder{L} 是 \grammarterm{user-defined-integer-literal}，则令 \placeholder{n} 为
+没有 \grammarterm{ud-suffix} 的字面量。如果 \placeholder{S} 包含一个
+参数类型为 \tcode{unsigned long long} 的字面量运算符，则字面量 \placeholder{L} 被视为
+以下形式的调用
 \begin{codeblock}
 operator ""@\placeholder{X}@(@\placeholder{n}@ULL)
 \end{codeblock}
-Otherwise, \placeholder{S} shall contain a raw literal operator
-or a numeric literal operator template\iref{over.literal} but not both.
-If \placeholder{S} contains a raw literal operator,
-the literal \placeholder{L} is treated as a call of the form
+否则，\placeholder{S} 应包含一个原始字面量运算符
+或一个数字字面量运算符模板\iref{over.literal}，但不能同时包含两者。
+如果 \placeholder{S} 包含一个原始字面量运算符，
+则字面量 \placeholder{L} 被视为以下形式的调用
 \begin{codeblock}
 operator ""@\placeholder{X}@("@\placeholder{n}@")
 \end{codeblock}
-Otherwise (\placeholder{S} contains a numeric literal operator template),
-\placeholder{L} is treated as a call of the form
+否则（\placeholder{S} 包含一个数字字面量运算符模板），
+\placeholder{L} 被视为以下形式的调用
 \begin{codeblock}
 operator ""@\placeholder{X}@<'@$c_1$@', '@$c_2$@', ... '@$c_k$@'>()
 \end{codeblock}
-where \placeholder{n} is the source character sequence $c_1c_2...c_k$.
+其中 \placeholder{n} 是源字符序列 $c_1c_2...c_k$。
 \begin{note}
-The sequence
-$c_1c_2...c_k$ can only contain characters from the basic character set.
+序列
+$c_1c_2...c_k$ 只能包含来自基本字符集的字符。
 \end{note}
 
 \pnum
-If \placeholder{L} is a \grammarterm{user-defined-floating-point-literal}, let \placeholder{f} be the
-literal without its \grammarterm{ud-suffix}. If \placeholder{S} contains a literal operator
-with parameter type \tcode{long double}, the literal \placeholder{L} is treated as a call of
-the form
+如果 \placeholder{L} 是 \grammarterm{user-defined-floating-point-literal}，则令 \placeholder{f} 为
+没有 \grammarterm{ud-suffix} 的字面量。如果 \placeholder{S} 包含一个
+参数类型为 \tcode{long double} 的字面量运算符，则字面量 \placeholder{L} 被视为
+以下形式的调用
 \begin{codeblock}
 operator ""@\placeholder{X}@(@\placeholder{f}@L)
 \end{codeblock}
-Otherwise, \placeholder{S} shall contain a raw literal operator
-or a numeric literal operator template\iref{over.literal} but not both.
-If \placeholder{S} contains a raw literal operator,
-the \grammarterm{literal} \placeholder{L} is treated as a call of the form
+否则，\placeholder{S} 应包含一个原始字面量运算符
+或一个数字字面量运算符模板\iref{over.literal}，但不能同时包含两者。
+如果 \placeholder{S} 包含一个原始字面量运算符，
+则 \grammarterm{literal} \placeholder{L} 被视为以下形式的调用
 \begin{codeblock}
 operator ""@\placeholder{X}@("@\placeholder{f}@")
 \end{codeblock}
-Otherwise (\placeholder{S} contains a numeric literal operator template),
-\placeholder{L} is treated as a call of the form
+否则（\placeholder{S} 包含一个数字字面量运算符模板），
+\placeholder{L} 被视为以下形式的调用
 \begin{codeblock}
 operator ""@\placeholder{X}@<'@$c_1$@', '@$c_2$@', ... '@$c_k$@'>()
 \end{codeblock}
-where \placeholder{f} is the source character sequence $c_1c_2...c_k$.
+其中 \placeholder{f} 是源字符序列 $c_1c_2...c_k$。
 \begin{note}
-The sequence
-$c_1c_2...c_k$ can only contain characters from the basic character set.
+序列
+$c_1c_2...c_k$ 只能包含来自基本字符集的字符。
 \end{note}
 
 \pnum
-If \placeholder{L} is a \grammarterm{user-defined-string-literal},
-let \placeholder{str} be the literal without its \grammarterm{ud-suffix}
-and let \placeholder{len} be the number of code units in \placeholder{str}
-(i.e., its length excluding the terminating null character).
-If \placeholder{S} contains a literal operator template with
-a non-type template parameter for which \placeholder{str} is
-a well-formed \grammarterm{template-argument},
-the literal \placeholder{L} is treated as a call of the form
+如果 \placeholder{L} 是 \grammarterm{user-defined-string-literal}，
+则令 \placeholder{str} 为没有 \grammarterm{ud-suffix} 的字面量，
+并令 \placeholder{len} 为 \placeholder{str} 中码位单元的数量
+（即，其长度不包括终止的空字符）。
+如果 \placeholder{S} 包含一个字面量运算符模板，该模板具有
+一个非类型模板参数，且 \placeholder{str} 是其
+格式正确的 \grammarterm{template-argument}，
+则字面量 \placeholder{L} 被视为以下形式的调用
 \begin{codeblock}
 operator ""@\placeholder{X}@<@\placeholder{str}{}@>()
 \end{codeblock}
-Otherwise, the literal \placeholder{L} is treated as a call of the form
+否则，字面量 \placeholder{L} 被视为以下形式的调用
 \begin{codeblock}
 operator ""@\placeholder{X}@(@\placeholder{str}{}@, @\placeholder{len}{}@)
 \end{codeblock}
 
 \pnum
-If \placeholder{L} is a \grammarterm{user-defined-character-literal}, let \placeholder{ch} be the
-literal without its \grammarterm{ud-suffix}.
-\placeholder{S} shall contain a literal operator\iref{over.literal} whose only parameter has
-the type of \placeholder{ch} and the
-literal \placeholder{L} is treated as a call
-of the form
+如果 \placeholder{L} 是 \grammarterm{user-defined-character-literal}，则令 \placeholder{ch} 为
+没有 \grammarterm{ud-suffix} 的字面量。
+\placeholder{S} 应包含一个字面量运算符\iref{over.literal}，其唯一参数
+具有 \placeholder{ch} 的类型，并且
+字面量 \placeholder{L} 被视为
+以下形式的调用
 \begin{codeblock}
 operator ""@\placeholder{X}@(@\placeholder{ch}{}@)
 \end{codeblock}
@@ -2256,14 +2171,14 @@ int main() {
 \end{example}
 
 \pnum
-In translation phase 6\iref{lex.phases}, adjacent \grammarterm{string-literal}s are concatenated and
-\grammarterm{user-defined-string-literal}{s} are considered \grammarterm{string-literal}s for that
-purpose. During concatenation, \grammarterm{ud-suffix}{es} are removed and ignored and
-the concatenation process occurs as described in~\ref{lex.string}. At the end of phase
-6, if a \grammarterm{string-literal} is the result of a concatenation involving at least one
-\grammarterm{user-defined-string-literal}, all the participating
-\grammarterm{user-defined-string-literal}{s} shall have the same \grammarterm{ud-suffix}
-and that suffix is applied to the result of the concatenation.
+在翻译阶段 6\iref{lex.phases} 中，相邻的 \grammarterm{string-literal} 被连接起来，
+并且 \grammarterm{user-defined-string-literal} 被视为 \grammarterm{string-literal}
+以用于该目的。在连接期间，\grammarterm{ud-suffix} 被移除并忽略，
+并且连接过程如 \ref{lex.string} 中所述。在阶段
+6 结束时，如果 \grammarterm{string-literal} 是至少涉及一个
+\grammarterm{user-defined-string-literal} 的连接的结果，则所有参与的
+\grammarterm{user-defined-string-literal} 都应具有相同的 \grammarterm{ud-suffix}，
+并且该后缀将应用于连接的结果。
 
 \pnum
 \begin{example}
