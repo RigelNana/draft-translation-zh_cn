@@ -1,14 +1,14 @@
 %!TEX root = std.tex
-\rSec0[cpp]{Preprocessing directives}%
+\rSec0[cpp]{预处理指令}%
 \indextext{preprocessing directive|(}
 
 \indextext{compiler control line|see{preprocessing directive}}%
 \indextext{control line|see{preprocessing directive}}%
 \indextext{directive, preprocessing|see{preprocessing directive}}
 
-\gramSec[gram.cpp]{Preprocessing directives}
+\gramSec[gram.cpp]{预处理指令}
 
-\rSec1[cpp.pre]{Preamble}
+\rSec1[cpp.pre]{导言}
 
 \begin{bnf}
 \nontermdef{preprocessing-file}\br
@@ -107,7 +107,7 @@
 
 \begin{bnf}
 \nontermdef{lparen}\br
-    \descr{a \terminal{(} character not immediately preceded by whitespace}
+    \descr{一个 \terminal{(} 字符，前面没有紧跟空白字符}
 \end{bnf}
 
 \begin{bnf}
@@ -128,159 +128,152 @@
 
 \begin{bnf}
 \nontermdef{new-line}\br
-    \descr{the new-line character}
+    \descr{换行符}
 \end{bnf}
 
 \pnum
-A \defn{preprocessing directive} consists of a sequence of preprocessing tokens
-that satisfies the following constraints:
-At the start of translation phase 4,
-the first preprocessing token in the sequence,
-referred to as a \defnadj{directive-introducing}{token},
-begins with the first character in the source file
-(optionally after whitespace containing no new-line characters) or
-follows whitespace containing at least one new-line character,
-and is
+一个\defn{预处理指令}由一系列预处理记号组成，这些记号满足以下约束：
+在翻译阶段4开始时，
+序列中的第一个预处理记号，
+被称为\defnadj{指令引导}{记号}，
+以源文件中的第一个字符开始
+（可选地，在不包含换行符的空白之后）或
+跟随包含至少一个换行符的空白，
+并且是
 
 \begin{itemize}
 \item
-a \tcode{\#} preprocessing token, or
+一个 \tcode{\#} 预处理记号，或
 
 \item
-an \keyword{import} preprocessing token
-immediately followed on the same logical source line by a
-\grammarterm{header-name},
-\tcode{<},
-\grammarterm{identifier},
-\grammarterm{string-literal}, or
+一个 \keyword{import} 预处理记号，
+在同一逻辑源行上紧跟一个
+\grammarterm{header-name}，
+\tcode{<}，
+\grammarterm{identifier}，
+\grammarterm{string-literal}，或
 \tcode{:}
-preprocessing token, or
+预处理记号，或
 
 \item
-a \keyword{module} preprocessing token
-immediately followed on the same logical source line by an
-\grammarterm{identifier},
-\tcode{:}, or
+一个 \keyword{module} 预处理记号，
+在同一逻辑源行上紧跟一个
+\grammarterm{identifier}，
+\tcode{:}，或
 \tcode{;}
-preprocessing token, or
+预处理记号，或
 
 \item
-an \keyword{export} preprocessing token
-immediately followed on the same logical source line by
-one of the two preceding forms.
+一个 \keyword{export} 预处理记号，
+在同一逻辑源行上紧跟
+上述两种形式之一。
 \end{itemize}
 
-The last preprocessing token in the sequence is the first preprocessing token within the sequence that
-is immediately followed by whitespace containing a new-line character.
+序列中的最后一个预处理记号是序列中第一个
+紧跟包含换行符的空白的预处理记号。
 \begin{footnote}
-Thus,
-preprocessing directives are commonly called ``lines''.
-These ``lines'' have no other syntactic significance,
-as all whitespace is equivalent except in certain situations
-during preprocessing (see the
+因此，
+预处理指令通常被称为“行”。
+这些“行”没有其他语法意义，
+因为除了在预处理期间的某些情况下，
+所有空白都是等效的（例如，参见~\ref{cpp.stringize} 中的
 \tcode{\#}
-character string literal creation operator in~\ref{cpp.stringize}, for example).
+字符串字面量创建运算符）。
 \end{footnote}
 \begin{note}
-A new-line character ends the preprocessing directive even if it occurs
-within what would otherwise be an invocation of a function-like macro.
+即使换行符出现在类似函数宏调用的内容中，
+换行符也会结束预处理指令。
 \end{note}
 
 \begin{example}
 \begin{codeblock}
-#                       // preprocessing directive
-module ;                // preprocessing directive
-export module leftpad;  // preprocessing directive
-import <string>;        // preprocessing directive
-export import "squee";  // preprocessing directive
-import rightpad;        // preprocessing directive
-import :part;           // preprocessing directive
+#                       // 预处理指令
+module ;                // 预处理指令
+export module leftpad;  // 预处理指令
+import <string>;        // 预处理指令
+export import "squee";  // 预处理指令
+import rightpad;        // 预处理指令
+import :part;           // 预处理指令
 
-module                  // not a preprocessing directive
-;                       // not a preprocessing directive
+module                  // 不是预处理指令
+;                       // 不是预处理指令
 
-export                  // not a preprocessing directive
-import                  // not a preprocessing directive
-foo;                    // not a preprocessing directive
+export                  // 不是预处理指令
+import                  // 不是预处理指令
+foo;                    // 不是预处理指令
 
-export                  // not a preprocessing directive
-import foo;             // preprocessing directive (ill-formed at phase 7)
+export                  // 不是预处理指令
+import foo;             // 预处理指令（在阶段7中是病态的）
 
-import ::               // not a preprocessing directive
-import ->               // not a preprocessing directive
+import ::               // 不是预处理指令
+import ->               // 不是预处理指令
 \end{codeblock}
 \end{example}
 
 \pnum
-A sequence of preprocessing tokens is only a \grammarterm{text-line}
-if it does not begin with a directive-introducing token.
+仅当一系列预处理记号不以指令引导记号开头时，它才是一个 \grammarterm{text-line}。
 \begin{example}
 \begin{codeblock}
 using module = int;
-module i;               // not a \grammarterm{text-line} and not a \grammarterm{control-line}
+module i;               // 不是 \grammarterm{text-line} 也不是 \grammarterm{control-line}
 int foo() {
   return i;
 }
 \end{codeblock}
-The example is not a valid \grammarterm{preprocessing-file}.
+该示例不是有效的 \grammarterm{preprocessing-file}。
 \end{example}
-A sequence of preprocessing tokens is only a \grammarterm{conditionally-supported-directive}
-if it does not begin with any of the directive names
-appearing after a \tcode{\#} in the syntax.
-A \grammarterm{conditionally-supported-directive} is
-conditionally-supported with
-\impldef{additional supported forms of preprocessing directive}
-semantics.
+仅当一系列预处理记号不以语法中出现在 \tcode{\#} 之后的任何指令名称开头时，它才是一个 \grammarterm{conditionally-supported-directive}。
+一个 \grammarterm{conditionally-supported-directive} 是
+有条件支持的，具有
+\impldef{额外支持的预处理指令形式}
+语义。
 
 \pnum
-At the start of phase 4 of translation,
-the \grammarterm{group} of a \grammarterm{pp-global-module-fragment} shall
-contain neither a \grammarterm{text-line} nor a \grammarterm{pp-import}.
+在翻译的阶段4开始时，
+\grammarterm{pp-global-module-fragment} 的 \grammarterm{group} 不应
+包含 \grammarterm{text-line} 或 \grammarterm{pp-import}。
 
 \pnum
-When in a group that is skipped\iref{cpp.cond}, the directive
-syntax is relaxed to allow any sequence of preprocessing tokens to occur between
-the directive name and the following new-line character.
+当在被跳过的组中时\iref{cpp.cond}，指令
+语法被放宽，允许任何预处理记号序列出现在
+指令名称和随后的换行符之间。
 
 \pnum
-The only whitespace characters that shall appear
-between preprocessing tokens
-within a preprocessing directive
-(from just after the directive-introducing token
-through just before the terminating new-line character)
-are space and horizontal-tab
-(including spaces that have replaced comments
-or possibly other whitespace characters
-in translation phase 3).
+在预处理指令中，
+预处理记号之间
+（从指令引导记号之后
+到终止换行符之前）
+唯一允许出现的空白字符是空格和水平制表符
+（包括在翻译阶段3中已替换注释
+或可能替换其他空白字符的空格）。
 
 \pnum
-The implementation can
-process and skip sections of source files conditionally,
-include other source files,
-import macros from header units,
-and replace macros.
-These capabilities are called
-\defn{preprocessing},
-because conceptually they occur
-before translation of the resulting translation unit.
+实现可以
+有条件地处理和跳过源文件的某些部分，
+包含其他源文件，
+从头文件单元导入宏，
+并替换宏。
+这些功能被称为
+\defn{预处理}，
+因为从概念上讲，它们发生在
+对结果翻译单元进行翻译之前。
 
 \pnum
-The preprocessing tokens within a preprocessing directive
-are not subject to macro expansion unless otherwise stated.
+除非另有说明，预处理指令中的预处理记号
+不受宏扩展的影响。
 
 \begin{example}
-In:
+在：
 \begin{codeblock}
 #define EMPTY
 EMPTY   #   include <file.h>
 \end{codeblock}
-the sequence of preprocessing tokens on the second line is \textit{not}
-a preprocessing directive, because it does not begin with a \tcode{\#} at the start of
-translation phase 4, even though it will do so after the macro \tcode{EMPTY}
-has been replaced.
+第二行上的预处理记号序列\textit{不是}
+预处理指令，因为它在翻译阶段4开始时不是以 \tcode{\#} 开头的，即使在宏 \tcode{EMPTY}
+被替换后会是这样。
 \end{example}
 
-\rSec1[cpp.cond]{Conditional inclusion}%
+\rSec1[cpp.cond]{条件包含}%
 \indextext{preprocessing directive!conditional inclusion}%
 \indextext{inclusion!conditional|see{preprocessing directive, conditional inclusion}}
 
@@ -293,7 +286,7 @@ has been replaced.
 
 \begin{bnf}
 \nontermdef{h-preprocessing-token}\br
-    \textnormal{any \grammarterm{preprocessing-token} other than \terminal{>}}
+    \textnormal{除 \terminal{>} 之外的任何 \grammarterm{preprocessing-token}}
 \end{bnf}
 
 \begin{bnf}
@@ -302,1718 +295,1616 @@ has been replaced.
 \end{bnf}
 
 \begin{bnf}
-\nontermdef{header-name-tokens}\br
-    string-literal\br
-    \terminal{<} h-pp-tokens \terminal{>}
-\end{bnf}
-
-\indextext{\idxxname{has_include}}%
-\begin{bnf}
-\nontermdef{has-include-expression}\br
-    \terminal{\xname{has_include}} \terminal{(} header-name \terminal{)}\br
-    \terminal{\xname{has_include}} \terminal{(} header-name-tokens \terminal{)}
-\end{bnf}
-
-\indextext{\idxxname{has_cpp_attribute}}%
-\begin{bnf}
-\nontermdef{has-attribute-expression}\br
-    \terminal{\xname{has_cpp_attribute} (} pp-tokens \terminal{)}
-\end{bnf}
-
-\pnum
-The expression that controls conditional inclusion
-shall be an integral constant expression except that
-identifiers
-(including those lexically identical to keywords)
-are interpreted as described below
-\begin{footnote}
-Because the controlling constant expression is evaluated
-during translation phase 4,
-all identifiers either are or are not macro names ---
-there simply are no keywords, enumeration constants, etc.
-\end{footnote}
-and it may contain zero or more \grammarterm{defined-macro-expression}{s} and/or
-\grammarterm{has-include-expression}{s} and/or
-\grammarterm{has-attribute-expression}{s} as unary operator expressions.
-
-\pnum
-A \grammarterm{defined-macro-expression} evaluates to \tcode{1}
-if the identifier is currently defined
-as a macro name
-(that is, if it is predefined
-or if it has one or more active macro definitions\iref{cpp.import},
-for example because
-it has been the subject of a
-\tcode{\#define}
-preprocessing directive
-without an intervening
-\tcode{\#undef}
-directive with the same subject identifier), \tcode{0} if it is not.
-
-\pnum
-The second form of \grammarterm{has-include-expression}
-is considered only if the first form does not match,
-in which case the preprocessing tokens are processed just as in normal text.
-
-\pnum
-The header or source file identified by
-the parenthesized preprocessing token sequence
-in each contained \grammarterm{has-include-expression}
-is searched for as if that preprocessing token sequence
-were the \grammarterm{pp-tokens} in a \tcode{\#include} directive,
-except that no further macro expansion is performed.
-If such a directive would not satisfy the syntactic requirements
-of a \tcode{\#include} directive, the program is ill-formed.
-The \grammarterm{has-include-expression} evaluates
-to \tcode{1} if the search for the source file succeeds, and
-to \tcode{0} if the search fails.
-
-\pnum
-Each \grammarterm{has-attribute-expression} is replaced by
-a non-zero \grammarterm{pp-number}
-matching the form of an \grammarterm{integer-literal}
-if the implementation supports an attribute
-with the name specified by interpreting
-the \grammarterm{pp-tokens}, after macro expansion,
-as an \grammarterm{attribute-token},
-and by \tcode{0} otherwise.
-The program is ill-formed if the \grammarterm{pp-tokens}
-do not match the form of an \grammarterm{attribute-token}.
-
-\pnum
-For an attribute specified in this document,
-it is \impldef{value of \grammarterm{has-attribute-expression}
-for standard attributes}
-whether the value of the \grammarterm{has-attribute-expression}
-is \tcode{0} or is given by \tref{cpp.cond.ha}.
-For other attributes recognized by the implementation,
-the value is
-\impldef{value of \grammarterm{has-attribute-expression}
-for non-standard attributes}.
-\begin{note}
-It is expected
-that the availability of an attribute can be detected by any non-zero result.
-\end{note}
-
-\begin{floattable}{\xname{has_cpp_attribute} values}{cpp.cond.ha}
-{ll}
-\topline
-\lhdr{Attribute} & \rhdr{Value} \\ \rowsep
-\tcode{assume}                & \tcode{202207L} \\
-\tcode{carries_dependency}    & \tcode{200809L} \\
-\tcode{deprecated}            & \tcode{201309L} \\
-\tcode{fallthrough}           & \tcode{201603L} \\
-\tcode{likely}                & \tcode{201803L} \\
-\tcode{maybe_unused}          & \tcode{201603L} \\
-\tcode{no_unique_address}     & \tcode{201803L} \\
-\tcode{nodiscard}             & \tcode{201907L} \\
-\tcode{noreturn}              & \tcode{200809L} \\
-\tcode{unlikely}              & \tcode{201803L} \\
-\end{floattable}
-
-\pnum
-The
-\tcode{\#ifdef}, \tcode{\#ifndef}, \tcode{\#elifdef}, and \tcode{\#elifndef}
-directives, and
-the \tcode{defined} conditional inclusion operator,
-shall treat \xname{has_include} and \xname{has_cpp_attribute}
-as if they were the names of defined macros.
-The identifiers \xname{has_include} and \xname{has_cpp_attribute}
-shall not appear in any context not mentioned in this subclause.
-
-\pnum
-Each preprocessing token that remains (in the list of preprocessing tokens that
-will become the controlling expression)
-after all macro replacements have occurred
-shall be in the lexical form of a token\iref{lex.token}.
-
-\pnum
-Preprocessing directives of the forms
-\begin{ncsimplebnf}\obeyspaces
-\indextext{\idxcode{\#if}}%
-\terminal{\# if     } constant-expression new-line \opt{group}\br
-\indextext{\idxcode{\#elif}}%
-\terminal{\# elif   } constant-expression new-line \opt{group}
-\end{ncsimplebnf}
-check whether the controlling constant expression evaluates to nonzero.
-
-\pnum
-Prior to evaluation,
-macro invocations in the list of preprocessing tokens
-that will become the controlling constant expression
-are replaced
-(except for those macro names modified by the
-\tcode{defined}
-unary operator),
-just as in normal text.
-If the preprocessing token
-\tcode{defined}
-is generated as a result of this replacement process
-or use of the
-\tcode{defined}
-unary operator does not match one of the two specified forms
-prior to macro replacement,
-the behavior is undefined.
-
-\pnum
-After all replacements due to macro expansion and
-evaluations of
-\grammarterm{defined-macro-expression}s,
-\grammarterm{has-include-expression}s, and
-\grammarterm{has-attribute-expression}s
-have been performed,
-all remaining identifiers and keywords,
-except for
-\tcode{true}
-and
-\tcode{false},
-are replaced with the \grammarterm{pp-number}
-\tcode{0},
-and then each preprocessing token is converted into a token.
-\begin{note}
-An alternative
-token\iref{lex.digraph} is not an identifier,
-even when its spelling consists entirely of letters and underscores.
-Therefore it is not subject to this replacement.
-\end{note}
-
-\pnum
-The resulting tokens comprise the controlling constant expression
-which is evaluated according to the rules of~\ref{expr.const}
-using arithmetic that has at least the ranges specified
-in~\ref{support.limits}. For the purposes of this token conversion and evaluation
-all signed and unsigned integer types
-act as if they have the same representation as, respectively,
-\tcode{intmax_t} or \tcode{uintmax_t}\iref{cstdint.syn}.
-\begin{note}
-Thus on an
-implementation where \tcode{std::numeric_limits<int>::max()} is \tcode{0x7FFF}
-and \tcode{std::numeric_limits<unsigned int>::max()} is \tcode{0xFFFF},
-the integer literal \tcode{0x8000} is signed and positive within a \tcode{\#if}
-expression even though it is unsigned in translation phase
-7\iref{lex.phases}.
-\end{note}
-This includes interpreting \grammarterm{character-literal}s
-according to the rules in \ref{lex.ccon}.
-\begin{note}
-The associated character encodings of literals are the same
-in \tcode{\#if} and \tcode{\#elif} directives and in any expression.
-\end{note}
-Each subexpression with type
-\tcode{bool}
-is subjected to integral promotion before processing continues.
-
-\pnum
-Preprocessing directives of the forms
-\begin{ncsimplebnf}\obeyspaces
-\terminal{\# ifdef   } identifier new-line \opt{group}\br
-\indextext{\idxcode{\#ifdef}}%
-\terminal{\# ifndef  } identifier new-line \opt{group}\br
-\indextext{\idxcode{\#ifndef}}%
-\terminal{\# elifdef } identifier new-line \opt{group}\br
-\indextext{\idxcode{\#elifdef}}%
-\terminal{\# elifndef} identifier new-line \opt{group}
-\indextext{\idxcode{\#elifndef}}%
-\end{ncsimplebnf}
-check whether the identifier is or is not currently defined as a macro name.
-Their conditions are equivalent to
-\tcode{\#if} \tcode{defined} \grammarterm{identifier},
-\tcode{\#if} \tcode{!defined} \grammarterm{identifier},
-\tcode{\#elif} \tcode{defined} \grammarterm{identifier}, and
-\tcode{\#elif} \tcode{!defined} \grammarterm{identifier},
-respectively.
-
-\pnum
-Each directive's condition is checked in order.
-If it evaluates to false (zero),
-the group that it controls is skipped:
-directives are processed only through the name that determines
-the directive in order to keep track of the level
-of nested conditionals;
-the rest of the directives' preprocessing tokens are ignored,
-as are the other preprocessing tokens in the group.
-Only the first group
-whose control condition evaluates to true (nonzero) is processed;
-any following groups are skipped and their controlling directives
-are processed as if they were in a group that is skipped.
-If none of the conditions evaluates to true,
-and there is a
-\tcode{\#else}
-\indextext{\idxcode{\#else}}%
-directive,
-the group controlled by the
-\tcode{\#else}
-is processed; lacking a
-\tcode{\#else}
-directive, all the groups until the
-\tcode{\#endif}
-\indextext{\idxcode{\#endif}}%
-are skipped.%
-\begin{footnote}
-As indicated by the syntax,
-a preprocessing token cannot follow a
-\tcode{\#else}
-or
-\tcode{\#endif}
-directive before the terminating new-line character.
-However,
-comments can appear anywhere in a source file,
-including within a preprocessing directive.
-\end{footnote}
-
-\pnum
-\begin{example}
-This demonstrates a way to include a library \tcode{optional} facility
-only if it is available:
-
-\begin{codeblock}
-#if __has_include(<optional>)
-#  include <optional>
-#  if __cpp_lib_optional >= 201603
-#    define have_optional 1
-#  endif
-#elif __has_include(<experimental/optional>)
-#  include <experimental/optional>
-#  if __cpp_lib_experimental_optional >= 201411
-#    define have_optional 1
-#    define experimental_optional 1
-#  endif
-#endif
-#ifndef have_optional
-#  define have_optional 0
-#endif
-\end{codeblock}
-\end{example}
-
-\pnum
-\begin{example}
-This demonstrates a way to use the attribute \tcode{[[acme::deprecated]]}
-only if it is available.
-\begin{codeblock}
-#if __has_cpp_attribute(acme::deprecated)
-#  define ATTR_DEPRECATED(msg) [[acme::deprecated(msg)]]
-#else
-#  define ATTR_DEPRECATED(msg) [[deprecated(msg)]]
-#endif
-ATTR_DEPRECATED("This function is deprecated") void anvil();
-\end{codeblock}
-\end{example}
-
-\rSec1[cpp.include]{Source file inclusion}
-\indextext{preprocessing directive!header inclusion}
-\indextext{preprocessing directive!source-file inclusion}
-\indextext{inclusion!source file|see{preprocessing directive, source-file inclusion}}%
-\indextext{\idxcode{\#include}}%
-
-\pnum
-A
-\tcode{\#include}
-directive shall identify a header or source file
-that can be processed by the implementation.
-
-\pnum
-A preprocessing directive of the form
-\begin{ncsimplebnf}
-\terminal{\# include <} h-char-sequence \terminal{>} new-line
-\end{ncsimplebnf}
-searches a sequence of
-\impldef{sequence of places searched for a header}
-places
-for a header identified uniquely by the specified sequence
-between the
-\tcode{<}
-and
-\tcode{>}
-delimiters,
-and causes the replacement of that
-directive by the entire contents of the header.
-How the places are specified
-or the header identified
-is \impldef{search locations for \tcode{<>} header}.
-
-\pnum
-A preprocessing directive of the form
-\begin{ncsimplebnf}
-\terminal{\# include "} q-char-sequence \terminal{"} new-line
-\end{ncsimplebnf}
-causes the replacement of that
-directive by the entire contents of the
-source file identified by the specified sequence between the
-\tcode{"}
-delimiters.
-The named source file is searched for in an
-\impldef{manner of search for included source file}
-manner.
-If this search is not supported,
-or if the search fails,
-the directive is reprocessed as if it read
-\begin{ncsimplebnf}
-\terminal{\# include <} h-char-sequence \terminal{>} new-line
-\end{ncsimplebnf}
-with the identical contained sequence (including
-\tcode{>}
-characters, if any) from the original directive.
-
-\pnum
-A preprocessing directive of the form
-\begin{ncsimplebnf}
-\terminal{\# include} pp-tokens new-line
-\end{ncsimplebnf}
-(that does not match one of the two previous forms) is permitted.
-The preprocessing tokens after
-\tcode{include}
-in the directive are processed just as in normal text
-(i.e., each identifier currently defined as a macro name is replaced by its
-replacement list of preprocessing tokens).
-If the directive resulting after all replacements does not match
-one of the two previous forms, the behavior is
-undefined.
-\begin{footnote}
-Note that adjacent \grammarterm{string-literal}s are not concatenated into
-a single \grammarterm{string-literal}
-(see the translation phases in~\ref{lex.phases});
-thus, an expansion that results in two \grammarterm{string-literal}s is an
-invalid directive.
-\end{footnote}
-The method by which a sequence of preprocessing tokens between a
-\tcode{<}
-and a
-\tcode{>}
-preprocessing token pair or a pair of
-\tcode{"}
-characters is combined into a single header name
-preprocessing token is \impldef{search locations for \tcode{""""} header}.
-
-\pnum
-The implementation shall provide unique mappings for
-sequences consisting of one or more
-\grammarterm{nondigit}{s} or \grammarterm{digit}{s}\iref{lex.name}
-followed by a period
-(\tcode{.})
-and a single
-\grammarterm{nondigit}.
-The first character shall not be a \grammarterm{digit}.
-The implementation may ignore distinctions of alphabetical case.
-
-\pnum
-A
-\tcode{\#include}
-preprocessing directive may appear
-in a source file that has been read because of a
-\tcode{\#include}
-directive in another file,
-up to an \impldef{nesting limit for \tcode{\#include} directives} nesting limit.
-
-\pnum
-If the header identified by the \grammarterm{header-name}
-denotes an importable header\iref{module.import},
-it is
-\impldef{whether source file inclusion of importable header
-is replaced with \tcode{import} directive}
-whether the \tcode{\#include} preprocessing directive
-is instead replaced by an \tcode{import} directive\iref{cpp.import} of the form
-\begin{ncbnf}
-\terminal{import} header-name \terminal{;} new-line
-\end{ncbnf}
-
-\pnum
-\begin{note}
-An implementation can provide a mechanism for making arbitrary
-source files available to the \tcode{< >} search.
-However, using the \tcode{< >} form for headers provided
-with the implementation and the \tcode{" "} form for sources
-outside the control of the implementation
-achieves wider portability. For instance:
-
-\begin{codeblock}
-#include <stdio.h>
-#include <unistd.h>
-#include "usefullib.h"
-#include "myprog.h"
-\end{codeblock}
-
-\end{note}
-
-\pnum
-\begin{example}
-This illustrates macro-replaced
-\tcode{\#include}
-directives:
-
-\begin{codeblock}
-#if VERSION == 1
-    #define INCFILE  "vers1.h"
-#elif VERSION == 2
-    #define INCFILE  "vers2.h"  // and so on
-#else
-    #define INCFILE  "versN.h"
-#endif
-#include INCFILE
-\end{codeblock}
-\end{example}
-
-\rSec1[cpp.module]{Module directive}
-\indextext{preprocessing directive!module}%
-
-\begin{bnf}
-\nontermdef{pp-module}\br
-    \opt{\keyword{export}} \keyword{module} \opt{pp-tokens} \terminal{;} new-line
-\end{bnf}
-
-\pnum
-A \grammarterm{pp-module} shall not
-appear in a context where \tcode{module}
-or (if it is the first preprocessing token of the \grammarterm{pp-module}) \tcode{export}
-is an identifier defined as an object-like macro.
-
-\pnum
-The \grammarterm{pp-tokens}, if any, of a \grammarterm{pp-module}
-shall be of the form:
-\begin{ncsimplebnf}
-pp-module-name \opt{pp-module-partition} \opt{pp-tokens}
-\end{ncsimplebnf}
-where the \grammarterm{pp-tokens} (if any) shall not begin with
-a \tcode{(} preprocessing token and
-the grammar non-terminals are defined as:
-\begin{ncbnf}
-\nontermdef{pp-module-name}\br
-    \opt{pp-module-name-qualifier} identifier
-\end{ncbnf}
-\begin{ncbnf}
-\nontermdef{pp-module-partition}\br
-    \terminal{:} \opt{pp-module-name-qualifier} identifier
-\end{ncbnf}
-\begin{ncbnf}
-\nontermdef{pp-module-name-qualifier}\br
-    identifier \terminal{.}\br
-    pp-module-name-qualifier identifier \terminal{.}
-\end{ncbnf}
-No \grammarterm{identifier} in
-the \grammarterm{pp-module-name} or \grammarterm{pp-module-partition}
-shall currently be defined as an object-like macro.
-
-\pnum
-Any preprocessing tokens after the \tcode{module} preprocessing token
-in the \tcode{module} directive are processed just as in normal text.
-\begin{note}
-Each identifier currently defined as a macro name
-is replaced by its replacement list of preprocessing tokens.
-\end{note}
-
-\pnum
-The \tcode{module} and \tcode{export} (if it exists) preprocessing tokens
-are replaced by the \grammarterm{module-keyword} and
-\grammarterm{export-keyword} preprocessing tokens respectively.
-\begin{note}
-This makes the line no longer a directive
-so it is not removed at the end of phase 4.
-\end{note}
-
-\rSec1[cpp.import]{Header unit importation}
-\indextext{header unit!preprocessing}%
-\indextext{preprocessing directive!import}%
-\indextext{macro!import|(}%
-
-\begin{bnf}
-\nontermdef{pp-import}\br
-    \opt{\keyword{export}} \keyword{import} header-name \opt{pp-tokens} \terminal{;} new-line\br
-    \opt{\keyword{export}} \keyword{import} header-name-tokens \opt{pp-tokens} \terminal{;} new-line\br
-    \opt{\keyword{export}} \keyword{import} pp-tokens \terminal{;} new-line
-\end{bnf}
-
-\pnum
-A \grammarterm{pp-import} shall not
-appear in a context where \tcode{import}
-or (if it is the first preprocessing token of the \grammarterm{pp-import}) \tcode{export}
-is an identifier defined as an object-like macro.
-
-\pnum
-The preprocessing tokens after the \tcode{import} preprocessing token
-in the \tcode{import} \grammarterm{control-line}
-are processed just as in normal text
-(i.e., each identifier currently defined as a macro name
-is replaced by its replacement list of preprocessing tokens).
-\begin{note}
-An \tcode{import} directive
-matching the first two forms of a \grammarterm{pp-import}
-instructs the preprocessor to import macros
-from the header unit\iref{module.import}
-denoted by the \grammarterm{header-name},
-as described below.
-\end{note}
-\indextext{point of!macro import|see{macro, point of import}}%
-The \defnx{point of macro import}{macro!point of import} for the
-first two forms of \grammarterm{pp-import} is
-immediately after the \grammarterm{new-line} terminating
-the \grammarterm{pp-import}.
-The last form of \grammarterm{pp-import} is only considered
-if the first two forms did not match, and
-does not have a point of macro import.
-
-\pnum
-If a \grammarterm{pp-import} is produced by source file inclusion
-(including by the rewrite produced
-when a \tcode{\#include} directive names an importable header)
-while processing the \grammarterm{group} of a \grammarterm{module-file},
-the program is ill-formed.
-
-\pnum
-In all three forms of \grammarterm{pp-import},
-the \tcode{import} and \tcode{export} (if it exists) preprocessing tokens
-are replaced by the \grammarterm{import-keyword} and
-\grammarterm{export-keyword} preprocessing tokens respectively.
-\begin{note}
-This makes the line no longer a directive
-so it is not removed at the end of phase 4.
-\end{note}
-Additionally, in the second form of \grammarterm{pp-import},
-a \grammarterm{header-name} token is formed as if
-the \grammarterm{header-name-tokens}
-were the \grammarterm{pp-tokens} of a \tcode{\#include} directive.
-The \grammarterm{header-name-tokens} are replaced by
-the \grammarterm{header-name} token.
-\begin{note}
-This ensures that imports are treated consistently by
-the preprocessor and later phases of translation.
-\end{note}
-
-\pnum
-Each \tcode{\#define} directive encountered when preprocessing
-each translation unit in a program results in a distinct
-\defnx{macro definition}{macro!definition}.
-\begin{note}
-A predefined macro name\iref{cpp.predefined}
-is not introduced by a \tcode{\#define} directive.
-Implementations providing mechanisms to predefine additional macros
-are encouraged to not treat them
-as being introduced by a \tcode{\#define} directive.
-\end{note}
-Each macro definition has at most one point of definition in
-each translation unit and at most one point of undefinition, as follows:
-\begin{itemize}
-\item
-\indextext{point of!macro definition|see{macro, point of definition}}%
-The \defnx{point of definition}{macro!point of definition}
-of a macro definition within a translation unit $T$ is
-\begin{itemize}
-\item
-if the \tcode{\#define} directive of the macro definition occurs within $T$,
-the point at which that directive occurs, or otherwise,
-\item
-if the macro name is not lexically identical to a keyword\iref{lex.key}
-or to the \grammarterm{identifier}{s} \tcode{module} or \tcode{import},
-the first point of macro import in $T$ of a header unit
-containing a point of definition for the macro definition, if any.
-\end{itemize}
-In the latter case, the macro is said
-to be \defnx{imported}{macro!import} from the header unit.
-
-\item
-\indextext{point of!macro undefinition|see{macro, point of undefinition}}%
-The \defnx{point of undefinition}{macro!point of undefinition}
-of a macro definition within a translation unit
-is the first point at which a \tcode{\#undef} directive naming the macro occurs
-after its point of definition, or the first point
-of macro import of a header unit containing a point of undefinition for the
-macro definition, whichever (if any) occurs first.
-\end{itemize}
-
-\pnum
-\indextext{active macro definition|see{macro, active}}%
-A macro definition is \defnx{active}{macro!active} at a source location
-if it has a point of definition in that translation unit preceding the location,
-and does not have a point of undefinition in that translation unit preceding
-the location.
-
-\pnum
-If a macro would be replaced or redefined, and multiple macro definitions
-are active for that macro name, the active macro definitions shall all be
-valid redefinitions of the same macro\iref{cpp.replace}.
-\begin{note}
-The relative order of \grammarterm{pp-import}{s} has no bearing on whether a
-particular macro definition is active.
-\end{note}
-
-\pnum
-\begin{example}
-\begin{codeblocktu}{Importable header \tcode{"a.h"}}
-#define X 123   // \#1
-#define Y 45    // \#2
-#define Z a     // \#3
-#undef X        // point of undefinition of \#1 in \tcode{"a.h"}
-\end{codeblocktu}
-
-\begin{codeblocktu}{Importable header \tcode{"b.h"}}
-import "a.h";   // point of definition of \#1, \#2, and \#3, point of undefinition of \#1 in \tcode{"b.h"}
-#define X 456   // OK, \#1 is not active
-#define Y 6     // error: \#2 is active
-\end{codeblocktu}
-
-\begin{codeblocktu}{Importable header \tcode{"c.h"}}
-#define Y 45    // \#4
-#define Z c     // \#5
-\end{codeblocktu}
-
-\begin{codeblocktu}{Importable header \tcode{"d.h"}}
-import "c.h";   // point of definition of \#4 and \#5 in \tcode{"d.h"}
-\end{codeblocktu}
-
-\begin{codeblocktu}{Importable header \tcode{"e.h"}}
-import "a.h";   // point of definition of \#1, \#2, and \#3, point of undefinition of \#1 in \tcode{"e.h"}
-import "d.h";   // point of definition of \#4 and \#5 in \tcode{"e.h"}
-int a = Y;      // OK, active macro definitions \#2 and \#4 are valid redefinitions
-int c = Z;      // error: active macro definitions \#3 and \#5 are not valid redefinitions of \tcode{Z}
-\end{codeblocktu}
-
-\begin{codeblocktu}{Module unit \tcode{f}}
-export module f;
-export import "a.h";
-
-int a = Y;      // OK
-\end{codeblocktu}
-
-\begin{codeblocktu}{Translation unit \tcode{\#1}}
-import f;
-int x = Y;      // error: \tcode{Y} is neither a defined macro nor a declared name
-\end{codeblocktu}
-\end{example}
-\indextext{macro!import|)}
-
-\rSec1[cpp.replace]{Macro replacement}%
-
-\rSec2[cpp.replace.general]{General}%
-\indextext{macro!replacement|(}%
-\indextext{replacement!macro|see{macro, replacement}}%
-\indextext{preprocessing directive!macro replacement|see{macro, replacement}}
-
-\pnum
-\indextext{macro!replacement list}%
-Two replacement lists are identical if and only if
-the preprocessing tokens in both have
-the same number, ordering, spelling, and whitespace separation,
-where all whitespace separations are considered identical.
-
-\pnum
-An identifier currently defined as an
-\indextext{macro!object-like}%
-object-like macro (see below) may be redefined by another
-\tcode{\#define}
-preprocessing directive provided that the second definition is an
-object-like macro definition and the two replacement lists
-are identical, otherwise the program is ill-formed.
-Likewise, an identifier currently defined as a
-\indextext{macro!function-like}%
-function-like macro (see below) may be redefined by another
-\tcode{\#define}
-preprocessing directive provided that the second definition is a
-function-like macro definition that has the same number and spelling
-of parameters,
-and the two replacement lists are identical,
-otherwise the program is ill-formed.
-
-\pnum
-\begin{example}
-The following sequence is valid:
-\begin{codeblock}
-#define OBJ_LIKE      (1-1)
-#define OBJ_LIKE      @\tcode{/* whitespace */ (1-1) /* other */}@
-#define FUNC_LIKE(a)   ( a )
-#define FUNC_LIKE( a )(     @\tcode{/* note the whitespace */ \textbackslash}@
-                a @\tcode{/* other stuff on this line}@
-                  @\tcode{*/}@ )
-\end{codeblock}
-But the following redefinitions are invalid:
-\begin{codeblock}
-#define OBJ_LIKE    (0)         // different token sequence
-#define OBJ_LIKE    (1 - 1)     // different whitespace
-#define FUNC_LIKE(b) ( a )      // different parameter usage
-#define FUNC_LIKE(b) ( b )      // different parameter spelling
-\end{codeblock}
-\end{example}
-
-\pnum
-\indextext{macro!replacement list}%
-There shall be whitespace between the identifier and the replacement list
-in the definition of an object-like macro.
-
-\pnum
-If the \grammarterm{identifier-list} in the macro definition does not end with
-an ellipsis, the number of arguments (including those arguments consisting
-of no preprocessing tokens)
-in an invocation of a function-like macro shall
-equal the number of parameters in the macro definition.
-Otherwise, there shall be at least as many arguments in the invocation as there are
-parameters in the macro definition (excluding the \tcode{...}). There
-shall exist a
-\tcode{)}
-preprocessing token that terminates the invocation.
-
-\pnum
-\indextext{__va_args__@\mname{VA_ARGS}}%
-\indextext{__va_opt__@\mname{VA_OPT}}%
-The identifiers \mname{VA_ARGS} and \mname{VA_OPT}
-shall occur only in the \grammarterm{replacement-list}
-of a function-like macro that uses the ellipsis notation in the parameters.
-
-\pnum
-A parameter identifier in a function-like macro
-shall be uniquely declared within its scope.
-
-\pnum
-The identifier immediately following the
-\tcode{define}
-is called the
-\indextext{name!macro|see{macro, name}}%
-\defnx{macro name}{macro!name}.
-There is one name space for macro names.
-Any whitespace characters preceding or following the
-replacement list of preprocessing tokens are not considered
-part of the replacement list for either form of macro.
-
-\pnum
-If a
-\indextext{\#\#0 operator@\tcode{\#} operator}
-\tcode{\#}
-preprocessing token,
-followed by an identifier,
-occurs lexically
-at the point at which a preprocessing directive can begin,
-the identifier is not subject to macro replacement.
-
-\pnum
-A preprocessing directive of the form
-\begin{ncsimplebnf}
-\terminal{\# define} identifier replacement-list new-line
-\indextext{\idxcode{\#define}}%
-\end{ncsimplebnf}
-defines an
-\defnadj{object-like}{macro} that
-causes each subsequent instance of the macro name
-\begin{footnote}
-Since, by macro-replacement time,
-all \grammarterm{character-literal}s and \grammarterm{string-literal}s are preprocessing tokens,
-not sequences possibly containing identifier-like subsequences
-(see \ref{lex.phases}, translation phases),
-they are never scanned for macro names or parameters.
-\end{footnote}
-to be replaced by the replacement list of preprocessing tokens
-that constitute the remainder of the directive.
-\begin{footnote}
-An alternative token\iref{lex.digraph} is not an identifier,
-even when its spelling consists entirely of letters and underscores.
-Therefore it is not possible to define a macro
-whose name is the same as that of an alternative token.
-\end{footnote}
-The replacement list is then rescanned for more macro names as
-specified below.
-
-\pnum
-\begin{example}
-The simplest use of this facility is to define a ``manifest constant'',
-as in
-\begin{codeblock}
-#define TABSIZE 100
-int table[TABSIZE];
-\end{codeblock}
-\end{example}
-
-\pnum
-A preprocessing directive of the form
-\begin{ncsimplebnf}
-\terminal{\# define} identifier lparen \opt{identifier-list} \terminal{)} replacement-list new-line\br
-\terminal{\# define} identifier lparen \terminal{...} \terminal{)} replacement-list new-line\br
-\terminal{\# define} identifier lparen identifier-list \terminal{, ...} \terminal{)} replacement-list new-line
-\end{ncsimplebnf}
-defines a \defnadj{function-like}{macro}
-with parameters, whose use is
-similar syntactically to a function call.
-The parameters
-\indextext{parameter!macro}%
-are specified by the optional list of identifiers.
-Each subsequent instance of the function-like macro name followed by a
-\tcode{(}
-as the next preprocessing token
-introduces the sequence of preprocessing tokens that is replaced
-by the replacement list in the definition
-(an invocation of the macro).
-\indextext{invocation!macro}%
-The replaced sequence of preprocessing tokens is terminated by the matching
-\tcode{)}
-preprocessing token, skipping intervening matched pairs of left and
-right parenthesis preprocessing tokens.
-Within the sequence of preprocessing tokens making up an invocation
-of a function-like macro,
-new-line is considered a normal whitespace character.
-
-\pnum
-\indextext{macro!function-like!arguments}%
-The sequence of preprocessing tokens
-bounded by the outside-most matching parentheses
-forms the list of arguments for the function-like macro.
-The individual arguments within the list
-are separated by comma preprocessing tokens,
-but comma preprocessing tokens between matching
-inner parentheses do not separate arguments.
-If there are sequences of preprocessing tokens within the list of
-arguments that would otherwise act as preprocessing directives,
-\begin{footnote}
-A \grammarterm{conditionally-supported-directive} is a preprocessing directive regardless of whether the implementation supports it.
-\end{footnote}
-the behavior is undefined.
-
-\pnum
-\begin{example}
-The following defines a function-like
-macro whose value is the maximum of its arguments.
-It has the disadvantages of evaluating one or the other of its arguments
-a second time
-(including
-\indextext{side effects}%
-side effects)
-and generating more code than a function if invoked several times.
-It also cannot have its address taken,
-as it has none.
-
-\begin{codeblock}
-#define max(a, b) ((a) > (b) ? (a) : (b))
-\end{codeblock}
-
-The parentheses ensure that the arguments and
-the resulting expression are bound properly.
-\end{example}
-
-\pnum
-\indextext{macro!function-like!arguments}%
-If there is a \tcode{...} immediately preceding the \tcode{)} in the
-function-like macro
-definition, then the trailing arguments (if any), including any separating comma preprocessing
-tokens, are merged to form a single item: the \defn{variable arguments}. The number of
-arguments so combined is such that, following merger, the number of arguments is
-either equal to or
-one more than the number of parameters in the macro definition (excluding the
-\tcode{...}).
-
-\rSec2[cpp.subst]{Argument substitution}%
-\indextext{macro!argument substitution}%
-\indextext{argument substitution|see{macro, argument substitution}}%
-
-\indextext{__va_opt__@\mname{VA_OPT}}%
-\begin{bnf}
-\nontermdef{va-opt-replacement}\br
-    \terminal{\mname{VA_OPT} (} \opt{pp-tokens} \terminal{)}
-\end{bnf}
-
-\pnum
-After the arguments for the invocation of a function-like macro have
-been identified, argument substitution takes place.
-For each parameter in the replacement list that is neither
-preceded by a \tcode{\#} or \tcode{\#\#} preprocessing token nor
-followed by a \tcode{\#\#} preprocessing token, the preprocessing tokens
-naming the parameter are replaced by a preprocessing token sequence determined as follows:
-\begin{itemize}
-\item
-  If the parameter is of the form \grammarterm{va-opt-replacement},
-  the replacement preprocessing tokens are the
-  preprocessing token sequence for the corresponding argument,
-  as specified below.
-\item
-  Otherwise, the replacement preprocessing tokens are the
-  preprocessing tokens of corresponding argument after all
-  macros contained therein have been expanded. The argument's
-  preprocessing tokens are completely macro replaced before
-  being substituted as if they formed the rest of the preprocessing
-  translation unit with no other preprocessing tokens being available.
-\end{itemize}
-\begin{example}
-\begin{codeblock}
-#define LPAREN() (
-#define G(Q) 42
-#define F(R, X, ...)  __VA_OPT__(G R X) )
-int x = F(LPAREN(), 0, <:-);    // replaced by \tcode{int x = 42;}
-\end{codeblock}
-\end{example}
-
-\pnum
-\indextext{__va_args__@\mname{VA_ARGS}}%
-An identifier \mname{VA_ARGS} that occurs in the replacement list
-shall be treated as if it were a parameter, and the variable arguments shall form
-the preprocessing tokens used to replace it.
-
-\pnum
-\begin{example}
-\begin{codeblock}
-#define debug(...) fprintf(stderr, @\mname{VA_ARGS}@)
-#define showlist(...) puts(#@\mname{VA_ARGS}@)
-#define report(test, ...) ((test) ? puts(#test) : printf(@\mname{VA_ARGS}@))
-debug("Flag");
-debug("X = %d\n", x);
-showlist(The first, second, and third items.);
-report(x>y, "x is %d but y is %d", x, y);
-\end{codeblock}
-results in
-\begin{codeblock}
-fprintf(stderr, "Flag");
-fprintf(stderr, "X = %d\n", x);
-puts("The first, second, and third items.");
-((x>y) ? puts("x>y") : printf("x is %d but y is %d", x, y));
-\end{codeblock}
-\end{example}
-
-\pnum
-\indextext{__va_opt__@\mname{VA_OPT}}%
-The identifier \mname{VA_OPT}
-shall always occur as part of the preprocessing token sequence
-\grammarterm{va-opt-replacement};
-its closing \tcode{)} is determined by skipping
-intervening pairs of matching left and right parentheses
-in its \grammarterm{pp-tokens}.
-The \grammarterm{pp-tokens} of a \grammarterm{va-opt-replacement}
-shall not contain \mname{VA_OPT}.
-If the \grammarterm{pp-tokens} would be ill-formed
-as the replacement list of the current function-like macro,
-the program is ill-formed.
-A \grammarterm{va-opt-replacement} is treated as if it were a parameter,
-and the preprocessing token sequence for the corresponding
-argument is defined as follows.
-If the substitution of \mname{VA_ARGS} as neither an operand
-of \tcode{\#} nor \tcode{\#\#} consists of no preprocessing tokens,
-the argument consists of
-a single placemarker preprocessing token\iref{cpp.concat,cpp.rescan}.
-Otherwise, the argument consists of
-the results of the expansion of the contained \grammarterm{pp-tokens}
-as the replacement list of the current function-like macro
-before removal of placemarker tokens, rescanning, and further replacement.
-\begin{note}
-The placemarker tokens are removed before stringization\iref{cpp.stringize},
-and can be removed by rescanning and further replacement\iref{cpp.rescan}.
-\end{note}
-\begin{example}
-\begin{codeblock}
-#define F(...)           f(0 __VA_OPT__(,) __VA_ARGS__)
-#define G(X, ...)        f(0, X __VA_OPT__(,) __VA_ARGS__)
-#define SDEF(sname, ...) S sname __VA_OPT__(= { __VA_ARGS__ })
-#define EMP
-
-F(a, b, c)          // replaced by \tcode{f(0, a, b, c)}
-F()                 // replaced by \tcode{f(0)}
-F(EMP)              // replaced by \tcode{f(0)}
-
-G(a, b, c)          // replaced by \tcode{f(0, a, b, c)}
-G(a, )              // replaced by \tcode{f(0, a)}
-G(a)                // replaced by \tcode{f(0, a)}
-
-SDEF(foo);          // replaced by \tcode{S foo;}
-SDEF(bar, 1, 2);    // replaced by \tcode{S bar = \{ 1, 2 \};}
-
-#define H1(X, ...) X __VA_OPT__(##) __VA_ARGS__ // error: \tcode{\#\#} may not appear at
-                                                // the beginning of a replacement list\iref{cpp.concat}
-
-#define H2(X, Y, ...) __VA_OPT__(X ## Y,) __VA_ARGS__
-H2(a, b, c, d)      // replaced by \tcode{ab, c, d}
-
-#define H3(X, ...) #__VA_OPT__(X##X X##X)
-H3(, 0)             // replaced by \tcode{""}
-
-#define H4(X, ...) __VA_OPT__(a X ## X) ## b
-H4(, 1)             // replaced by \tcode{a b}
-
-#define H5A(...) __VA_OPT__()@\tcode{/**/}@__VA_OPT__()
-#define H5B(X) a ## X ## b
-#define H5C(X) H5B(X)
-H5C(H5A())          // replaced by \tcode{ab}
-\end{codeblock}
-\end{example}
-
-\rSec2[cpp.stringize]{The \tcode{\#} operator}%
-\indextext{\#\#0 operator@\tcode{\#} operator}%
-\indextext{stringize|see{\tcode{\#} operator}}
-
-\pnum
-Each
-\tcode{\#}
-preprocessing token in the replacement list for a function-like
-macro shall be followed by a parameter as the next preprocessing
-token in the replacement list.
-
-\pnum
-A \defn{character string literal} is a \grammarterm{string-literal} with no prefix.
-If, in the replacement list, a parameter is immediately
-preceded by a
-\tcode{\#}
-preprocessing token,
-both are replaced by a single character string literal preprocessing token that
-contains the spelling of the preprocessing token sequence for the
-corresponding argument (excluding placemarker tokens).
-Let the \defn{stringizing argument} be the preprocessing token sequence
-for the corresponding argument with placemarker tokens removed.
-Each occurrence of whitespace between the stringizing argument's preprocessing
-tokens becomes a single space character in the character string literal.
-Whitespace before the first preprocessing token and after the last
-preprocessing token comprising the stringizing argument is deleted.
-Otherwise, the original spelling of each preprocessing token in the
-stringizing argument is retained in the character string literal,
-except for special handling for producing the spelling of
-\grammarterm{string-literal}s and \grammarterm{character-literal}s:
-a
-\tcode{\textbackslash}
-character is inserted before each
-\tcode{"}
-and
-\tcode{\textbackslash}
-character of a \grammarterm{character-literal} or \grammarterm{string-literal}
-(including the delimiting
-\tcode{"}
-characters).
-If the replacement that results is not a valid character string literal,
-the behavior is undefined. The character string literal corresponding to
-an empty stringizing argument is \tcode{""}.
-The order of evaluation of
-\tcode{\#}
-and
-\tcode{\#\#}
-operators is unspecified.
-
-\rSec2[cpp.concat]{The \tcode{\#\#} operator}%
-\indextext{\#\#1 operator@\tcode{\#\#} operator}%
-\indextext{concatenation!macro argument|see{\tcode{\#\#} operator}}
-
-\pnum
-A
-\tcode{\#\#}
-preprocessing token shall not occur at the beginning or
-at the end of a replacement list for either form
-of macro definition.
-
-\pnum
-If, in the replacement list of a function-like macro, a parameter is
-immediately preceded or followed by a
-\tcode{\#\#}
-preprocessing token, the parameter is replaced by the
-corresponding argument's preprocessing token sequence; however, if an argument consists of no preprocessing tokens, the parameter is
-replaced by a placemarker preprocessing token instead.
-\begin{footnote}
-Placemarker preprocessing tokens do not appear in the syntax
-because they are temporary entities that exist only within translation phase 4.
-\end{footnote}
-
-\pnum
-For both object-like and function-like macro invocations, before the
-replacement list is reexamined for more macro names to replace,
-each instance of a
-\tcode{\#\#}
-preprocessing token in the replacement list
-(not from an argument) is deleted and the
-preceding preprocessing token is concatenated
-with the following preprocessing token.
-Placemarker preprocessing tokens are handled specially: concatenation
-of two placemarkers results in a single placemarker preprocessing token, and
-concatenation of a placemarker with a non-placemarker preprocessing token results
-in the non-placemarker preprocessing token.
-\begin{note}
-Concatenation can form
-a \grammarterm{universal-character-name}\iref{lex.charset}.
-\end{note}
-If the result is not a valid preprocessing token,
-the behavior is undefined.
-The resulting preprocessing token is available for further macro replacement.
-The order of evaluation of
-\tcode{\#\#}
-operators is unspecified.
-
-\pnum
-\begin{example}
-The sequence
-\begin{codeblock}
-#define str(s)      # s
-#define xstr(s)     str(s)
-#define debug(s, t) printf("x" # s "= %d, x" # t "= %s", @\textbackslash@
-               x ## s, x ## t)
-#define INCFILE(n)  vers ## n
-#define glue(a, b)  a ## b
-#define xglue(a, b) glue(a, b)
-#define HIGHLOW     "hello"
-#define LOW         LOW ", world"
-
-debug(1, 2);
-fputs(str(strncmp("abc@\textbackslash@0d", "abc", '@\textbackslash@4')        // this goes away
-    == 0) str(: @\atsign\textbackslash@n), s);
-#include xstr(INCFILE(2).h)
-glue(HIGH, LOW);
-xglue(HIGH, LOW)
-\end{codeblock}
-results in
-\begin{codeblock}
-printf("x" "1" "= %d, x" "2" "= %s", x1, x2);
-fputs("strncmp(@\textbackslash@"abc@\textbackslash\textbackslash@0d@\textbackslash@", @\textbackslash@"abc@\textbackslash@", '@\textbackslash\textbackslash@4') == 0" ": @\atsign\textbackslash@n", s);
-#include "vers2.h"      @\textrm{(\textit{after macro replacement, before file access})}@
-"hello";
-"hello" ", world"
-\end{codeblock}
-or, after concatenation of the character string literals,
-\begin{codeblock}
-printf("x1= %d, x2= %s", x1, x2);
-fputs("strncmp(@\textbackslash@"abc@\textbackslash\textbackslash@0d@\textbackslash@", @\textbackslash@"abc@\textbackslash@", '@\textbackslash\textbackslash@4') == 0: @\atsign\textbackslash@n", s);
-#include "vers2.h"      @\textrm{(\textit{after macro replacement, before file access})}@
-"hello";
-"hello, world"
-\end{codeblock}
-
-Space around the \tcode{\#} and \tcode{\#\#} preprocessing tokens in the macro definition
-is optional.
-\end{example}
-
-\pnum
-\begin{example}
-In the following fragment:
-
-\begin{codeblock}
-#define hash_hash # ## #
-#define mkstr(a) # a
-#define in_between(a) mkstr(a)
-#define join(c, d) in_between(c hash_hash d)
-char p[] = join(x, y);          // equivalent to \tcode{char p[] = "x \#\# y";}
-\end{codeblock}
-
-The expansion produces, at various stages:
-
-\begin{codeblock}
-join(x, y)
-in_between(x hash_hash y)
-in_between(x ## y)
-mkstr(x ## y)
-"x ## y"
-\end{codeblock}
-
-In other words, expanding \tcode{hash_hash} produces a new preprocessing token,
-consisting of two adjacent sharp signs, but this new preprocessing token is not the
-\tcode{\#\#} operator.
-\end{example}
-
-\pnum
-\begin{example}
-To illustrate the rules for placemarker preprocessing tokens, the sequence
-\begin{codeblock}
-#define t(x,y,z) x ## y ## z
-int j[] = { t(1,2,3), t(,4,5), t(6,,7), t(8,9,),
-  t(10,,), t(,11,), t(,,12), t(,,) };
-\end{codeblock}
-results in
-\begin{codeblock}
-int j[] = { 123, 45, 67, 89,
-  10, 11, 12, };
-\end{codeblock}
-\end{example}
-
-\rSec2[cpp.rescan]{Rescanning and further replacement}%
-\indextext{macro!rescanning and replacement}%
-\indextext{rescanning and replacement|see{macro, rescanning and replacement}}
-
-\pnum
-After all parameters in the replacement list have been substituted and \tcode{\#} and \tcode{\#\#} processing has taken
-place, all placemarker preprocessing tokens are removed. Then
-the resulting preprocessing token sequence is rescanned, along with all
-subsequent preprocessing tokens of the source file, for more macro names
-to replace.
-
-\pnum
-\begin{example}
-The sequence
-\begin{codeblock}
-#define x       3
-#define f(a)    f(x * (a))
-#undef  x
-#define x       2
-#define g       f
-#define z       z[0]
-#define h       g(~
-#define m(a)    a(w)
-#define w       0,1
-#define t(a)    a
-#define p()     int
-#define q(x)    x
-#define r(x,y)  x ## y
-#define str(x)  # x
-
-f(y+1) + f(f(z)) % t(t(g)(0) + t)(1);
-g(x+(3,4)-w) | h 5) & m
-    (f)^m(m);
-p() i[q()] = { q(1), r(2,3), r(4,), r(,5), r(,) };
-char c[2][6] = { str(hello), str() };
-\end{codeblock}
-results in
-\begin{codeblock}
-f(2 * (y+1)) + f(2 * (f(2 * (z[0])))) % f(2 * (0)) + t(1);
-f(2 * (2+(3,4)-0,1)) | f(2 * (~ 5)) & f(2 * (0,1))^m(0,1);
-int i[] = { 1, 23, 4, 5, };
-char c[2][6] = { "hello", "" };
-\end{codeblock}
-\end{example}
-
-\pnum
-If the name of the macro being replaced is found during this scan of
-the replacement list
-(not including the rest of the source file's preprocessing tokens),
-it is not replaced.
-Furthermore,
-if any nested replacements encounter the name of the macro being replaced,
-it is not replaced.
-These nonreplaced macro name preprocessing tokens are no longer available
-for further replacement even if they are later (re)examined in contexts
-in which that macro name preprocessing token would otherwise have been
-replaced.
-
-\pnum
-The resulting completely macro-replaced preprocessing token sequence
-is not processed as a preprocessing directive even if it resembles one,
-but all pragma unary operator expressions within it are then processed as
-specified in~\ref{cpp.pragma.op} below.
-
-\rSec2[cpp.scope]{Scope of macro definitions}%
-\indextext{macro!scope of definition}%
-\indextext{scope!macro definition|see{macro, scope of definition}}
-
-\pnum
-A macro definition lasts
-(independent of block structure)
-until a corresponding
-\tcode{\#undef}
-directive is encountered or
-(if none is encountered)
-until the end of the translation unit.
-Macro definitions have no significance after translation phase 4.
-
-\pnum
-A preprocessing directive of the form
-\begin{ncsimplebnf}
-\terminal{\# undef} identifier new-line
-\indextext{\idxcode{\#undef}}%
-\end{ncsimplebnf}
-causes the specified identifier no longer to be defined as a macro name.
-It is ignored if the specified identifier is not currently defined as
-a macro name.
-
-\indextext{macro!replacement|)}
-
-\rSec1[cpp.line]{Line control}%
-\indextext{preprocessing directive!line control}%
-\indextext{\idxcode{\#line}|see{preprocessing directive, line control}}
-
-\pnum
-The \grammarterm{string-literal} of a
-\tcode{\#line}
-directive, if present,
-shall be a character string literal.
-
-\pnum
-The
-\defn{line number}
-of the current source line is
-the line number of the current physical source line,
-i.e., it is one greater than
-the number of new-line characters read or introduced
-in translation phase 1\iref{lex.phases}
-while processing the source file to the current preprocessing token.
-
-\pnum
-A preprocessing directive of the form
-\begin{ncsimplebnf}
-\terminal{\# line} digit-sequence new-line
-\end{ncsimplebnf}
-causes the implementation to behave as if
-the following sequence of source lines begins with a
-source line that has a line number as specified
-by the digit sequence (interpreted as a decimal integer).
-If the digit sequence specifies zero
-or a number greater than 2147483647,
-the behavior is undefined.
-
-\pnum
-A preprocessing directive of the form
-\begin{ncsimplebnf}
-\terminal{\# line} digit-sequence \terminal{"} \opt{s-char-sequence} \terminal{"} new-line
-\end{ncsimplebnf}
-sets the presumed line number similarly and changes the
-presumed name of the source file to be the contents
-of the character string literal.
-
-\pnum
-A preprocessing directive of the form
-\begin{ncsimplebnf}
-\terminal{\# line} pp-tokens new-line
-\end{ncsimplebnf}
-(that does not match one of the two previous forms)
-is permitted.
-The preprocessing tokens after
-\tcode{line}
-on the directive are processed just as in normal text
-(each identifier currently defined as a macro name is replaced by its
-replacement list of preprocessing tokens).
-If the directive resulting after all replacements does not match
-one of the two previous forms, the behavior is undefined;
-otherwise, the result is processed as appropriate.
-
-\rSec1[cpp.error]{Diagnostic directives}%
-\indextext{preprocessing directive!error}%
-\indextext{preprocessing directive!diagnostic}%
-\indextext{preprocessing directive!warning}%
-\indextext{\idxcode{\#error}|see{preprocessing directive, error}}
-
-\pnum
-A preprocessing directive of the form
-\begin{ncsimplebnf}
-\terminal{\# error} \opt{pp-tokens} new-line
-\end{ncsimplebnf}
-renders the program ill-formed.
-A preprocessing directive of the form
-\begin{ncsimplebnf}
-\terminal{\# warning} \opt{pp-tokens} new-line
-\end{ncsimplebnf}
-requires the implementation to produce at least one diagnostic message
-for the preprocessing translation unit\iref{intro.compliance.general}.
-\recommended
-Any diagnostic message caused by either of these directives
-should include the specified sequence of preprocessing tokens.
-
-\rSec1[cpp.pragma]{Pragma directive}%
-\indextext{preprocessing directive!pragma}%
-\indextext{\idxcode{\#pragma}|see{preprocessing directive, pragma}}
-
-\pnum
-A preprocessing directive of the form
-\begin{ncsimplebnf}
-\terminal{\# pragma} \opt{pp-tokens} new-line
-\end{ncsimplebnf}
-causes the implementation to behave
-in an \impldef{\tcode{\#pragma}} manner.
-The behavior may cause translation to fail or cause the translator or
-the resulting program to behave in a non-conforming manner.
-Any pragma that is not recognized by the implementation is ignored.
-
-\rSec1[cpp.null]{Null directive}%
-\indextext{preprocessing directive!null}
-
-\pnum
-A preprocessing directive of the form
-\begin{ncsimplebnf}
-\terminal{\#} new-line
-\end{ncsimplebnf}
-has no effect.
-
-\rSec1[cpp.predefined]{Predefined macro names}
-\indextext{macro!predefined}%
-\indextext{name!predefined macro|see{macro, predefined}}
-
-\pnum
-The following macro names shall be defined by the implementation:
-
-\begin{description}
-
-\item
-\indextext{\idxxname{cplusplus}}%
-\xname{cplusplus}\\
-The integer literal \tcode{\cppver}.
-\begin{note}
-Future revisions of this document will
-replace the value of this macro with a greater value.
-\end{note}
-
-\item The names listed in \tref{cpp.predefined.ft}.\\
-The macros defined in \tref{cpp.predefined.ft} shall be defined to
-the corresponding integer literal.
-\begin{note}
-Future revisions of this document might replace
-the values of these macros with greater values.
-\end{note}
-
-\item
-\indextext{__date__@\mname{DATE}}%
-\mname{DATE}\\
-The date of translation of the source file:
-a character string literal of the form
-\tcode{"Mmm~dd~yyyy"},
-where the names of the months are the same as those generated
-by the
-\tcode{asctime}
-function,
-and the first character of
-\tcode{dd}
-is a space character if the value is less than 10.
-If the date of translation is not available,
-an \impldef{text of \mname{DATE} when date of translation is not available} valid date
-shall be supplied.
-
-\item
-\indextext{__file__@\mname{FILE}}%
-\mname{FILE}\\
-The presumed name of the current source file (a character string
-literal).
-\begin{footnote}
-The presumed source file name can be changed by the \tcode{\#line} directive.
-\end{footnote}
-
-\item
-\indextext{__line__@\mname{LINE}}%
-\mname{LINE}\\
-The presumed line number (within the current source file) of the current source line
-(an integer literal).
-\begin{footnote}
-The presumed line number can be changed by the \tcode{\#line} directive.
-\end{footnote}
-
-\item
-\indextext{__stdc_hosted__@\mname{STDC_HOSTED}}%
-\indextext{implementation!hosted}%
-\indextext{implementation!freestanding}%
-\mname{STDC_HOSTED}\\
-The integer literal \tcode{1}
-if the implementation is a hosted implementation or
-the integer literal \tcode{0}
-if it is a freestanding implementation\iref{intro.compliance}.
-
-\item
-\indextext{__stdcpp_default_new_alignment__@\mname{STDCPP_DEFAULT_NEW_ALIGNMENT}}%
-\mname{STDCPP_DEFAULT_NEW_ALIGNMENT}\\
-An integer literal of type \tcode{std::size_t}
-whose value is the alignment guaranteed
-by a call to \tcode{operator new(std::size_t)}
-or \tcode{operator new[](std::size_t)}.
-\begin{note}
-Larger alignments will be passed to
-\tcode{operator new(std::size_t, std::align_val_t)}, etc.\iref{expr.new}.
-\end{note}
-
-\item
-\indextext{__stdcpp_float16_t__@\mname{STDCPP_FLOAT16_T}}%
-\mname{STDCPP_FLOAT16_T}\\
-Defined as the integer literal \tcode{1}
-if and only if the implementation supports
-the \IsoFloatUndated{} floating-point interchange format binary16
-as an extended floating-point type\iref{basic.extended.fp}.
-
-\item
-\indextext{__stdcpp_float32_t__@\mname{STDCPP_FLOAT32_T}}%
-\mname{STDCPP_FLOAT32_T}\\
-Defined as the integer literal \tcode{1}
-if and only if the implementation supports
-the \IsoFloatUndated{} floating-point interchange format binary32
-as an extended floating-point type.
-
-\item
-\indextext{__stdcpp_float64_t__@\mname{STDCPP_FLOAT64_T}}%
-\mname{STDCPP_FLOAT64_T}\\
-Defined as the integer literal \tcode{1}
-if and only if the implementation supports
-the \IsoFloatUndated{} floating-point interchange format binary64
-as an extended floating-point type.
-
-\item
-\indextext{__stdcpp_float128_t__@\mname{STDCPP_FLOAT128_T}}%
-\mname{STDCPP_FLOAT128_T}\\
-Defined as the integer literal \tcode{1}
-if and only if the implementation supports
-the \IsoFloatUndated{} floating-point interchange format binary128
-as an extended floating-point type.
-
-\item
-\indextext{__stdcpp_bfloat16_t__@\mname{STDCPP_BFLOAT16_T}}%
-\mname{STDCPP_BFLOAT16_T}\\
-Defined as the integer literal \tcode{1}
-if and only if the implementation supports an extended floating-point type
-with the properties of the \grammarterm{typedef-name} \tcode{std::bfloat16_t}
-as described in \ref{basic.extended.fp}.
-
-\item
-\indextext{__time__@\mname{TIME}}%
-\mname{TIME}\\
-The time of translation of the source file:
-a character string literal of the form
-\tcode{"hh:mm:ss"}
-as in the time generated by the
-\tcode{asctime}
-function.
-If the time of translation is not available,
-an \impldef{text of \mname{TIME} when time of translation is not available} valid time shall be supplied.
-\end{description}
-
-\indextext{macro!feature-test}%
-\indextext{feature-test macro|see{macro, feature-test}}%
-\begin{LongTable}{Feature-test macros}{cpp.predefined.ft}{ll}
-\\ \topline
-\lhdr{Macro name} & \rhdr{Value} \\ \capsep
-\endfirsthead
-\continuedcaption \\
-\hline
-\lhdr{Name} & \rhdr{Value} \\ \capsep
-\endhead
-\defnxname{cpp_aggregate_bases}                   & \tcode{201603L} \\ \rowsep
-\defnxname{cpp_aggregate_nsdmi}                   & \tcode{201304L} \\ \rowsep
-\defnxname{cpp_aggregate_paren_init}              & \tcode{201902L} \\ \rowsep
-\defnxname{cpp_alias_templates}                   & \tcode{200704L} \\ \rowsep
-\defnxname{cpp_aligned_new}                       & \tcode{201606L} \\ \rowsep
-\defnxname{cpp_attributes}                        & \tcode{200809L} \\ \rowsep
-\defnxname{cpp_auto_cast}                         & \tcode{202110L} \\ \rowsep
-\defnxname{cpp_binary_literals}                   & \tcode{201304L} \\ \rowsep
-\defnxname{cpp_capture_star_this}                 & \tcode{201603L} \\ \rowsep
-\defnxname{cpp_char8_t}                           & \tcode{202207L} \\ \rowsep
-\defnxname{cpp_concepts}                          & \tcode{202002L} \\ \rowsep
-\defnxname{cpp_conditional_explicit}              & \tcode{201806L} \\ \rowsep
-\defnxname{cpp_constexpr}                         & \tcode{202406L} \\ \rowsep
-\defnxname{cpp_constexpr_dynamic_alloc}           & \tcode{201907L} \\ \rowsep
-\defnxname{cpp_constexpr_exceptions}              & \tcode{202411L} \\ \rowsep
-\defnxname{cpp_constexpr_in_decltype}             & \tcode{201711L} \\ \rowsep
-\defnxname{cpp_consteval}                         & \tcode{202211L} \\ \rowsep
-\defnxname{cpp_constinit}                         & \tcode{201907L} \\ \rowsep
-\defnxname{cpp_decltype}                          & \tcode{200707L} \\ \rowsep
-\defnxname{cpp_decltype_auto}                     & \tcode{201304L} \\ \rowsep
-\defnxname{cpp_deduction_guides}                  & \tcode{201907L} \\ \rowsep
-\defnxname{cpp_delegating_constructors}           & \tcode{200604L} \\ \rowsep
-\defnxname{cpp_deleted_function}                  & \tcode{202403L} \\ \rowsep
-\defnxname{cpp_designated_initializers}           & \tcode{201707L} \\ \rowsep
-\defnxname{cpp_enumerator_attributes}             & \tcode{201411L} \\ \rowsep
-\defnxname{cpp_explicit_this_parameter}           & \tcode{202110L} \\ \rowsep
-\defnxname{cpp_fold_expressions}                  & \tcode{201603L} \\ \rowsep
-\defnxname{cpp_generic_lambdas}                   & \tcode{201707L} \\ \rowsep
-\defnxname{cpp_guaranteed_copy_elision}           & \tcode{201606L} \\ \rowsep
-\defnxname{cpp_hex_float}                         & \tcode{201603L} \\ \rowsep
-\defnxname{cpp_if_consteval}                      & \tcode{202106L} \\ \rowsep
-\defnxname{cpp_if_constexpr}                      & \tcode{201606L} \\ \rowsep
-\defnxname{cpp_impl_coroutine}                    & \tcode{201902L} \\ \rowsep
-\defnxname{cpp_impl_destroying_delete}            & \tcode{201806L} \\ \rowsep
-\defnxname{cpp_impl_three_way_comparison}         & \tcode{201907L} \\ \rowsep
-\defnxname{cpp_implicit_move}                     & \tcode{202207L} \\ \rowsep
-\defnxname{cpp_inheriting_constructors}           & \tcode{201511L} \\ \rowsep
-\defnxname{cpp_init_captures}                     & \tcode{201803L} \\ \rowsep
-\defnxname{cpp_initializer_lists}                 & \tcode{200806L} \\ \rowsep
-\defnxname{cpp_inline_variables}                  & \tcode{201606L} \\ \rowsep
-\defnxname{cpp_lambdas}                           & \tcode{200907L} \\ \rowsep
-\defnxname{cpp_modules}                           & \tcode{201907L} \\ \rowsep
-\defnxname{cpp_multidimensional_subscript}        & \tcode{202211L} \\ \rowsep
-\defnxname{cpp_named_character_escapes}           & \tcode{202207L} \\ \rowsep
-\defnxname{cpp_namespace_attributes}              & \tcode{201411L} \\ \rowsep
-\defnxname{cpp_noexcept_function_type}            & \tcode{201510L} \\ \rowsep
-\defnxname{cpp_nontype_template_args}             & \tcode{201911L} \\ \rowsep
-\defnxname{cpp_nontype_template_parameter_auto}   & \tcode{201606L} \\ \rowsep
-\defnxname{cpp_nsdmi}                             & \tcode{200809L} \\ \rowsep
-\defnxname{cpp_pack_indexing}                     & \tcode{202311L} \\ \rowsep
-\defnxname{cpp_placeholder_variables}             & \tcode{202306L} \\ \rowsep
-\defnxname{cpp_range_based_for}                   & \tcode{202211L} \\ \rowsep
-\defnxname{cpp_raw_strings}                       & \tcode{200710L} \\ \rowsep
-\defnxname{cpp_ref_qualifiers}                    & \tcode{200710L} \\ \rowsep
-\defnxname{cpp_return_type_deduction}             & \tcode{201304L} \\ \rowsep
-\defnxname{cpp_rvalue_references}                 & \tcode{200610L} \\ \rowsep
-\defnxname{cpp_size_t_suffix}                     & \tcode{202011L} \\ \rowsep
-\defnxname{cpp_sized_deallocation}                & \tcode{201309L} \\ \rowsep
-\defnxname{cpp_static_assert}                     & \tcode{202306L} \\ \rowsep
-\defnxname{cpp_static_call_operator}              & \tcode{202207L} \\ \rowsep
-\defnxname{cpp_structured_bindings}               & \tcode{202411L} \\ \rowsep
-\defnxname{cpp_template_template_args}            & \tcode{201611L} \\ \rowsep
-\defnxname{cpp_threadsafe_static_init}            & \tcode{200806L} \\ \rowsep
-\defnxname{cpp_unicode_characters}                & \tcode{200704L} \\ \rowsep
-\defnxname{cpp_unicode_literals}                  & \tcode{200710L} \\ \rowsep
-\defnxname{cpp_user_defined_literals}             & \tcode{200809L} \\ \rowsep
-\defnxname{cpp_using_enum}                        & \tcode{201907L} \\ \rowsep
-\defnxname{cpp_variable_templates}                & \tcode{201304L} \\ \rowsep
-\defnxname{cpp_variadic_friend}                   & \tcode{202403L} \\ \rowsep
-\defnxname{cpp_variadic_templates}                & \tcode{200704L} \\ \rowsep
-\defnxname{cpp_variadic_using}                    & \tcode{201611L} \\
-\end{LongTable}
-
-\pnum
-The following macro names are conditionally defined by the implementation:
-
-\begin{description}
-\item
-\indextext{__stdc__@\mname{STDC}}%
-\mname{STDC}\\
-Whether \mname{STDC} is predefined and if so, what its value is,
-are \impldef{definition and meaning of \mname{STDC}}.
-
-\item
-\indextext{__stdc_mb_might_neq_wc__@\mname{STDC_MB_MIGHT_NEQ_WC}}%
-\mname{STDC_MB_MIGHT_NEQ_WC}\\
-The integer literal \tcode{1}, intended to indicate that, in the encoding for
-\keyword{wchar_t}, a member of the basic character set need not have a code value equal to
-its value when used as the lone character in an ordinary character literal.
-
-\item
-\indextext{__stdc_version__@\mname{STDC_VERSION}}%
-\mname{STDC_VERSION}\\
-Whether \mname{STDC_VERSION} is predefined and if so, what its value is,
-are \impldef{definition and meaning of \mname{STDC_VERSION}}.
-
-\item
-\indextext{__stdc_iso_10646__@\mname{STDC_ISO_10646}}%
-\mname{STDC_ISO_10646}\\
-An integer literal of the form \tcode{yyyymmL}
-(for example, \tcode{199712L}).
-Whether \mname{STDC_ISO_10646} is predefined and
-if so, what its value is,
-are \impldef{presence and value of \mname{STDC_ISO_10646}}.
-
-\item
-\indextext{__stdcpp_threads__@\mname{STDCPP_THREADS}}%
-\mname{STDCPP_THREADS}\\
-Defined, and has the value integer literal 1, if and only if a program
-can have more than one thread of execution\iref{intro.multithread}.
-
-\end{description}
-
-\pnum
-The values of the predefined macros
-(except for
-\mname{FILE}
-and
-\mname{LINE})
-remain constant throughout the translation unit.
-
-\pnum
-If any of the pre-defined macro names in this subclause,
-or the identifier
-\tcode{defined},
-is the subject of a
-\tcode{\#define}
-or a
-\tcode{\#undef}
-preprocessing directive,
-the behavior is undefined.
-Any other predefined macro names shall begin with a
-leading underscore followed by an uppercase letter or a second
-underscore.
-
-\rSec1[cpp.pragma.op]{Pragma operator}%
-\indextext{macro!pragma operator}%
-\indextext{operator!pragma|see{macro, pragma operator}}
-
-\pnum
-A unary operator expression of the form:
-\begin{ncbnf}
-\terminal{_Pragma} \terminal{(} string-literal \terminal{)}
-\end{ncbnf}
-is processed as follows: The \grammarterm{string-literal} is \defnx{destringized}{destringization}
-by deleting the \tcode{L} prefix, if present, deleting the leading and trailing
-double-quotes, replacing each escape sequence \tcode{\textbackslash"} by a double-quote, and
-replacing each escape sequence \tcode{\textbackslash\textbackslash} by a single
-backslash. The resulting sequence of characters is processed through translation phase 3
-to produce preprocessing tokens that are executed as if they were the
-\grammarterm{pp-tokens} in a pragma directive. The original four preprocessing
-tokens in the unary operator expression are removed.
-
-\pnum
-\begin{example}
-\begin{codeblock}
-#pragma listing on "..\listing.dir"
-\end{codeblock}
-can also be expressed as:
-\begin{codeblock}
-_Pragma ( "listing on \"..\\listing.dir\"" )
-\end{codeblock}
-The latter form is processed in the same way whether it appears literally
-as shown, or results from macro replacement, as in:
-\begin{codeblock}
-#define LISTING(x) PRAGMA(listing on #x)
-#define PRAGMA(x) _Pragma(#x)
-
-LISTING( ..\listing.dir )
-\end{codeblock}
-\end{example}
-\indextext{preprocessing directive|)}
+    \nontermdef{header-name-tokens}\br
+        string-literal\br
+        \terminal{<} h-pp-tokens \terminal{>}
+    \end{bnf}
+    
+    \indextext{\idxxname{has_include}}%
+    \begin{bnf}
+    \nontermdef{has-include-expression}\br
+        \terminal{\xname{has_include}} \terminal{(} header-name \terminal{)}\br
+        \terminal{\xname{has_include}} \terminal{(} header-name-tokens \terminal{)}
+    \end{bnf}
+    
+    \indextext{\idxxname{has_cpp_attribute}}%
+    \begin{bnf}
+    \nontermdef{has-attribute-expression}\br
+        \terminal{\xname{has_cpp_attribute} (} pp-tokens \terminal{)}
+    \end{bnf}
+    
+    \pnum
+    控制条件包含的表达式
+    应该是一个整型常量表达式，除了
+    标识符
+    （包括那些在词法上与关键字相同的标识符）
+    将按照下面的描述进行解释
+    \begin{footnote}
+    因为控制常量表达式是在
+    翻译阶段4期间求值的，
+    所有标识符要么是宏名，要么不是宏名——
+    根本没有关键字、枚举常量等。
+    \end{footnote}
+    并且它可能包含零个或多个 \grammarterm{defined-macro-expression}{s} 和/或
+    \grammarterm{has-include-expression}{s} 和/或
+    \grammarterm{has-attribute-expression}{s} 作为一元运算符表达式。
+    
+    \pnum
+    如果标识符当前被定义为
+    宏名，则 \grammarterm{defined-macro-expression} 的计算结果为 \tcode{1}
+    （也就是说，如果它是预定义的，
+    或者如果它有一个或多个活动宏定义\iref{cpp.import}，
+    例如因为它
+    已经是一个
+    \tcode{\#define}
+    预处理指令的主题，
+    而没有中间的
+    具有相同主题标识符的 \tcode{\#undef}
+    指令），否则为 \tcode{0}。
+    
+    \pnum
+    仅当第一种形式不匹配时，才考虑第二种形式的 \grammarterm{has-include-expression}，
+    在这种情况下，预处理记号的处理方式与普通文本中的处理方式相同。
+    
+    \pnum
+    在每个包含的 \grammarterm{has-include-expression} 中，
+    由带括号的预处理记号序列
+    标识的头文件或源文件
+    将被搜索，就像该预处理记号序列
+    是 \tcode{\#include} 指令中的 \grammarterm{pp-tokens} 一样，
+    只是不会执行进一步的宏扩展。
+    如果这样的指令不满足
+    \tcode{\#include} 指令的语法要求，则程序是病态的。
+    如果搜索源文件成功，则 \grammarterm{has-include-expression} 的计算结果为
+    \tcode{1}，如果搜索失败，则计算结果为 \tcode{0}。
+    
+    \pnum
+    如果实现支持
+    通过解释 \grammarterm{pp-tokens}
+    （在宏扩展之后）作为 \grammarterm{attribute-token}
+    指定的名称的属性，
+    则每个 \grammarterm{has-attribute-expression} 将被替换为
+    与 \grammarterm{integer-literal} 形式匹配的
+    非零 \grammarterm{pp-number}，
+    否则替换为 \tcode{0}。
+    如果 \grammarterm{pp-tokens}
+    与 \grammarterm{attribute-token} 的形式不匹配，则程序是病态的。
+    
+    \pnum
+    对于本文档中指定的属性，
+    \grammarterm{has-attribute-expression} 的值
+    是 \tcode{0} 还是由 \tref{cpp.cond.ha} 给出，这是
+    \impldef{标准属性的 \grammarterm{has-attribute-expression} 值}。
+    对于实现识别的其他属性，
+    其值是
+    \impldef{非标准属性的 \grammarterm{has-attribute-expression} 值}。
+    \begin{note}
+    预计
+    可以通过任何非零结果检测属性的可用性。
+    \end{note}
+    
+    \begin{floattable}{\xname{has_cpp_attribute} 的值}{cpp.cond.ha}
+    {ll}
+    \topline
+    \lhdr{属性} & \rhdr{值} \\ \rowsep
+    \tcode{assume}                & \tcode{202207L} \\
+    \tcode{carries_dependency}    & \tcode{200809L} \\
+    \tcode{deprecated}            & \tcode{201309L} \\
+    \tcode{fallthrough}           & \tcode{201603L} \\
+    \tcode{likely}                & \tcode{201803L} \\
+    \tcode{maybe_unused}          & \tcode{201603L} \\
+    \tcode{no_unique_address}     & \tcode{201803L} \\
+    \tcode{nodiscard}             & \tcode{201907L} \\
+    \tcode{noreturn}              & \tcode{200809L} \\
+    \tcode{unlikely}              & \tcode{201803L} \\
+    \end{floattable}
+    
+    \pnum
+    \tcode{\#ifdef}、\tcode{\#ifndef}、\tcode{\#elifdef} 和 \tcode{\#elifndef}
+    指令，以及
+    \tcode{defined} 条件包含运算符，
+    应将 \xname{has_include} 和 \xname{has_cpp_attribute}
+    视为已定义宏的名称。
+    标识符 \xname{has_include} 和 \xname{has_cpp_attribute}
+    不应出现在本子条款中未提及的任何上下文中。
+    
+    \pnum
+    在所有宏替换发生后，
+    剩余的每个预处理记号（在将成为控制表达式的预处理记号列表中）
+    都应该具有记号的词法形式\iref{lex.token}。
+    
+    \pnum
+    以下形式的预处理指令
+    \begin{ncsimplebnf}\obeyspaces
+    \indextext{\idxcode{\#if}}%
+    \terminal{\# if     } constant-expression new-line \opt{group}\br
+    \indextext{\idxcode{\#elif}}%
+    \terminal{\# elif   } constant-expression new-line \opt{group}
+    \end{ncsimplebnf}
+    检查控制常量表达式的计算结果是否为非零。
+    
+    \pnum
+    在求值之前，
+    将成为控制常量表达式的预处理记号列表中的
+    宏调用将被替换
+    （除了那些被
+    \tcode{defined}
+    一元运算符修改的宏名），
+    就像在普通文本中一样。
+    如果预处理记号
+    \tcode{defined}
+    是作为此替换过程的结果生成的，
+    或者
+    \tcode{defined}
+    一元运算符的使用在宏替换之前与两种指定形式之一不匹配，
+    则行为是未定义的。
+    
+    \pnum
+    在由于宏扩展和
+    \grammarterm{defined-macro-expression}{s}，
+    \grammarterm{has-include-expression}{s}，和
+    \grammarterm{has-attribute-expression}{s}
+    的求值而进行的所有替换都已执行后，
+    所有剩余的标识符和关键字，
+    除了
+    \tcode{true}
+    和
+    \tcode{false}，
+    将被替换为 \grammarterm{pp-number}
+    \tcode{0}，
+    然后每个预处理记号都将转换为一个记号。
+    \begin{note}
+    替代
+    记号\iref{lex.digraph} 不是标识符，
+    即使它的拼写完全由字母和下划线组成。
+    因此，它不受此替换的影响。
+    \end{note}
+    
+    \pnum
+    产生的记号组成了控制常量表达式，
+    该表达式根据~\ref{expr.const} 的规则进行求值，
+    使用至少具有~\ref{support.limits} 中指定的范围的算术运算。
+    为了进行此记号转换和求值，
+    所有有符号和无符号整数类型
+    都表现为分别具有与
+    \tcode{intmax_t} 或 \tcode{uintmax_t}\iref{cstdint.syn} 相同的表示形式。
+    \begin{note}
+    因此，在
+    \tcode{std::numeric_limits<int>::max()} 为 \tcode{0x7FFF}
+    且 \tcode{std::numeric_limits<unsigned int>::max()} 为 \tcode{0xFFFF} 的实现上，
+    整数文字 \tcode{0x8000} 在 \tcode{\#if}
+    表达式中是有符号且为正的，即使它在翻译阶段
+    7\iref{lex.phases} 中是无符号的。
+    \end{note}
+    这包括根据 \ref{lex.ccon} 中的规则解释 \grammarterm{character-literal}。
+    \begin{note}
+    文字的关联字符编码在 \tcode{\#if} 和 \tcode{\#elif} 指令中以及在任何表达式中都是相同的。
+    \end{note}
+    每个具有类型
+    \tcode{bool}
+    的子表达式在继续处理之前都会进行整型提升。
+    
+    \pnum
+    以下形式的预处理指令
+    \begin{ncsimplebnf}\obeyspaces
+    \terminal{\# ifdef   } identifier new-line \opt{group}\br
+    \indextext{\idxcode{\#ifdef}}%
+    \terminal{\# ifndef  } identifier new-line \opt{group}\br
+    \indextext{\idxcode{\#ifndef}}%
+    \terminal{\# elifdef } identifier new-line \opt{group}\br
+    \indextext{\idxcode{\#elifdef}}%
+    \terminal{\# elifndef} identifier new-line \opt{group}
+    \indextext{\idxcode{\#elifndef}}%
+    \end{ncsimplebnf}
+    检查标识符当前是否被定义为宏名。
+    它们的条件分别等价于
+    \tcode{\#if} \tcode{defined} \grammarterm{identifier}，
+    \tcode{\#if} \tcode{!defined} \grammarterm{identifier}，
+    \tcode{\#elif} \tcode{defined} \grammarterm{identifier}，和
+    \tcode{\#elif} \tcode{!defined} \grammarterm{identifier}。
+    
+    \pnum
+    每个指令的条件都按顺序检查。
+    如果它的计算结果为假（零），
+    则它控制的组将被跳过：
+    指令只处理到确定
+    指令的名称，以便跟踪嵌套条件
+    的级别；
+    指令的其余预处理记号将被忽略，
+    组中的其他预处理记号也将被忽略。
+    只有第一个
+    控制条件的计算结果为真（非零）的组才会被处理；
+    任何后续的组都将被跳过，并且它们的控制指令
+    将被处理，就好像它们在一个被跳过的组中一样。
+    如果没有一个条件的计算结果为真，
+    并且有一个
+    \tcode{\#else}
+    \indextext{\idxcode{\#else}}%
+    指令，
+    则由 \tcode{\#else}
+    控制的组将被处理；如果没有
+    \tcode{\#else}
+    指令，则所有组直到
+    \tcode{\#endif}
+    \indextext{\idxcode{\#endif}}%
+    都将被跳过。%
+    \begin{footnote}
+    正如语法所示，
+    预处理记号不能在
+    \tcode{\#else}
+    或
+    \tcode{\#endif}
+    指令之后，终止换行符之前跟随。
+    但是，
+    注释可以出现在源文件中的任何位置，
+    包括在预处理指令中。
+    \end{footnote}
+    
+    \pnum
+    \begin{example}
+    这演示了一种仅当库 \tcode{optional} 工具可用时才包含它的方法：
+    
+    \begin{codeblock}
+    #if __has_include(<optional>)
+    #  include <optional>
+    #  if __cpp_lib_optional >= 201603
+    #    define have_optional 1
+    #  endif
+    #elif __has_include(<experimental/optional>)
+    #  include <experimental/optional>
+    #  if __cpp_lib_experimental_optional >= 201411
+    #    define have_optional 1
+    #    define experimental_optional 1
+    #  endif
+    #endif
+    #ifndef have_optional
+    #  define have_optional 0
+    #endif
+    \end{codeblock}
+    \end{example}
+    
+    \pnum
+    \begin{example}
+    这演示了一种仅当属性 \tcode{[[acme::deprecated]]} 可用时才使用它的方法。
+    \begin{codeblock}
+    #if __has_cpp_attribute(acme::deprecated)
+    #  define ATTR_DEPRECATED(msg) [[acme::deprecated(msg)]]
+    #else
+    #  define ATTR_DEPRECATED(msg) [[deprecated(msg)]]
+    #endif
+    ATTR_DEPRECATED("This function is deprecated") void anvil();
+    \end{codeblock}
+    \end{example}
+    
+    \rSec1[cpp.include]{源文件包含}
+    \indextext{preprocessing directive!header inclusion}
+    \indextext{preprocessing directive!source-file inclusion}
+    \indextext{inclusion!source file|see{preprocessing directive, source-file inclusion}}%
+    \indextext{\idxcode{\#include}}%
+    
+    \pnum
+    \tcode{\#include}
+    指令应标识一个可以由实现处理的头文件或源文件。
+    
+    \pnum
+    以下形式的预处理指令
+    \begin{ncsimplebnf}
+    \terminal{\# include <} h-char-sequence \terminal{>} new-line
+    \end{ncsimplebnf}
+    搜索一系列
+    \impldef{搜索头文件的位置序列}
+    位置，
+    以查找由
+    \tcode{<}
+    和
+    \tcode{>}
+    分隔符之间的指定序列唯一标识的头文件，
+    并导致该指令被头文件的全部内容替换。
+    如何指定位置
+    或标识头文件
+    是 \impldef{搜索 \tcode{<>} 头文件的位置}。
+    
+    \pnum
+    以下形式的预处理指令
+    \begin{ncsimplebnf}
+    \terminal{\# include "} q-char-sequence \terminal{"} new-line
+    \end{ncsimplebnf}
+    导致该指令被
+    \tcode{"}
+    分隔符之间的指定序列标识的
+    源文件的全部内容替换。
+    命名的源文件将以
+    \impldef{搜索包含的源文件的方式}
+    的方式进行搜索。
+    如果不支持此搜索，
+    或者搜索失败，
+    则该指令将被重新处理，就像它读取
+    \begin{ncsimplebnf}
+    \terminal{\# include <} h-char-sequence \terminal{>} new-line
+    \end{ncsimplebnf}
+    一样，具有来自原始指令的相同的包含序列（包括
+    \tcode{>}
+    字符，如果有）。
+    
+    \pnum
+    允许以下形式的预处理指令
+    \begin{ncsimplebnf}
+    \terminal{\# include} pp-tokens new-line
+    \end{ncsimplebnf}
+    （不匹配前两种形式之一）。
+    指令中
+    \tcode{include}
+    之后的预处理记号将像普通文本一样被处理
+    （即，当前定义为宏名的每个标识符都将被其
+    预处理记号的替换列表替换）。
+    如果所有替换后产生的指令与
+    前两种形式之一不匹配，则行为是
+    未定义的。
+    \begin{footnote}
+    请注意，相邻的 \grammarterm{string-literal} 不会被连接成
+    单个 \grammarterm{string-literal}
+    （参见~\ref{lex.phases} 中的翻译阶段）；
+    因此，导致两个 \grammarterm{string-literal} 的扩展是
+    无效指令。
+    \end{footnote}
+    将
+    \tcode{<}
+    和
+    \tcode{>}
+    预处理记号对或一对
+    \tcode{"}
+    字符之间的预处理记号序列组合成单个头文件名
+    预处理记号的方法是 \impldef{搜索 \tcode{""""} 头文件的位置}。
+    
+    \pnum
+    实现应为
+    由一个或多个
+    \grammarterm{nondigit}{s} 或 \grammarterm{digit}{s}\iref{lex.name}
+    后跟一个句点
+    (\tcode{.})
+    和一个 \grammarterm{nondigit}
+    组成的序列提供唯一的映射。
+    第一个字符不应是 \grammarterm{digit}。
+    实现可以忽略字母大小写的区别。
+    
+    \pnum
+    \tcode{\#include}
+    预处理指令可以出现在
+    由于另一个文件中的
+    \tcode{\#include}
+    指令而被读取的源文件中，
+    最多达到 \impldef{\tcode{\#include} 指令的嵌套限制} 嵌套限制。
+    
+    \pnum
+    如果由 \grammarterm{header-name} 标识的头文件
+    表示一个可导入的头文件\iref{module.import}，
+    则 \tcode{\#include} 预处理指令
+    是否会被替换为以下形式的 \tcode{import} 指令\iref{cpp.import}，这是
+    \impldef{是否将可导入头文件的源文件包含替换为 \tcode{import} 指令}
+    \begin{ncbnf}
+    \terminal{import} header-name \terminal{;} new-line
+    \end{ncbnf}
+    
+    \pnum
+    \begin{note}
+    实现可以提供一种机制，使任意
+    源文件可用于 \tcode{< >} 搜索。
+    但是，对实现提供的头文件使用 \tcode{< >} 形式，
+    对实现控制之外的源文件使用 \tcode{" "} 形式，
+    可以实现更广泛的可移植性。例如：
+    
+    \begin{codeblock}
+    #include <stdio.h>
+    #include <unistd.h>
+    #include "usefullib.h"
+    #include "myprog.h"
+    \end{codeblock}
+    
+    \end{note}
+    
+    \pnum
+    \begin{example}
+    这说明了宏替换的
+    \tcode{\#include}
+    指令：
+    
+    \begin{codeblock}
+    #if VERSION == 1
+        #define INCFILE  "vers1.h"
+    #elif VERSION == 2
+        #define INCFILE  "vers2.h"  // 等等
+    #else
+        #define INCFILE  "versN.h"
+    #endif
+    #include INCFILE
+    \end{codeblock}
+    \end{example}
+    
+    \rSec1[cpp.module]{模块指令}
+    \indextext{preprocessing directive!module}%
+    
+    \begin{bnf}
+    \nontermdef{pp-module}\br
+        \opt{\keyword{export}} \keyword{module} \opt{pp-tokens} \terminal{;} new-line
+    \end{bnf}
+    
+    \pnum
+    \grammarterm{pp-module} 不应
+    出现在 \tcode{module}
+    或（如果它是 \grammarterm{pp-module} 的第一个预处理记号）\tcode{export}
+    是定义为对象式宏的标识符的上下文中。
+    
+    \pnum
+    \grammarterm{pp-module} 的 \grammarterm{pp-tokens}（如果有）
+    应具有以下形式：
+    \begin{ncsimplebnf}
+    pp-module-name \opt{pp-module-partition} \opt{pp-tokens}
+    \end{ncsimplebnf}
+    其中 \grammarterm{pp-tokens}（如果有）不应以
+    \tcode{(} 预处理记号开头，并且
+    语法非终结符定义如下：
+    \begin{ncbnf}
+    \nontermdef{pp-module-name}\br
+        \opt{pp-module-name-qualifier} identifier
+    \end{ncbnf}
+    \begin{ncbnf}
+    \nontermdef{pp-module-partition}\br
+        \terminal{:} \opt{pp-module-name-qualifier} identifier
+    \end{ncbnf}
+    \begin{ncbnf}
+    \nontermdef{pp-module-name-qualifier}\br
+        identifier \terminal{.}\br
+        pp-module-name-qualifier identifier \terminal{.}
+    \end{ncbnf}
+    \grammarterm{pp-module-name} 或 \grammarterm{pp-module-partition} 中的任何 \grammarterm{identifier}
+    当前都不应被定义为对象式宏。
+    
+    \pnum
+    \tcode{module} 指令中 \tcode{module} 预处理记号之后的任何预处理记号
+    都将像普通文本一样被处理。
+    \begin{note}
+    当前定义为宏名的每个标识符
+    都将被其预处理记号的替换列表替换。
+    \end{note}
+    
+    \pnum
+    \tcode{module} 和 \tcode{export}（如果存在）预处理记号
+    将分别被替换为 \grammarterm{module-keyword} 和
+    \grammarterm{export-keyword} 预处理记号。
+    \begin{note}
+    这使得该行不再是指令，
+    因此在阶段4结束时不会被删除。
+    \end{note}
+    
+    \rSec1[cpp.import]{头文件单元导入}
+    \indextext{header unit!preprocessing}%
+    \indextext{preprocessing directive!import}%
+    \indextext{macro!import|(}%
+    
+    \begin{bnf}
+    \nontermdef{pp-import}\br
+        \opt{\keyword{export}} \keyword{import} header-name \opt{pp-tokens} \terminal{;} new-line\br
+        \opt{\keyword{export}} \keyword{import} header-name-tokens \opt{pp-tokens} \terminal{;} new-line\br
+        \opt{\keyword{export}} \keyword{import} pp-tokens \terminal{;} new-line
+    \end{bnf}
+    
+    \pnum
+    \grammarterm{pp-import} 不应
+    出现在 \tcode{import}
+    或（如果它是 \grammarterm{pp-import} 的第一个预处理记号）\tcode{export}
+    是定义为对象式宏的标识符的上下文中。
+    
+    \pnum
+    \tcode{import} \grammarterm{control-line} 中 \tcode{import} 预处理记号之后的预处理记号
+    将像普通文本一样被处理
+    （即，当前定义为宏名的每个标识符
+    都将被其预处理记号的替换列表替换）。
+    \begin{note}
+    与 \grammarterm{pp-import} 的前两种形式
+    匹配的 \tcode{import} 指令
+    指示预处理器从
+    由 \grammarterm{header-name} 表示的头文件单元\iref{module.import}
+    导入宏，
+    如下所述。
+    \end{note}
+    \indextext{point of!macro import|see{macro, point of import}}%
+    前两种形式的 \grammarterm{pp-import} 的 \defnx{宏导入点}{macro!point of import}
+    紧跟在终止 \grammarterm{pp-import} 的 \grammarterm{new-line} 之后。
+    仅当前两种形式不匹配时才考虑最后一种形式的 \grammarterm{pp-import}，并且
+    它没有宏导入点。
+    
+    \pnum
+    如果 \grammarterm{pp-import} 是由源文件包含产生的
+    （包括当 \tcode{\#include} 指令命名可导入头文件时产生的重写）
+    同时处理 \grammarterm{module-file} 的 \grammarterm{group}，
+    则程序是病态的。
+    
+    \pnum
+    在所有三种形式的 \grammarterm{pp-import} 中，
+    \tcode{import} 和 \tcode{export}（如果存在）预处理记号
+    将分别被替换为 \grammarterm{import-keyword} 和
+    \grammarterm{export-keyword} 预处理记号。
+    \begin{note}
+    这使得该行不再是指令，
+    因此在阶段4结束时不会被删除。
+    \end{note}
+    此外，在第二种形式的 \grammarterm{pp-import} 中，
+    将形成一个 \grammarterm{header-name} 记号，就像
+    \grammarterm{header-name-tokens}
+    是 \tcode{\#include} 指令的 \grammarterm{pp-tokens} 一样。
+    \grammarterm{header-name-tokens} 将被
+    \grammarterm{header-name} 记号替换。
+    \begin{note}
+    这确保了导入被
+    预处理器和后续翻译阶段一致地处理。
+    \end{note}
+    
+    \pnum
+    在程序中预处理每个翻译单元时遇到的每个 \tcode{\#define} 指令都会产生一个不同的
+    \defnx{宏定义}{macro!definition}。
+    \begin{note}
+    预定义宏名\iref{cpp.predefined}
+    不是由 \tcode{\#define} 指令引入的。
+    鼓励提供预定义其他宏的机制的实现
+    不将它们视为由 \tcode{\#define} 指令引入。
+    \end{note}
+    每个宏定义在
+    每个翻译单元中最多有一个定义点，最多有一个未定义点，如下所示：
+    \begin{itemize}
+    \item
+    \indextext{point of!macro definition|see{macro, point of definition}}%
+    翻译单元 $T$ 中宏定义的 \defnx{定义点}{macro!point of definition} 是
+    \begin{itemize}
+    \item
+    如果宏定义的 \tcode{\#define} 指令出现在 $T$ 中，
+    则为该指令出现的点，否则，
+    \item
+    如果宏名在词法上与关键字\iref{lex.key}
+    或 \grammarterm{identifier}{s} \tcode{module} 或 \tcode{import} 不同，
+    则为 $T$ 中包含宏定义定义点的头文件单元的第一个宏导入点（如果有）。
+    \end{itemize}
+    在后一种情况下，宏被称为
+    从头文件单元\defnx{导入}{macro!import}。
+    
+    \item
+    \indextext{point of!macro undefinition|see{macro, point of undefinition}}%
+    翻译单元中宏定义的 \defnx{未定义点}{macro!point of undefinition}
+    是在其定义点之后命名宏的 \tcode{\#undef} 指令出现的第一个点，
+    或者是包含宏定义未定义点的头文件单元的第一个
+    宏导入点，以先发生者为准（如果有）。
+    \end{itemize}
+    
+    \pnum
+    \indextext{active macro definition|see{macro, active}}%
+    如果宏定义在该翻译单元中具有位于该位置之前的定义点，
+    并且在该翻译单元中没有位于该位置之前的未定义点，则宏定义在源位置\defnx{活动}{macro!active}。
+    
+    \pnum
+    如果要替换或重新定义宏，并且该宏名有多个宏定义
+    处于活动状态，则所有活动的宏定义都应该是
+    同一宏的有效重定义\iref{cpp.replace}。
+    \begin{note}
+    \grammarterm{pp-import}{s} 的相对顺序与
+    特定宏定义是否活动无关。
+    \end{note}
+    
+    \pnum
+    \begin{example}
+    \begin{codeblocktu}{可导入头文件 \tcode{"a.h"}}
+    #define X 123   // \#1
+    #define Y 45    // \#2
+    #define Z a     // \#3
+    #undef X        // \tcode{"a.h"} 中 \#1 的未定义点
+    \end{codeblocktu}
+    
+    \begin{codeblocktu}{可导入头文件 \tcode{"b.h"}}
+    import "a.h";   // \tcode{"b.h"} 中 \#1、\#2 和 \#3 的定义点，\#1 的未定义点
+    #define X 456   // OK，\#1 不活动
+    #define Y 6     // 错误：\#2 活动
+    \end{codeblocktu}
+    
+    \begin{codeblocktu}{可导入头文件 \tcode{"c.h"}}
+    #define Y 45    // \#4
+    #define Z c     // \#5
+    \end{codeblocktu}
+    
+    \begin{codeblocktu}{可导入头文件 \tcode{"d.h"}}
+    import "c.h";   // \tcode{"d.h"} 中 \#4 和 \#5 的定义点
+    \end{codeblocktu}
+    
+    \begin{codeblocktu}{可导入头文件 \tcode{"e.h"}}
+    import "a.h";   // \tcode{"e.h"} 中 \#1、\#2 和 \#3 的定义点，\#1 的未定义点
+    import "d.h";   // \tcode{"e.h"} 中 \#4 和 \#5 的定义点
+    int a = Y;      // OK，活动宏定义 \#2 和 \#4 是有效的重定义
+    int c = Z;      // 错误：活动宏定义 \#3 和 \#5 不是 \tcode{Z} 的有效重定义
+    \end{codeblocktu}
+    
+    \begin{codeblocktu}{模块单元 \tcode{f}}
+    export module f;
+    export import "a.h";
+    
+    int a = Y;      // OK
+    \end{codeblocktu}
+    
+    \begin{codeblocktu}{翻译单元 \tcode{\#1}}
+    import f;
+    int x = Y;      // 错误：\tcode{Y} 既不是已定义的宏，也不是已声明的名称
+    \end{codeblocktu}
+    \end{example}
+    \indextext{macro!import|)}
+    
+    \rSec1[cpp.replace]{宏替换}%
+    
+    \rSec2[cpp.replace.general]{概述}%
+    \indextext{macro!replacement|(}%
+    \indextext{replacement!macro|see{macro, replacement}}%
+    \indextext{preprocessing directive!macro replacement|see{macro, replacement}}
+    
+    \pnum
+    \indextext{macro!replacement list}%
+    当且仅当两个替换列表中的
+    预处理记号具有
+    相同的数量、顺序、拼写和空白分隔时，它们才是相同的，
+    其中所有空白分隔都被认为是相同的。
+    
+    \pnum
+    当前定义为
+    \indextext{macro!object-like}%
+    对象式宏（见下文）的标识符可以被另一个
+    \tcode{\#define}
+    预处理指令重新定义，前提是第二个定义是
+    对象式宏定义，并且两个替换列表
+    相同，否则程序是病态的。
+    同样，当前定义为
+    \indextext{macro!function-like}%
+    函数式宏（见下文）的标识符可以被另一个
+    \tcode{\#define}
+    预处理指令重新定义，前提是第二个定义是
+    函数式宏定义，具有相同数量和拼写的
+    参数，
+    并且两个替换列表相同，
+    否则程序是病态的。
+    
+
+    \pnum
+    \begin{example}
+    以下序列是有效的：
+    \begin{codeblock}
+    #define OBJ_LIKE      (1-1)
+    #define OBJ_LIKE      @\tcode{/* 空白 */ (1-1) /* 其他 */}@
+    #define FUNC_LIKE(a)   ( a )
+    #define FUNC_LIKE( a )(     @\tcode{/* 注意空白 */ \textbackslash}@
+                    a @\tcode{/* 此行上的其他内容 */}@
+                      @\tcode{*/}@ )
+    \end{codeblock}
+    但以下重定义是无效的：
+    \begin{codeblock}
+    #define OBJ_LIKE    (0)         // 不同的记号序列
+    #define OBJ_LIKE    (1 - 1)     // 不同的空白
+    #define FUNC_LIKE(b) ( a )      // 不同的参数用法
+    #define FUNC_LIKE(b) ( b )      // 不同的参数拼写
+    \end{codeblock}
+    \end{example}
+    
+    \pnum
+    \indextext{macro!replacement list}%
+    在对象式宏的定义中，标识符和替换列表之间应该有空白。
+    
+    \pnum
+    如果宏定义中的 \grammarterm{identifier-list} 不以省略号结尾，则
+    函数式宏调用中的参数数量（包括那些由
+    没有预处理记号组成的参数）应该
+    等于宏定义中的参数数量。
+    否则，调用中的参数数量应至少与
+    宏定义中的参数数量一样多（不包括 \tcode{...}）。应该
+    存在一个
+    \tcode{)}
+    预处理记号来终止调用。
+    
+    \pnum
+    \indextext{__va_args__@\mname{VA_ARGS}}%
+    \indextext{__va_opt__@\mname{VA_OPT}}%
+    标识符 \mname{VA_ARGS} 和 \mname{VA_OPT}
+    只应出现在参数中使用省略号表示法的函数式宏的 \grammarterm{replacement-list} 中。
+    
+    \pnum
+    函数式宏中的参数标识符
+    应在其作用域内唯一声明。
+    
+    \pnum
+    紧跟在
+    \tcode{define}
+    之后的标识符被称为
+    \indextext{name!macro|see{macro, name}}%
+    \defnx{宏名}{macro!name}。
+    宏名只有一个命名空间。
+    预处理记号的替换列表中之前或之后的任何空白字符
+    都不被认为是任何形式的宏的替换列表的一部分。
+    
+    \pnum
+    如果一个
+    \indextext{\#\#2 operator@\tcode{\#} operator}
+    \tcode{\#}
+    预处理记号，
+    后跟一个标识符，
+    在词法上出现在可以开始预处理指令的点，
+    则该标识符不受宏替换的影响。
+    
+    \pnum
+    以下形式的预处理指令
+    \begin{ncsimplebnf}
+    \terminal{\# define} identifier replacement-list new-line
+    \indextext{\idxcode{\#define}}%
+    \end{ncsimplebnf}
+    定义一个
+    \defnadj{对象式}{macro}，
+    导致宏名的每个后续实例
+    \begin{footnote}
+    因为，在宏替换时，
+    所有 \grammarterm{character-literal}s 和 \grammarterm{string-literal}s 都是预处理记号，
+    而不是可能包含类似标识符的子序列的序列
+    （参见 \ref{lex.phases}，翻译阶段），
+    所以它们永远不会被扫描以查找宏名或参数。
+    \end{footnote}
+    被构成指令其余部分的预处理记号的替换列表替换。
+    \begin{footnote}
+    替代记号\iref{lex.digraph} 不是标识符，
+    即使它的拼写完全由字母和下划线组成。
+    因此，不可能定义一个宏，
+    其名称与替代记号的名称相同。
+    \end{footnote}
+    然后，如下所述，重新扫描替换列表以查找更多宏名。
+    
+    \pnum
+    \begin{example}
+    此工具的最简单用法是定义一个“清单常量”，
+    如
+    \begin{codeblock}
+    #define TABSIZE 100
+    int table[TABSIZE];
+    \end{codeblock}
+    \end{example}
+    
+    \pnum
+    以下形式的预处理指令
+    \begin{ncsimplebnf}
+    \terminal{\# define} identifier lparen \opt{identifier-list} \terminal{)} replacement-list new-line\br
+    \terminal{\# define} identifier lparen \terminal{...} \terminal{)} replacement-list new-line\br
+    \terminal{\# define} identifier lparen identifier-list \terminal{, ...} \terminal{)} replacement-list new-line
+    \end{ncsimplebnf}
+    定义一个带有参数的 \defnadj{函数式}{macro}，其用法
+    在语法上类似于函数调用。参数
+    \indextext{parameter!macro}%
+    由可选的标识符列表指定。
+    函数式宏名称的每个后续实例后跟一个
+    \tcode{(}
+    作为下一个预处理记号，
+    引入了被定义中的替换列表替换的预处理记号序列
+    （宏的调用）。
+    \indextext{invocation!macro}%
+    被替换的预处理记号序列由匹配的
+    \tcode{)}
+    预处理记号终止，跳过中间匹配的左右括号预处理记号对。
+    在构成函数式宏调用的预处理记号序列中，
+    换行符被认为是正常的空白字符。
+    
+    \pnum
+    \indextext{macro!function-like!arguments}%
+    由最外层匹配括号
+    限定的预处理记号序列
+    构成函数式宏的参数列表。列表中的各个参数
+    由逗号预处理记号分隔，
+    但匹配的内括号之间的逗号预处理记号
+    不分隔参数。
+    如果参数列表中存在预处理记号序列，这些序列在其他情况下将充当预处理指令，
+    \begin{footnote}
+    \grammarterm{conditionally-supported-directive} 是预处理指令，无论实现是否支持它。
+    \end{footnote}
+    则行为是未定义的。
+    
+    \pnum
+    \begin{example}
+    以下定义了一个函数式
+    宏，其值为其参数的最大值。
+    它的缺点是会对其参数中的一个或另一个进行第二次求值
+    （包括
+    \indextext{side effects}%
+    副作用），
+    并且如果被多次调用，会生成比函数更多的代码。
+    它也不能获取其地址，
+    因为它没有地址。
+    
+    \begin{codeblock}
+    #define max(a, b) ((a) > (b) ? (a) : (b))
+    \end{codeblock}
+    
+    括号确保参数和
+    结果表达式被正确绑定。
+    \end{example}
+    
+    \pnum
+    \indextext{macro!function-like!arguments}%
+    如果函数式宏定义中的 \tcode{)} 之前紧跟一个 \tcode{...}，
+    则尾随参数（如果有），包括任何分隔逗号预处理
+    记号，将合并形成一个单独的项目：\defn{可变参数}。合并的
+    参数数量应使得合并后，参数数量
+    等于或
+    比宏定义中的参数数量多一个（不包括
+    \tcode{...}）。
+    
+    \rSec2[cpp.subst]{参数替换}%
+    \indextext{macro!argument substitution}%
+    \indextext{argument substitution|see{macro, argument substitution}}%
+    
+    \indextext{__va_opt__@\mname{VA_OPT}}%
+    \begin{bnf}
+    \nontermdef{va-opt-replacement}\br
+        \terminal{\mname{VA_OPT} (} \opt{pp-tokens} \terminal{)}
+    \end{bnf}
+    
+    \pnum
+    在识别出函数式宏调用的参数后，
+    将进行参数替换。
+    对于替换列表中既不
+    以 \tcode{\#} 或 \tcode{\#\#} 预处理记号开头，也
+    不以 \tcode{\#\#} 预处理记号结尾的每个参数，命名参数的预处理记号将替换为按如下方式确定的预处理记号序列：
+    \begin{itemize}
+    \item
+    如果参数的形式为 \grammarterm{va-opt-replacement}，则替换预处理记号是如下面所规定的相应参数的预处理记号序列。
+    \item
+    否则，替换预处理记号是相应参数在其中包含的所有宏都已展开后的预处理记号。在替换之前，将对参数的预处理记号进行完全的宏替换，就像它们形成了其余的预处理翻译单元，而没有其他可用的预处理记号一样。
+    \end{itemize}
+    \begin{example}
+    \begin{codeblock}
+    #define LPAREN() (
+    #define G(Q) 42
+    #define F(R, X, ...)  __VA_OPT__(G R X) )
+    int x = F(LPAREN(), 0, <:-);    // 替换为 \tcode{int x = 42;}
+    \end{codeblock}
+    \end{example}
+    
+    \pnum
+    \indextext{__va_args__@\mname{VA_ARGS}}%
+    出现在替换列表中的标识符 \mname{VA_ARGS}
+    应被视为参数，并且可变参数应形成
+    用于替换它的预处理记号。
+    
+    \pnum
+    \begin{example}
+    \begin{codeblock}
+    #define debug(...) fprintf(stderr, @\mname{VA_ARGS}@)
+    #define showlist(...) puts(#@\mname{VA_ARGS}@)
+    #define report(test, ...) ((test) ? puts(#test) : printf(@\mname{VA_ARGS}@))
+    debug("Flag");
+    debug("X = %d\n", x);
+    showlist(The first, second, and third items.);
+    report(x>y, "x is %d but y is %d", x, y);
+    \end{codeblock}
+    结果为
+    \begin{codeblock}
+    fprintf(stderr, "Flag");
+    fprintf(stderr, "X = %d\n", x);
+    puts("The first, second, and third items.");
+    ((x>y) ? puts("x>y") : printf("x is %d but y is %d", x, y));
+    \end{codeblock}
+    \end{example}
+    
+    \pnum
+    \indextext{__va_opt__@\mname{VA_OPT}}%
+    标识符 \mname{VA_OPT}
+    应始终作为预处理记号序列
+    \grammarterm{va-opt-replacement} 的一部分出现；
+    其结尾的 \tcode{)} 是通过跳过
+    其 \grammarterm{pp-tokens} 中间匹配的左右括号对来确定的。
+    \grammarterm{va-opt-replacement} 的 \grammarterm{pp-tokens}
+    不应包含 \mname{VA_OPT}。
+    如果 \grammarterm{pp-tokens} 作为
+    当前函数式宏的替换列表是不合法的，
+    则程序是病态的。
+    \grammarterm{va-opt-replacement} 被视为参数，
+    并且相应参数的预处理记号序列定义如下。
+    如果 \mname{VA_ARGS} 的替换（作为 \tcode{\#} 或 \tcode{\#\#} 的操作数）
+    不包含任何预处理记号，
+    则参数由
+    单个占位符预处理记号\iref{cpp.concat,cpp.rescan} 组成。
+    否则，参数由
+    包含的 \grammarterm{pp-tokens} 作为
+    当前函数式宏的替换列表展开的结果组成，
+    在删除占位符记号、重新扫描和进一步替换之前。
+    \begin{note}
+    占位符记号在字符串化\iref{cpp.stringize} 之前被删除，
+    并且可以通过重新扫描和进一步替换\iref{cpp.rescan} 来删除。
+    \end{note}
+    \begin{example}
+    \begin{codeblock}
+    #define F(...)           f(0 __VA_OPT__(,) __VA_ARGS__)
+    #define G(X, ...)        f(0, X __VA_OPT__(,) __VA_ARGS__)
+    #define SDEF(sname, ...) S sname __VA_OPT__(= { __VA_ARGS__ })
+    #define EMP
+    
+    F(a, b, c)          // 替换为 \tcode{f(0, a, b, c)}
+    F()                 // 替换为 \tcode{f(0)}
+    F(EMP)              // 替换为 \tcode{f(0)}
+    
+    G(a, b, c)          // 替换为 \tcode{f(0, a, b, c)}
+    G(a, )              // 替换为 \tcode{f(0, a)}
+    G(a)                // 替换为 \tcode{f(0, a)}
+    
+    SDEF(foo);          // 替换为 \tcode{S foo;}
+    SDEF(bar, 1, 2);    // 替换为 \tcode{S bar = \{ 1, 2 \};}
+    
+    #define H1(X, ...) X __VA_OPT__(##) __VA_ARGS__ // 错误：\tcode{\#\#} 不能出现在
+                                                    // 替换列表的开头\iref{cpp.concat}
+    
+    #define H2(X, Y, ...) __VA_OPT__(X ## Y,) __VA_ARGS__
+    H2(a, b, c, d)      // 替换为 \tcode{ab, c, d}
+    
+    #define H3(X, ...) #__VA_OPT__(X##X X##X)
+    H3(, 0)             // 替换为 \tcode{""}
+    
+    #define H4(X, ...) __VA_OPT__(a X ## X) ## b
+    H4(, 1)             // 替换为 \tcode{a b}
+    
+    #define H5A(...) __VA_OPT__()@\tcode{/**/}@__VA_OPT__()
+    #define H5B(X) a ## X ## b
+    #define H5C(X) H5B(X)
+    H5C(H5A())          // 替换为 \tcode{ab}
+    \end{codeblock}
+    \end{example}
+    
+    \rSec2[cpp.stringize]{\tcode{\#} 运算符}%
+    \indextext{\#\#3 operator@\tcode{\#} operator}%
+    \indextext{stringize|see{\tcode{\#} operator}}
+    
+    \pnum
+    函数式宏的替换列表中的每个
+    \tcode{\#}
+    预处理记号都应后跟一个参数作为替换列表中的下一个预处理
+    记号。
+    
+    \pnum
+    \defn{字符串字面量} 是没有前缀的 \grammarterm{string-literal}。
+    如果在替换列表中，一个参数紧跟在
+    \tcode{\#}
+    预处理记号之前，
+    则两者都将被替换为单个字符串字面量预处理记号，其中
+    包含相应参数的预处理记号序列的拼写（不包括占位符记号）。
+    令 \defn{字符串化参数} 为相应参数的预处理记号序列，其中已删除占位符记号。
+    字符串化参数的预处理记号之间的每个空白都将成为字符串字面量中的单个空格字符。
+    删除字符串化参数的第一个预处理记号之前和最后一个
+    预处理记号之后的空白。
+    否则，字符串化参数中每个预处理记号的原始拼写将保留在字符串字面量中，
+    但对生成 \grammarterm{string-literal}s 和 \grammarterm{character-literal}s 的拼写有特殊处理：
+    在 \grammarterm{character-literal} 或 \grammarterm{string-literal} 的每个
+    \tcode{"}
+    和
+    \tcode{\textbackslash}
+    字符（包括定界
+    \tcode{"}
+    字符）之前插入一个
+    \tcode{\textbackslash}
+    字符。
+    如果替换的结果不是有效的字符串字面量，
+    则行为是未定义的。与
+    空字符串化参数对应的字符串字面量是 \tcode{""}。
+    \tcode{\#}
+    和
+    \tcode{\#\#}
+    运算符的求值顺序是未指定的。
+    
+    \rSec2[cpp.concat]{\tcode{\#\#} 运算符}%
+    \indextext{\#\#4 operator@\tcode{\#\#} operator}%
+    \indextext{concatenation!macro argument|see{\tcode{\#\#} operator}}
+    
+    \pnum
+    \tcode{\#\#}
+    预处理记号不应出现在任何一种形式的
+    宏定义的替换列表的开头或
+    结尾。
+    
+    \pnum
+    如果在函数式宏的替换列表中，一个参数
+    紧跟在 \tcode{\#\#}
+    预处理记号之前或之后，则该参数将被
+    相应参数的预处理记号序列替换；但是，如果参数由没有预处理记号组成，则该参数
+    将替换为占位符预处理记号。
+    \begin{footnote}
+    占位符预处理记号不会出现在语法中，
+    因为它们是仅存在于翻译阶段4中的临时实体。
+    \end{footnote}
+    
+    \pnum
+    对于对象式宏和函数式宏调用，在
+    重新检查替换列表以替换更多宏名之前，
+    替换列表中的每个
+    \tcode{\#\#}
+    预处理记号实例
+    （不是来自参数）都将被删除，并且
+    前面的预处理记号将与
+    后面的预处理记号连接。
+    占位符预处理记号有特殊处理：两个占位符的连接将产生单个占位符预处理记号，而
+    占位符与非占位符预处理记号的连接将产生
+    非占位符预处理记号。
+    \begin{note}
+    连接可以形成
+    \grammarterm{universal-character-name}\iref{lex.charset}。
+    \end{note}
+    如果结果不是有效的预处理记号，
+    则行为是未定义的。
+    生成的预处理记号可用于进一步的宏替换。
+    \tcode{\#\#}
+    运算符的求值顺序是未指定的。
+    
+    \pnum
+    \begin{example}
+    序列
+    \begin{codeblock}
+    #define str(s)      # s
+    #define xstr(s)     str(s)
+    #define debug(s, t) printf("x" # s "= %d, x" # t "= %s", @\textbackslash@
+                   x ## s, x ## t)
+    #define INCFILE(n)  vers ## n
+    #define glue(a, b)  a ## b
+    #define xglue(a, b) glue(a, b)
+    #define HIGHLOW     "hello"
+    #define LOW         LOW ", world"
+    
+    debug(1, 2);
+    fputs(str(strncmp("abc@\textbackslash@0d", "abc", '@\textbackslash@4')        // this goes away
+        == 0) str(: @\atsign\textbackslash@n), s);
+    #include xstr(INCFILE(2).h)
+    glue(HIGH, LOW);
+    xglue(HIGH, LOW)
+    \end{codeblock}
+    结果为
+    \begin{codeblock}
+    printf("x" "1" "= %d, x" "2" "= %s", x1, x2);
+    fputs("strncmp(@\textbackslash@"abc@\textbackslash\textbackslash@0d@\textbackslash@", @\textbackslash@"abc@\textbackslash@", '@\textbackslash\textbackslash@4') == 0" ": @\atsign\textbackslash@n", s);
+    #include "vers2.h"      @\textrm{(\textit{宏替换后，文件访问前})}@
+    "hello";
+    "hello" ", world"
+    \end{codeblock}
+    或者，在连接字符串字面量之后，
+    \begin{codeblock}
+    printf("x1= %d, x2= %s", x1, x2);
+    fputs("strncmp(@\textbackslash@"abc@\textbackslash\textbackslash@0d@\textbackslash@", @\textbackslash@"abc@\textbackslash@", '@\textbackslash\textbackslash@4') == 0: @\atsign\textbackslash@n", s);
+    #include "vers2.h"      @\textrm{(\textit{宏替换后，文件访问前})}@
+    "hello";
+    "hello, world"
+    \end{codeblock}
+    
+    宏定义中 \tcode{\#} 和 \tcode{\#\#} 预处理记号周围的空格
+    是可选的。
+    \end{example}
+    
+    \pnum
+    \begin{example}
+    在以下片段中：
+    
+    \begin{codeblock}
+    #define hash_hash # ## #
+    #define mkstr(a) # a
+    #define in_between(a) mkstr(a)
+    #define join(c, d) in_between(c hash_hash d)
+    char p[] = join(x, y);          // 等价于 \tcode{char p[] = "x \#\# y";}
+    \end{codeblock}
+    
+    扩展在各个阶段产生：
+    
+    \begin{codeblock}
+    join(x, y)
+    in_between(x hash_hash y)
+    in_between(x ## y)
+    mkstr(x ## y)
+    "x ## y"
+    \end{codeblock}
+    
+    换句话说，扩展 \tcode{hash_hash} 会产生一个新的预处理记号，
+    由两个相邻的井号组成，但这个新的预处理记号不是
+    \tcode{\#\#} 运算符。
+    \end{example}
+    
+    \pnum
+    \begin{example}
+    为了说明占位符预处理记号的规则，序列
+    \begin{codeblock}
+    #define t(x,y,z) x ## y ## z
+    int j[] = { t(1,2,3), t(,4,5), t(6,,7), t(8,9,),
+      t(10,,), t(,11,), t(,,12), t(,,) };
+    \end{codeblock}
+    结果为
+    \begin{codeblock}
+    int j[] = { 123, 45, 67, 89,
+      10, 11, 12, };
+    \end{codeblock}
+    \end{example}
+    
+    \rSec2[cpp.rescan]{重新扫描和进一步替换}%
+    \indextext{macro!rescanning and replacement}%
+    \indextext{rescanning and replacement|see{macro, rescanning and replacement}}
+    
+    \pnum
+    在替换列表中的所有参数都已被替换并且 \tcode{\#} 和 \tcode{\#\#} 处理已经发生后，所有占位符预处理记号都将被移除。然后
+    重新扫描生成的预处理记号序列，以及
+    源文件的所有后续预处理记号，以替换更多宏名。
+    
+    \pnum
+    \begin{example}
+    序列
+    \begin{codeblock}
+    #define x       3
+    #define f(a)    f(x * (a))
+    #undef  x
+    #define x       2
+    #define g       f
+    #define z       z[0]
+    #define h       g(~
+    #define m(a)    a(w)
+    #define w       0,1
+    #define t(a)    a
+    #define p()     int
+    #define q(x)    x
+    #define r(x,y)  x ## y
+    #define str(x)  # x
+    
+    f(y+1) + f(f(z)) % t(t(g)(0) + t)(1);
+    g(x+(3,4)-w) | h 5) & m
+        (f)^m(m);
+    p() i[q()] = { q(1), r(2,3), r(4,), r(,5), r(,) };
+    char c[2][6] = { str(hello), str() };
+    \end{codeblock}
+    结果为
+    \begin{codeblock}
+    f(2 * (y+1)) + f(2 * (f(2 * (z[0])))) % f(2 * (0)) + t(1);
+    f(2 * (2+(3,4)-0,1)) | f(2 * (~ 5)) & f(2 * (0,1))^m(0,1);
+    int i[] = { 1, 23, 4, 5, };
+    char c[2][6] = { "hello", "" };
+    \end{codeblock}
+    \end{example}    
+
+    \pnum
+    如果在扫描替换列表
+    （不包括源文件的其余预处理记号）期间找到正在被替换的宏的名称，
+    则不会替换它。
+    此外，
+    如果任何嵌套替换遇到正在被替换的宏的名称，
+    则不会替换它。
+    即使这些未替换的宏名预处理记号稍后在
+    该宏名预处理记号原本会被
+    替换的上下文中（重新）检查，它们也不再可用于
+    进一步替换。
+    
+    \pnum
+    即使生成的完全宏替换的预处理记号序列类似于预处理指令，
+    也不会将其作为预处理指令处理，
+    但其中的所有 pragma 一元运算符表达式都将按照
+    下面~\ref{cpp.pragma.op} 中的规定进行处理。
+    
+    \rSec2[cpp.scope]{宏定义的作用域}%
+    \indextext{macro!scope of definition}%
+    \indextext{scope!macro definition|see{macro, scope of definition}}
+    
+    \pnum
+    宏定义持续有效
+    （独立于块结构）
+    直到遇到相应的
+    \tcode{\#undef}
+    指令或
+    （如果未遇到）
+    直到翻译单元结束。
+    宏定义在翻译阶段4之后没有意义。
+    
+    \pnum
+    以下形式的预处理指令
+    \begin{ncsimplebnf}
+    \terminal{\# undef} identifier new-line
+    \indextext{\idxcode{\#undef}}%
+    \end{ncsimplebnf}
+    导致指定的标识符不再被定义为宏名。
+    如果指定的标识符当前未定义为
+    宏名，则忽略它。
+    
+    \indextext{macro!replacement|)}
+    
+    \rSec1[cpp.line]{行控制}%
+    \indextext{preprocessing directive!line control}%
+    \indextext{\idxcode{\#line}|see{preprocessing directive, line control}}
+    
+    \pnum
+    \tcode{\#line} 指令的 \grammarterm{string-literal}（如果存在）
+    应为字符串字面量。
+    
+    \pnum
+    当前源行的 \defn{行号}
+    是当前物理源行的行号，
+    即，它比
+    在翻译阶段 1\iref{lex.phases} 中
+    处理源文件到当前预处理记号时
+    读取或引入的换行符数量大一。
+    
+    \pnum
+    以下形式的预处理指令
+    \begin{ncsimplebnf}
+    \terminal{\# line} digit-sequence new-line
+    \end{ncsimplebnf}
+    导致实现的行为就像
+    以下源行序列以具有由数字序列
+    （解释为十进制整数）指定的行号的
+    源行开始。
+    如果数字序列指定零
+    或大于 2147483647 的数字，
+    则行为是未定义的。
+    
+    \pnum
+    以下形式的预处理指令
+    \begin{ncsimplebnf}
+    \terminal{\# line} digit-sequence \terminal{"} \opt{s-char-sequence} \terminal{"} new-line
+    \end{ncsimplebnf}
+    类似地设置假定的行号，并将
+    源文件的假定名称更改为
+    字符串字面量的内容。
+    
+    \pnum
+    以下形式的预处理指令
+    \begin{ncsimplebnf}
+    \terminal{\# line} pp-tokens new-line
+    \end{ncsimplebnf}
+    （不匹配前两种形式之一）
+    是允许的。
+    指令中 \tcode{line}
+    之后的预处理记号将像普通文本一样被处理
+    （当前定义为宏名的每个标识符都将被其
+    预处理记号的替换列表替换）。
+    如果所有替换后产生的指令与
+    前两种形式之一不匹配，则行为是未定义的；
+    否则，将适当地处理结果。
+    
+    \rSec1[cpp.error]{诊断指令}%
+    \indextext{preprocessing directive!error}%
+    \indextext{preprocessing directive!diagnostic}%
+    \indextext{preprocessing directive!warning}%
+    \indextext{\idxcode{\#error}|see{preprocessing directive, error}}
+    
+    \pnum
+    以下形式的预处理指令
+    \begin{ncsimplebnf}
+    \terminal{\# error} \opt{pp-tokens} new-line
+    \end{ncsimplebnf}
+    使程序成为病态的。
+    以下形式的预处理指令
+    \begin{ncsimplebnf}
+    \terminal{\# warning} \opt{pp-tokens} new-line
+    \end{ncsimplebnf}
+    要求实现为预处理翻译单元\iref{intro.compliance.general} 生成至少一条诊断消息。
+    \recommended
+    由这些指令中的任何一个引起的任何诊断消息
+    都应包含指定的预处理记号序列。
+    
+    \rSec1[cpp.pragma]{Pragma 指令}%
+    \indextext{preprocessing directive!pragma}%
+    \indextext{\idxcode{\#pragma}|see{preprocessing directive, pragma}}
+    
+    \pnum
+    以下形式的预处理指令
+    \begin{ncsimplebnf}
+    \terminal{\# pragma} \opt{pp-tokens} new-line
+    \end{ncsimplebnf}
+    导致实现以
+    \impldef{\tcode{\#pragma}} 的方式运行。
+    该行为可能导致翻译失败，或导致翻译器或
+    生成的程序以不符合要求的方式运行。
+    任何未被实现识别的 pragma 都将被忽略。
+    
+    \rSec1[cpp.null]{空指令}%
+    \indextext{preprocessing directive!null}
+    
+    \pnum
+    以下形式的预处理指令
+    \begin{ncsimplebnf}
+    \terminal{\#} new-line
+    \end{ncsimplebnf}
+    没有任何效果。
+    
+    \rSec1[cpp.predefined]{预定义宏名}
+    \indextext{macro!predefined}%
+    \indextext{name!predefined macro|see{macro, predefined}}
+    
+    \pnum
+    以下宏名应由实现定义：
+    
+    \begin{description}
+    
+    \item
+    \indextext{\idxxname{cplusplus}}%
+    \xname{cplusplus}\\
+    整数文字 \tcode{\cppver}。
+    \begin{note}
+    本文档的未来修订版将
+    用更大的值替换此宏的值。
+    \end{note}
+    
+    \item \tref{cpp.predefined.ft} 中列出的名称。\\
+    \tref{cpp.predefined.ft} 中定义的宏应定义为
+    相应的整数文字。
+    \begin{note}
+    本文档的未来修订版可能会
+    用更大的值替换这些宏的值。
+    \end{note}
+    
+    \item
+    \indextext{__date__@\mname{DATE}}%
+    \mname{DATE}\\
+    源文件的翻译日期：
+    形式为
+    \tcode{"Mmm~dd~yyyy"} 的字符串文字，
+    其中月份的名称与
+    \tcode{asctime}
+    函数生成的名称相同，
+    如果值小于10，则 \tcode{dd} 的第一个字符是空格字符。
+    如果翻译日期不可用，
+    则应提供一个 \impldef{当翻译日期不可用时 \mname{DATE} 的文本} 有效日期。
+    
+    \item
+    \indextext{__file__@\mname{FILE}}%
+    \mname{FILE}\\
+    当前源文件的假定名称（字符串
+    文字）。
+    \begin{footnote}
+    假定的源文件名可以通过 \tcode{\#line} 指令更改。
+    \end{footnote}
+    
+    \item
+    \indextext{__line__@\mname{LINE}}%
+    \mname{LINE}\\
+    当前源行在当前源文件中的假定行号
+    （整数文字）。
+    \begin{footnote}
+    假定的行号可以通过 \tcode{\#line} 指令更改。
+    \end{footnote}
+    
+    \item
+    \indextext{__stdc_hosted__@\mname{STDC_HOSTED}}%
+    \indextext{implementation!hosted}%
+    \indextext{implementation!freestanding}%
+    \mname{STDC_HOSTED}\\
+    如果实现是宿主实现，则为整数文字 \tcode{1}，
+    如果是独立实现\iref{intro.compliance}，则为整数文字 \tcode{0}。
+    
+    \item
+    \indextext{__stdcpp_default_new_alignment__@\mname{STDCPP_DEFAULT_NEW_ALIGNMENT}}%
+    \mname{STDCPP_DEFAULT_NEW_ALIGNMENT}\\
+    类型为 \tcode{std::size_t} 的整数文字，
+    其值是由调用 \tcode{operator new(std::size_t)}
+    或 \tcode{operator new[](std::size_t)} 保证的对齐方式。
+    \begin{note}
+    更大的对齐方式将传递给
+    \tcode{operator new(std::size_t, std::align_val_t)} 等\iref{expr.new}。
+    \end{note}
+    
+    \item
+    \indextext{__stdcpp_float16_t__@\mname{STDCPP_FLOAT16_T}}%
+    \mname{STDCPP_FLOAT16_T}\\
+    当且仅当实现支持
+    \IsoFloatUndated{} 浮点交换格式 binary16
+    作为扩展浮点类型\iref{basic.extended.fp} 时，定义为整数文字 \tcode{1}。
+    
+    \item
+    \indextext{__stdcpp_float32_t__@\mname{STDCPP_FLOAT32_T}}%
+    \mname{STDCPP_FLOAT32_T}\\
+    当且仅当实现支持
+    \IsoFloatUndated{} 浮点交换格式 binary32
+    作为扩展浮点类型时，定义为整数文字 \tcode{1}。
+    
+    \item
+    \indextext{__stdcpp_float64_t__@\mname{STDCPP_FLOAT64_T}}%
+    \mname{STDCPP_FLOAT64_T}\\
+    当且仅当实现支持
+    \IsoFloatUndated{} 浮点交换格式 binary64
+    作为扩展浮点类型时，定义为整数文字 \tcode{1}。
+    
+    \item
+    \indextext{__stdcpp_float128_t__@\mname{STDCPP_FLOAT128_T}}%
+    \mname{STDCPP_FLOAT128_T}\\
+    当且仅当实现支持
+    \IsoFloatUndated{} 浮点交换格式 binary128
+    作为扩展浮点类型时，定义为整数文字 \tcode{1}。
+    
+    \item
+    \indextext{__stdcpp_bfloat16_t__@\mname{STDCPP_BFLOAT16_T}}%
+    \mname{STDCPP_BFLOAT16_T}\\
+    当且仅当实现支持具有 \ref{basic.extended.fp} 中描述的 \grammarterm{typedef-name} \tcode{std::bfloat16_t} 属性的扩展浮点类型时，定义为整数文字 \tcode{1}。
+    
+    \item
+    \indextext{__time__@\mname{TIME}}%
+    \mname{TIME}\\
+    源文件的翻译时间：
+    形式为
+    \tcode{"hh:mm:ss"} 的字符串文字，
+    与 \tcode{asctime}
+    函数生成的时间相同。
+    如果翻译时间不可用，
+    则应提供一个 \impldef{当翻译时间不可用时 \mname{TIME} 的文本} 有效时间。
+    \end{description}
+    
+    \indextext{macro!feature-test}%
+    \indextext{feature-test macro|see{macro, feature-test}}%
+    \begin{LongTable}{功能测试宏}{cpp.predefined.ft}{ll}
+    \\ \topline
+    \lhdr{宏名} & \rhdr{值} \\ \capsep
+    \endfirsthead
+    \continuedcaption \\
+    \hline
+    \lhdr{名称} & \rhdr{值} \\ \capsep
+    \endhead
+    \defnxname{cpp_aggregate_bases}                   & \tcode{201603L} \\ \rowsep
+    \defnxname{cpp_aggregate_nsdmi}                   & \tcode{201304L} \\ \rowsep
+    \defnxname{cpp_aggregate_paren_init}              & \tcode{201902L} \\ \rowsep
+    \defnxname{cpp_alias_templates}                   & \tcode{200704L} \\ \rowsep
+    \defnxname{cpp_aligned_new}                       & \tcode{201606L} \\ \rowsep
+    \defnxname{cpp_attributes}                        & \tcode{200809L} \\ \rowsep
+    \defnxname{cpp_auto_cast}                         & \tcode{202110L} \\ \rowsep
+    \defnxname{cpp_binary_literals}                   & \tcode{201304L} \\ \rowsep
+    \defnxname{cpp_capture_star_this}                 & \tcode{201603L} \\ \rowsep
+    \defnxname{cpp_char8_t}                           & \tcode{202207L} \\ \rowsep
+    \defnxname{cpp_concepts}                          & \tcode{202002L} \\ \rowsep
+    \defnxname{cpp_conditional_explicit}              & \tcode{201806L} \\ \rowsep
+    \defnxname{cpp_constexpr}                         & \tcode{202406L} \\ \rowsep
+    \defnxname{cpp_constexpr_dynamic_alloc}           & \tcode{201907L} \\ \rowsep
+    \defnxname{cpp_constexpr_exceptions}              & \tcode{202411L} \\ \rowsep
+    \defnxname{cpp_constexpr_in_decltype}             & \tcode{201711L} \\ \rowsep
+    \defnxname{cpp_consteval}                         & \tcode{202211L} \\ \rowsep
+    \defnxname{cpp_constinit}                         & \tcode{201907L} \\ \rowsep
+    \defnxname{cpp_decltype}                          & \tcode{200707L} \\ \rowsep
+    \defnxname{cpp_decltype_auto}                     & \tcode{201304L} \\ \rowsep
+    \defnxname{cpp_deduction_guides}                  & \tcode{201907L} \\ \rowsep
+    \defnxname{cpp_delegating_constructors}           & \tcode{200604L} \\ \rowsep
+    \defnxname{cpp_deleted_function}                  & \tcode{202403L} \\ \rowsep
+    \defnxname{cpp_designated_initializers}           & \tcode{201707L} \\ \rowsep
+    \defnxname{cpp_enumerator_attributes}             & \tcode{201411L} \\ \rowsep
+    \defnxname{cpp_explicit_this_parameter}           & \tcode{202110L} \\ \rowsep
+    \defnxname{cpp_fold_expressions}                  & \tcode{201603L} \\ \rowsep
+    \defnxname{cpp_generic_lambdas}                   & \tcode{201707L} \\ \rowsep
+    \defnxname{cpp_guaranteed_copy_elision}           & \tcode{201606L} \\ \rowsep
+    \defnxname{cpp_hex_float}                         & \tcode{201603L} \\ \rowsep
+    \defnxname{cpp_if_consteval}                      & \tcode{202106L} \\ \rowsep
+    \defnxname{cpp_if_constexpr}                      & \tcode{201606L} \\ \rowsep
+    \defnxname{cpp_impl_coroutine}                    & \tcode{201902L} \\ \rowsep
+    \defnxname{cpp_impl_destroying_delete}            & \tcode{201806L} \\ \rowsep
+    \defnxname{cpp_impl_three_way_comparison}         & \tcode{201907L} \\ \rowsep
+    \defnxname{cpp_implicit_move}                     & \tcode{202207L} \\ \rowsep
+    \defnxname{cpp_inheriting_constructors}           & \tcode{201511L} \\ \rowsep
+    \defnxname{cpp_init_captures}                     & \tcode{201803L} \\ \rowsep
+    \defnxname{cpp_initializer_lists}                 & \tcode{200806L} \\ \rowsep
+    \defnxname{cpp_inline_variables}                  & \tcode{201606L} \\ \rowsep
+    \defnxname{cpp_lambdas}                           & \tcode{200907L} \\ \rowsep
+    \defnxname{cpp_modules}                           & \tcode{201907L} \\ \rowsep
+    \defnxname{cpp_multidimensional_subscript}        & \tcode{202211L} \\ \rowsep
+    \defnxname{cpp_named_character_escapes}           & \tcode{202207L} \\ \rowsep
+    \defnxname{cpp_namespace_attributes}              & \tcode{201411L} \\ \rowsep
+    \defnxname{cpp_noexcept_function_type}            & \tcode{201510L} \\ \rowsep
+    \defnxname{cpp_nontype_template_args}             & \tcode{201911L} \\ \rowsep
+    \defnxname{cpp_nontype_template_parameter_auto}   & \tcode{201606L} \\ \rowsep
+    \defnxname{cpp_nsdmi}                             & \tcode{200809L} \\ \rowsep
+    \defnxname{cpp_pack_indexing}                     & \tcode{202311L} \\ \rowsep
+    \defnxname{cpp_placeholder_variables}             & \tcode{202306L} \\ \rowsep
+    \defnxname{cpp_range_based_for}                   & \tcode{202211L} \\ \rowsep
+    \defnxname{cpp_raw_strings}                       & \tcode{200710L} \\ \rowsep
+    \defnxname{cpp_ref_qualifiers}                    & \tcode{200710L} \\ \rowsep
+    \defnxname{cpp_return_type_deduction}             & \tcode{201304L} \\ \rowsep
+    \defnxname{cpp_rvalue_references}                 & \tcode{200610L} \\ \rowsep
+    \defnxname{cpp_size_t_suffix}                     & \tcode{202011L} \\ \rowsep
+    \defnxname{cpp_sized_deallocation}                & \tcode{201309L} \\ \rowsep
+    \defnxname{cpp_static_assert}                     & \tcode{202306L} \\ \rowsep
+    \defnxname{cpp_static_call_operator}              & \tcode{202207L} \\ \rowsep
+    \defnxname{cpp_structured_bindings}               & \tcode{202411L} \\ \rowsep
+    \defnxname{cpp_template_template_args}            & \tcode{201611L} \\ \rowsep
+    \defnxname{cpp_threadsafe_static_init}            & \tcode{200806L} \\ \rowsep
+    \defnxname{cpp_unicode_characters}                & \tcode{200704L} \\ \rowsep
+    \defnxname{cpp_unicode_literals}                  & \tcode{200710L} \\ \rowsep
+    \defnxname{cpp_user_defined_literals}             & \tcode{200809L} \\ \rowsep
+    \defnxname{cpp_using_enum}                        & \tcode{201907L} \\ \rowsep
+    \defnxname{cpp_variable_templates}                & \tcode{201304L} \\ \rowsep
+    \defnxname{cpp_variadic_friend}                   & \tcode{202403L} \\ \rowsep
+    \defnxname{cpp_variadic_templates}                & \tcode{200704L} \\ \rowsep
+    \defnxname{cpp_variadic_using}                    & \tcode{201611L} \\
+    \end{LongTable}
+    
+    \pnum
+    以下宏名由实现有条件地定义：
+    
+    \begin{description}
+    \item
+    \indextext{__stdc__@\mname{STDC}}%
+    \mname{STDC}\\
+    \mname{STDC} 是否被预定义，如果是，它的值是什么，
+    是 \impldef{\mname{STDC} 的定义和含义}。
+    
+    \item
+    \indextext{__stdc_mb_might_neq_wc__@\mname{STDC_MB_MIGHT_NEQ_WC}}%
+    \mname{STDC_MB_MIGHT_NEQ_WC}\\
+    整数文字 \tcode{1}，旨在指示，在
+    \keyword{wchar_t} 的编码中，基本字符集的成员不需要具有与其作为普通字符字面量中的唯一字符时相同的值。
+    
+    \item
+    \indextext{__stdc_version__@\mname{STDC_VERSION}}%
+    \mname{STDC_VERSION}\\
+    \mname{STDC_VERSION} 是否被预定义，如果是，它的值是什么，
+    是 \impldef{\mname{STDC_VERSION} 的定义和含义}。
+    
+    \item
+    \indextext{__stdc_iso_10646__@\mname{STDC_ISO_10646}}%
+    \mname{STDC_ISO_10646}\\
+    形式为 \tcode{yyyymmL} 的整数文字
+    （例如，\tcode{199712L}）。
+    \mname{STDC_ISO_10646} 是否被预定义，
+    如果是，它的值是什么，
+    是 \impldef{\mname{STDC_ISO_10646} 的存在和值}。
+    
+    \item
+    \indextext{__stdcpp_threads__@\mname{STDCPP_THREADS}}%
+    \mname{STDCPP_THREADS}\\
+    当且仅当程序
+    可以有多个执行线程\iref{intro.multithread} 时，定义为整数文字1。
+    
+    \end{description}
+    
+    \pnum
+    预定义宏的值
+    （除了
+    \mname{FILE}
+    和
+    \mname{LINE}）
+    在整个翻译单元中保持不变。
+    
+    \pnum
+    如果本子条款中的任何预定义宏名，
+    或标识符
+    \tcode{defined}，
+    是
+    \tcode{\#define}
+    或
+    \tcode{\#undef}
+    预处理指令的主题，
+    则行为是未定义的。
+    任何其他预定义宏名都应以
+    下划线开头，后跟大写字母或第二个
+    下划线。
+    
+    \rSec1[cpp.pragma.op]{Pragma 运算符}%
+    \indextext{macro!pragma operator}%
+    \indextext{operator!pragma|see{macro, pragma operator}}
+    
+    \pnum
+    以下形式的一元运算符表达式：
+    \begin{ncbnf}
+    \terminal{_Pragma} \terminal{(} string-literal \terminal{)}
+    \end{ncbnf}
+    处理如下：\grammarterm{string-literal} 被 \defnx{去字符串化}{destringization}，
+    方法是删除 \tcode{L} 前缀（如果存在），删除开头和结尾的
+    双引号，将每个转义序列 \tcode{\textbackslash"} 替换为双引号，以及
+    将每个转义序列 \tcode{\textbackslash\textbackslash} 替换为单个
+    反斜杠。生成的字符序列将通过翻译阶段3处理
+    以生成预处理记号，这些记号将像它们是
+    pragma 指令中的 \grammarterm{pp-tokens} 一样执行。删除一元运算符表达式中的原始四个预处理
+    记号。
+    
+    \pnum
+    \begin{example}
+    \begin{codeblock}
+    #pragma listing on "..\listing.dir"
+    \end{codeblock}
+    也可以表示为：
+    \begin{codeblock}
+    _Pragma ( "listing on \"..\\listing.dir\"" )
+    \end{codeblock}
+    无论后一种形式是按所示字面形式出现，
+    还是由宏替换产生，都将以相同的方式处理，如：
+    \begin{codeblock}
+    #define LISTING(x) PRAGMA(listing on #x)
+    #define PRAGMA(x) _Pragma(#x)
+    
+    LISTING( ..\listing.dir )
+    \end{codeblock}
+    \end{example}
+    \indextext{preprocessing directive|)}
+    
