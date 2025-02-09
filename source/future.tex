@@ -1,28 +1,28 @@
 %!TEX root = std.tex
-\normannex{depr}{Compatibility features}
+\normannex{depr}{兼容性特性}
 
-\rSec1[depr.general]{General}
-
-\pnum
-This Annex describes features of this document
-that are specified for compatibility with existing implementations.
+\rSec1[depr.general]{概述}
 
 \pnum
-These are deprecated features, where
+本附件描述了本文档中
+为与现有实现兼容而指定的功能。
+
+\pnum
+这些是不推荐使用的功能，其中
 \term{deprecated}
-is defined as:
-Normative for the current revision of \Cpp{},
-but having been identified as a candidate for removal from future revisions.
-An implementation may declare library names and entities described in this Clause with the
-\tcode{deprecated} attribute\iref{dcl.attr.deprecated}.
+定义为：
+对于 \Cpp{} 的当前修订版是规范的，
+但已被确定为从未来修订版中删除的候选对象。
+实现可以使用
+\tcode{deprecated} 属性\iref{dcl.attr.deprecated} 声明本条款中描述的库名称和实体。
 
-\rSec1[depr.local]{Non-local use of TU-local entities}
+\rSec1[depr.local]{TU-local 实体的非局部使用}
 
 \pnum
-A declaration of a non-TU-local entity that is an exposure\iref{basic.link}
-is deprecated.
+作为暴露\iref{basic.link} 的非 TU-local 实体的声明
+是不推荐使用的。
 \begin{note}
-Such a declaration in an importable module unit is ill-formed.
+在可导入模块单元中的此类声明是病态的。
 \end{note}
 \begin{example}
 \begin{codeblock}
@@ -31,49 +31,49 @@ namespace {
     void f() {}
   };
 }
-A h();                          // deprecated: not internal linkage
-inline void g() {A().f();}      // deprecated: inline and not internal linkage
+A h();                          // 不推荐使用：不是内部链接
+inline void g() {A().f();}      // 不推荐使用：内联且不是内部链接
 \end{codeblock}
 \end{example}
 
-\rSec1[depr.capture.this]{Implicit capture of \tcode{*this} by reference}
+\rSec1[depr.capture.this]{通过引用隐式捕获 \tcode{*this}}
 
 \pnum
-For compatibility with prior revisions of \Cpp{},
-a \grammarterm{lambda-expression} with \grammarterm{capture-default}
-\tcode{=}\iref{expr.prim.lambda.capture} may implicitly capture
-\tcode{*this} by reference.
+为了与 \Cpp{} 的先前修订版兼容，
+带有 \grammarterm{capture-default}
+\tcode{=}\iref{expr.prim.lambda.capture} 的 \grammarterm{lambda-expression} 可以通过引用隐式捕获
+\tcode{*this}。
 \begin{example}
 \begin{codeblock}
 struct X {
   int x;
   void foo(int n) {
-    auto f = [=]() { x = n; };          // deprecated: \tcode{x} means \tcode{this->x}, not a copy thereof
-    auto g = [=, this]() { x = n; };    // recommended replacement
+    auto f = [=]() { x = n; };          // 不推荐使用：\tcode{x} 表示 \tcode{this->x}，而不是其副本
+    auto g = [=, this]() { x = n; };    // 推荐的替换
   }
 };
 \end{codeblock}
 \end{example}
 
-\rSec1[depr.volatile.type]{Deprecated \tcode{volatile} types}
+\rSec1[depr.volatile.type]{不推荐使用的 \tcode{volatile} 类型}
 
 \pnum
-Postfix \tcode{++} and \tcode{--} expressions\iref{expr.post.incr} and
-prefix \tcode{++} and \tcode{--} expressions\iref{expr.pre.incr}
-of volatile-qualified arithmetic and pointer types are deprecated.
+volatile 限定的算术类型和指针类型的
+后缀 \tcode{++} 和 \tcode{--} 表达式\iref{expr.post.incr} 以及
+前缀 \tcode{++} 和 \tcode{--} 表达式\iref{expr.pre.incr}
+是不推荐使用的。
 
 \begin{example}
 \begin{codeblock}
 volatile int velociraptor;
-++velociraptor;                     // deprecated
+++velociraptor;                     // 不推荐使用
 \end{codeblock}
 \end{example}
 
 
 \pnum
-Certain assignments
-where the left operand is a volatile-qualified non-class type
-are deprecated; see~\ref{expr.ass}.
+某些左操作数是 volatile 限定的非类类型的赋值
+是不推荐使用的；请参见~\ref{expr.ass}。
 
 \begin{example}
 \begin{codeblock}
@@ -81,106 +81,104 @@ int neck, tail;
 volatile int brachiosaur;
 brachiosaur = neck;                 // OK
 tail = brachiosaur;                 // OK
-tail = brachiosaur = neck;          // deprecated
+tail = brachiosaur = neck;          // 不推荐使用
 brachiosaur += neck;                // OK
 \end{codeblock}
 \end{example}
 
 
 \pnum
-A function type\iref{dcl.fct}
-with a parameter with volatile-qualified type or
-with a volatile-qualified return type is deprecated.
+带有 volatile 限定类型的参数或
+带有 volatile 限定返回类型的函数类型\iref{dcl.fct}
+是不推荐使用的。
 
 \begin{example}
 \begin{codeblock}
-volatile struct amber jurassic();                               // deprecated
-void trex(volatile short left_arm, volatile short right_arm);   // deprecated
+volatile struct amber jurassic();                               // 不推荐使用
+void trex(volatile short left_arm, volatile short right_arm);   // 不推荐使用
 void fly(volatile struct pterosaur* pteranodon);                // OK
 \end{codeblock}
 \end{example}
 
 
 \pnum
-A structured binding\iref{dcl.struct.bind} of a volatile-qualified type
-is deprecated.
+volatile 限定类型的结构化绑定\iref{dcl.struct.bind}
+是不推荐使用的。
 
 \begin{example}
 \begin{codeblock}
 struct linhenykus { short forelimb; };
 void park(linhenykus alvarezsauroid) {
-  volatile auto [what_is_this] = alvarezsauroid;                // deprecated
+  volatile auto [what_is_this] = alvarezsauroid;                // 不推荐使用
   // ...
 }
 \end{codeblock}
 \end{example}
 
-\rSec1[depr.ellipsis.comma]{Non-comma-separated ellipsis parameters}
+\rSec1[depr.ellipsis.comma]{非逗号分隔的省略号参数}
 
-A \grammarterm{parameter-declaration-clause}
-of the form
-\grammarterm{parameter-declaration-list} \tcode{...}
-is deprecated\iref{dcl.fct}.
+形式为
+\grammarterm{parameter-declaration-list} \tcode{...} 的 \grammarterm{parameter-declaration-clause}
+是不推荐使用的\iref{dcl.fct}。
 \begin{example}
 \begin{codeblock}
-void f(int...);         // deprecated
-void g(auto...);        // OK, declares a function parameter pack
-void h(auto......);     // deprecated
+void f(int...);         // 不推荐使用
+void g(auto...);        // OK，声明函数参数包
+void h(auto......);     // 不推荐使用
 \end{codeblock}
 \end{example}
 
-\rSec1[depr.impldec]{Implicit declaration of copy functions}
+\rSec1[depr.impldec]{复制函数的隐式声明}
 
 \pnum
-The implicit definition of a copy constructor\iref{class.copy.ctor}
-as defaulted is deprecated if the class has
-a user-declared copy assignment operator or
-a user-declared destructor\iref{class.dtor}.
-The implicit definition of a copy assignment operator\iref{class.copy.assign}
-as defaulted is deprecated if the class has
-a user-declared copy constructor or
-a user-declared destructor.
-It is possible that future versions of \Cpp{} will specify
-that these implicit definitions are deleted\iref{dcl.fct.def.delete}.
+如果类具有
+用户声明的复制赋值运算符或
+用户声明的析构函数\iref{class.dtor}，则复制构造函数\iref{class.copy.ctor}
+的隐式定义为默认定义是不推荐使用的。
+如果类具有
+用户声明的复制构造函数或
+用户声明的析构函数，则复制赋值运算符\iref{class.copy.assign}
+的隐式定义为默认定义是不推荐使用的。
+\Cpp{} 的未来版本可能会指定
+删除这些隐式定义\iref{dcl.fct.def.delete}。
 
-\rSec1[depr.static.constexpr]{Redeclaration of \tcode{static constexpr} data members}
+\rSec1[depr.static.constexpr]{\tcode{static constexpr} 数据成员的重新声明}
 
 \pnum
-For compatibility with prior revisions of \Cpp{}, a \keyword{constexpr}
-static data member may be redundantly redeclared outside the class with no
-initializer\iref{basic.def,class.static.data}.
-This usage is deprecated.
+为了与 \Cpp{} 的先前修订版兼容，\keyword{constexpr}
+静态数据成员可以在类外部冗余地重新声明，而无需
+初始化器\iref{basic.def,class.static.data}。
+此用法是不推荐使用的。
 \begin{example}
 \begin{codeblock}
 struct A {
-  static constexpr int n = 5;   // definition (declaration in \CppXIV{})
+  static constexpr int n = 5;   // 定义（\CppXIV{} 中的声明）
 };
 
-constexpr int A::n;             // redundant declaration (definition in \CppXIV{})
+constexpr int A::n;             // 冗余声明（\CppXIV{} 中的定义）
 \end{codeblock}
 \end{example}
 
-\rSec1[depr.lit]{Literal operator function declarations using an identifier}
+\rSec1[depr.lit]{使用标识符的文字运算符函数声明}
 
 \pnum
-A \grammarterm{literal-operator-id}\iref{over.literal} of the form
+以下形式的 \grammarterm{literal-operator-id}\iref{over.literal}
 \begin{codeblock}
 operator @\grammarterm{unevaluated-string}@ @\grammarterm{identifier}@
 \end{codeblock}
-is deprecated.
+是不推荐使用的。
 
-\rSec1[depr.template.template]{\tcode{template} keyword before qualified names}
-
-\pnum
-The use of the keyword \keyword{template}
-before the qualified name of a class or alias template
-without a template argument list is deprecated\iref{temp.names}.
-
-\rSec1[depr.numeric.limits.has.denorm]{\tcode{has_denorm} members in \tcode{numeric_limits}}
+\rSec1[depr.template.template]{限定名称前的 \tcode{template} 关键字}
 
 \pnum
-The following type is defined
-in addition to those specified in \libheaderref{limits}:
+在没有模板参数列表的类或别名模板的
+限定名称之前使用关键字 \keyword{template}
+是不推荐使用的\iref{temp.names}。
+
+\rSec1[depr.numeric.limits.has.denorm]{\tcode{numeric_limits} 中的 \tcode{has_denorm} 成员}
+
+\pnum
+除了 \libheaderref{limits} 中指定的类型外，还定义了以下类型：
 \begin{codeblock}
 namespace std {
   enum @\libglobal{float_denorm_style}@ {
@@ -196,20 +194,17 @@ namespace std {
 \indextext{value!denormalized|see{number, subnormal}}%
 \indextext{subnormal number|see{number, subnormal}}%
 \indextext{number!subnormal}%
-The following members are defined
-in addition to those specified in \ref{numeric.limits.general}:
+除了 \ref{numeric.limits.general} 中指定的成员外，还定义了以下成员：
 \begin{codeblock}
 static constexpr float_denorm_style has_denorm = denorm_absent;
 static constexpr bool has_denorm_loss = false;
 \end{codeblock}
 
 \pnum
-The values of \tcode{has_denorm} and \tcode{has_denorm_loss} of
-specializations of \tcode{numeric_limits} are unspecified.
+\tcode{numeric_limits} 特化版本的 \tcode{has_denorm} 和 \tcode{has_denorm_loss} 的值是未指定的。
 
 \pnum
-The following members of the specialization \tcode{numeric_limits<bool>} are defined
-in addition to those specified in \ref{numeric.special}:
+除了 \ref{numeric.special} 中指定的成员外，还定义了特化版本 \tcode{numeric_limits<bool>} 的以下成员：
 \indexlibrarymember{float_denorm_style}{numeric_limits}%
 \indexlibrarymember{has_denorm_loss}{numeric_limits}%
 \begin{codeblock}
@@ -217,25 +212,25 @@ static constexpr float_denorm_style has_denorm = denorm_absent;
 static constexpr bool has_denorm_loss = false;
 \end{codeblock}
 
-\rSec1[depr.c.macros]{Deprecated C macros}
+\rSec1[depr.c.macros]{不推荐使用的 C 宏}
 
 \pnum
-The header \libheaderref{stdalign.h} has the following macros:
+头文件 \libheaderref{stdalign.h} 具有以下宏：
 \begin{codeblock}
 #define @\libxmacro{alignas_is_defined}@ 1
 #define @\libxmacro{alignof_is_defined}@ 1
 \end{codeblock}
 
 \pnum
-The header \libheaderref{stdbool.h} has the following macro:
+头文件 \libheaderref{stdbool.h} 具有以下宏：
 \begin{codeblock}
 #define @\libxmacro{bool_true_false_are_defined}@ 1
 \end{codeblock}
 
-\rSec1[depr.cerrno]{Deprecated error numbers}
+\rSec1[depr.cerrno]{不推荐使用的错误编号}
 
 \pnum
-The header \libheaderref{cerrno} has the following additional macros:
+头文件 \libheaderref{cerrno} 具有以下附加宏：
 
 \begin{codeblock}
 #define @\libmacro{ENODATA}@ @\seebelow@
@@ -245,11 +240,10 @@ The header \libheaderref{cerrno} has the following additional macros:
 \end{codeblock}
 
 \pnum
-The meaning of these macros is defined by the POSIX standard.
+这些宏的含义由 POSIX 标准定义。
 
 \pnum
-The following \tcode{enum errc} enumerators are defined
-in addition to those specified in \ref{system.error.syn}:
+除了 \ref{system.error.syn} 中指定的 \tcode{enum errc} 枚举器外，还定义了以下枚举器：
 
 \begin{codeblock}
 @\libmember{no_message_available}{errc}@,               // \tcode{ENODATA}
@@ -259,15 +253,14 @@ in addition to those specified in \ref{system.error.syn}:
 \end{codeblock}
 
 \pnum
-The value of each \tcode{enum errc} enumerator above
-is the same as the value of the \libheader{cerrno} macro
-shown in the above synopsis.
+上述每个 \tcode{enum errc} 枚举器的值
+与上述概要中所示的 \libheader{cerrno} 宏的值相同。
 
-\rSec1[depr.meta.types]{Deprecated type traits}
+\rSec1[depr.meta.types]{不推荐使用的类型特征}
 
 \pnum
-The header \libheaderrefx{type_traits}{meta.type.synop}
-has the following addition:
+头文件 \libheaderrefx{type_traits}{meta.type.synop}
+具有以下附加内容：
 
 \begin{codeblock}
 namespace std {
@@ -287,27 +280,26 @@ namespace std {
 \end{codeblock}
 
 \pnum
-The behavior of a program that adds specializations for
-any of the templates defined in this subclause is undefined,
-unless explicitly permitted by the specification of the corresponding template.
+添加了为此子条款中定义的任何模板的特化的程序的行为是未定义的，
+除非相应模板的规范明确允许。
 
 \pnum
 \label{term.trivial.type}%
-A \defnadj{trivial}{class} is a class that is trivially copyable and
-has one or more eligible default constructors, all of which are trivial.
+\defnadj{平凡}{类} 是一个可平凡复制的类，
+并且具有一个或多个合格的默认构造函数，所有这些构造函数都是平凡的。
 \begin{note}
-In particular,
-a trivial class does not have virtual functions or virtual base classes.
+特别是，
+平凡类没有虚函数或虚基类。
 \end{note}
-A \defnadj{trivial}{type} is a scalar type, a trivial class,
-an array of such a type, or a cv-qualified version of one of these types.
+\defnadj{平凡}{类型} 是标量类型、平凡类、
+此类类型的数组或其中一种类型的 cv 限定版本。
 
 \pnum
 \indextext{POD}%
-A \term{POD class} is a class that is both a trivial class and a
-standard-layout class, and has no non-static data members of type non-POD class
-(or array thereof). A \term{POD type} is a scalar type, a POD class, an array
-of such a type, or a cv-qualified version of one of these types.
+\term{POD 类} 是一个既是平凡类又是
+标准布局类的类，并且没有类型为非 POD 类
+（或其数组）的非静态数据成员。\term{POD 类型} 是标量类型、POD 类、此类
+类型的数组或其中一种类型的 cv 限定版本。
 
 \indexlibraryglobal{is_trivial}%
 \begin{itemdecl}
@@ -317,19 +309,17 @@ template<class T> struct is_trivial;
 \begin{itemdescr}
 \pnum
 \expects
-\tcode{remove_all_extents_t<T>} shall be a complete type or \cv{} \keyword{void}.
+\tcode{remove_all_extents_t<T>} 应为完整类型或 \cv{} \keyword{void}。
 
 \pnum
 \remarks
-\tcode{is_trivial<T>} is a \oldconcept{UnaryTypeTrait}\iref{meta.rqmts}
-with a base characteristic of \tcode{true_type}
-if \tcode{T} is a trivial type,
-and \tcode{false_type} otherwise.
+\tcode{is_trivial<T>} 是一个 \oldconcept{UnaryTypeTrait}\iref{meta.rqmts}，
+如果 \tcode{T} 是平凡类型，则具有 \tcode{true_type} 的基本特征，
+否则具有 \tcode{false_type}。
 
 \pnum
 \begin{note}
-It is unspecified
-whether a closure type\iref{expr.prim.lambda.closure} is a trivial type.
+未指定闭包类型\iref{expr.prim.lambda.closure} 是否为平凡类型。
 \end{note}
 \end{itemdescr}
 
@@ -341,18 +331,17 @@ template<class T> struct is_pod;
 \begin{itemdescr}
 \pnum
 \expects
-\tcode{remove_all_extents_t<T>} shall be a complete type or \cv{} \keyword{void}.
+\tcode{remove_all_extents_t<T>} 应为完整类型或 \cv{} \keyword{void}。
 
 \pnum
 \remarks
-\tcode{is_pod<T>} is a \oldconcept{UnaryTypeTrait}\iref{meta.rqmts}
-with a base characteristic of \tcode{true_type}
-if \tcode{T} is a POD type,
-and \tcode{false_type} otherwise.
+\tcode{is_pod<T>} 是一个 \oldconcept{UnaryTypeTrait}\iref{meta.rqmts}，
+如果 \tcode{T} 是 POD 类型，则具有 \tcode{true_type} 的基本特征，
+否则具有 \tcode{false_type}。
 
 \pnum
 \begin{note}
-It is unspecified whether a closure type\iref{expr.prim.lambda.closure} is a POD type.
+未指定闭包类型\iref{expr.prim.lambda.closure} 是否为 POD 类型。
 \end{note}
 \end{itemdescr}
 
@@ -364,31 +353,29 @@ template<size_t Len, size_t Align = @\exposid{default-alignment}@>
 
 \begin{itemdescr}
 \pnum
-The value of \exposid{default-alignment} is the most
-stringent alignment requirement for any object type whose size
-is no greater than \tcode{Len}\iref{basic.types}.
+\exposid{default-alignment} 的值是
+任何大小不大于 \tcode{Len}\iref{basic.types} 的对象类型的最严格对齐要求。
 
 \pnum
 \mandates
-\tcode{Len} is not zero.
-\tcode{Align} is equal to \tcode{alignof(T)} for some type \tcode{T} or
-to \exposid{default-alignment}.
+\tcode{Len} 不为零。
+\tcode{Align} 等于某个类型 \tcode{T} 的 \tcode{alignof(T)} 或
+等于 \exposid{default-alignment}。
 
 \pnum
-The member typedef \tcode{type} denotes a trivial standard-layout type
-suitable for use as uninitialized storage for any object
-whose size is at most \tcode{Len} and
-whose alignment is a divisor of \tcode{Align}.
+成员 typedef \tcode{type} 表示一个平凡的标准布局类型，
+适用于作为任何对象的未初始化存储，
+其大小最大为 \tcode{Len} 并且
+其对齐方式是 \tcode{Align} 的约数。
 
 \pnum
 \begin{note}
-Uses of \tcode{aligned_storage<Len, Align>::type} can be replaced
-by an array \tcode{std::byte[Len]} declared with \tcode{alignas(Align)}.
+可以使用声明为 \tcode{alignas(Align)} 的数组 \tcode{std::byte[Len]} 来替换 \tcode{aligned_storage<Len, Align>::type} 的使用。
 \end{note}
 
 \pnum
 \begin{note}
-A typical implementation would define \tcode{aligned_storage} as:
+典型的实现会将 \tcode{aligned_storage} 定义为：
 \begin{codeblock}
 template<size_t Len, size_t Alignment>
 struct aligned_storage {
@@ -410,25 +397,25 @@ template<size_t Len, class... Types>
 \begin{itemdescr}
 \pnum
 \mandates
-At least one type is provided.
-Each type in the template parameter pack \tcode{Types}
-is a complete object type.
+至少提供一种类型。
+模板参数包 \tcode{Types} 中的每个类型
+都是一个完整的对象类型。
 
 \pnum
-The member typedef \tcode{type} denotes a trivial standard-layout type
-suitable for use as uninitialized storage for any object
-whose type is listed in \tcode{Types};
-its size shall be at least \tcode{Len}.
-The static member \tcode{alignment_value}
-is an integral constant of type \tcode{size_t}
-whose value is the strictest alignment of all types listed in \tcode{Types}.
+成员 typedef \tcode{type} 表示一个平凡的标准布局类型，
+适用于作为任何对象的未初始化存储，
+其类型列在 \tcode{Types} 中；
+其大小应至少为 \tcode{Len}。
+静态成员 \tcode{alignment_value}
+是类型为 \tcode{size_t} 的整数常量，
+其值是 \tcode{Types} 中列出的所有类型的最严格对齐方式。
 \end{itemdescr}
 
-\rSec1[depr.relops]{Relational operators}%
+\rSec1[depr.relops]{关系运算符}%
 \indexlibraryglobal{rel_ops}%
 
 \pnum
-The header \libheaderref{utility} has the following additions:
+头文件 \libheaderref{utility} 具有以下附加内容：
 
 \begin{codeblock}
 namespace std::rel_ops {
@@ -440,9 +427,9 @@ namespace std::rel_ops {
 \end{codeblock}
 
 \pnum
-To avoid redundant definitions of \tcode{operator!=} out of \tcode{operator==}
-and operators \tcode{>}, \tcode{<=}, and \tcode{>=} out of \tcode{operator<},
-the library provides the following:
+为了避免从 \tcode{operator==} 中冗余定义 \tcode{operator!=}
+以及从 \tcode{operator<} 中冗余定义运算符 \tcode{>}、\tcode{<=} 和 \tcode{>=}，
+库提供了以下内容：
 
 \indexlibrary{\idxcode{operator"!=}}%
 \begin{itemdecl}
@@ -452,7 +439,7 @@ template<class T> bool operator!=(const T& x, const T& y);
 \begin{itemdescr}
 \pnum
 \expects
-\tcode{T} meets the \oldconcept{EqualityComparable} requirements (\tref{cpp17.equalitycomparable}).
+\tcode{T} 满足 \oldconcept{EqualityComparable} 要求 (\tref{cpp17.equalitycomparable})。
 
 \pnum
 \returns
@@ -467,7 +454,7 @@ template<class T> bool operator>(const T& x, const T& y);
 \begin{itemdescr}
 \pnum
 \expects
-\tcode{T} meets the \oldconcept{LessThanComparable} requirements (\tref{cpp17.lessthancomparable}).
+\tcode{T} 满足 \oldconcept{LessThanComparable} 要求 (\tref{cpp17.lessthancomparable})。
 
 \pnum
 \returns
@@ -482,7 +469,7 @@ template<class T> bool operator<=(const T& x, const T& y);
 \begin{itemdescr}
 \pnum
 \expects
-\tcode{T} meets the \oldconcept{LessThanComparable} requirements (\tref{cpp17.lessthancomparable}).
+\tcode{T} 满足 \oldconcept{LessThanComparable} 要求 (\tref{cpp17.lessthancomparable})。
 
 \pnum
 \returns
@@ -497,17 +484,17 @@ template<class T> bool operator>=(const T& x, const T& y);
 \begin{itemdescr}
 \pnum
 \expects
-\tcode{T} meets the \oldconcept{LessThanComparable} requirements (\tref{cpp17.lessthancomparable}).
+\tcode{T} 满足 \oldconcept{LessThanComparable} 要求 (\tref{cpp17.lessthancomparable})。
 
 \pnum
 \returns
 \tcode{!(x < y)}.
 \end{itemdescr}
 
-\rSec1[depr.tuple]{Tuple}
+\rSec1[depr.tuple]{元组}
 
 \pnum
-The header \libheaderref{tuple} has the following additions:
+头文件 \libheaderref{tuple} 具有以下附加内容：
 
 \begin{codeblock}
 namespace std {
@@ -526,26 +513,25 @@ template<class T> struct tuple_size<const volatile T>;
 
 \begin{itemdescr}
 \pnum
-Let \tcode{TS} denote \tcode{tuple_size<T>} of the cv-unqualified type \tcode{T}.
-If the expression \tcode{TS::value} is well-formed
-when treated as an unevaluated operand\iref{term.unevaluated.operand},
-then specializations of each of the two templates meet
-the \oldconcept{TransformationTrait} requirements with a base characteristic of
-\tcode{integral_constant<size_t, TS::value>}.
-Otherwise, they have no member \tcode{value}.
+令 \tcode{TS} 表示 cv 非限定类型 \tcode{T} 的 \tcode{tuple_size<T>}。
+如果表达式 \tcode{TS::value} 在
+被视为未求值操作数\iref{term.unevaluated.operand} 时是良构的，
+则每个模板的特化都满足
+具有 \tcode{integral_constant<size_t, TS::value>} 的基本特征的 \oldconcept{TransformationTrait} 要求。
+否则，它们没有成员 \tcode{value}。
 
 \pnum
-Access checking is performed as if
-in a context unrelated to \tcode{TS} and \tcode{T}.
-Only the validity of the immediate context of the expression is considered.
+访问检查的执行方式
+与 \tcode{TS} 和 \tcode{T} 无关的上下文相同。
+仅考虑表达式的直接上下文的有效性。
 
 \pnum
-In addition to being available via inclusion of the \libheaderref{tuple} header,
-the two templates are available when any of the headers
-\libheaderref{array},
-\libheaderref{ranges}, or
+除了可以通过包含 \libheaderref{tuple} 头文件来使用外，
+这两个模板在包含
+\libheaderref{array}、
+\libheaderref{ranges} 或
 \libheaderref{utility}
-are included.
+头文件中的任何一个时也可用。
 \end{itemdescr}
 
 \begin{itemdecl}
@@ -555,29 +541,28 @@ template<size_t I, class T> struct tuple_element<I, const volatile T>;
 
 \begin{itemdescr}
 \pnum
-Let \tcode{TE} denote \tcode{tuple_element_t<I, T>}
-of the cv-unqualified type \tcode{T}.
-Then specializations of each of the two templates meet
-the \oldconcept{TransformationTrait} requirements
-with a member typedef \tcode{type} that names the following type:
+令 \tcode{TE} 表示 cv 非限定类型 \tcode{T} 的 \tcode{tuple_element_t<I, T>}。
+然后，每个模板的特化都满足
+\oldconcept{TransformationTrait} 要求，
+其中成员 typedef \tcode{type} 命名以下类型：
 \begin{itemize}
-\item for the first specialization, \tcode{add_volatile_t<TE>}, and
-\item for the second specialization, \tcode{add_cv_t<TE>}.
+\item 对于第一个特化，\tcode{add_volatile_t<TE>}，以及
+\item 对于第二个特化，\tcode{add_cv_t<TE>}。
 \end{itemize}
 
 \pnum
-In addition to being available via inclusion of the \libheaderref{tuple} header,
-the two templates are available when any of the headers
-\libheaderref{array},
-\libheaderref{ranges}, or
+除了可以通过包含 \libheaderref{tuple} 头文件来使用外，
+这两个模板在包含
+\libheaderref{array}、
+\libheaderref{ranges} 或
 \libheaderref{utility}
-are included.
+头文件中的任何一个时也可用。
 \end{itemdescr}
 
-\rSec1[depr.variant]{Variant}
+\rSec1[depr.variant]{变体}
 
 \pnum
-The header \libheaderref{variant} has the following additions:
+头文件 \libheaderref{variant} 具有以下附加内容：
 
 \begin{codeblock}
 namespace std {
@@ -596,11 +581,10 @@ template<class T> struct variant_size<const volatile T>;
 
 \begin{itemdescr}
 \pnum
-Let \tcode{VS} denote \tcode{variant_size<T>}
-of the cv-unqualified type \tcode{T}.
-Then specializations of each of the two templates meet
-the \oldconcept{UnaryTypeTrait} requirements
-with a base characteristic of \tcode{integral_constant<size_t, VS::value>}.
+令 \tcode{VS} 表示 cv 非限定类型 \tcode{T}
+的 \tcode{variant_size<T>}。
+然后，每个模板的特化都满足
+具有 \tcode{integral_constant<size_t, VS::value>} 的基本特征的 \oldconcept{UnaryTypeTrait} 要求。
 \end{itemdescr}
 
 \begin{itemdecl}
@@ -610,21 +594,21 @@ template<size_t I, class T> struct variant_alternative<I, const volatile T>;
 
 \begin{itemdescr}
 \pnum
-Let \tcode{VA} denote \tcode{variant_alternative<I, T>}
-of the cv-unqualified type \tcode{T}.
-Then specializations of each of the two templates meet
-the \oldconcept{TransformationTrait} requirements
-with a member typedef \tcode{type} that names the following type:
+令 \tcode{VA} 表示 cv 非限定类型 \tcode{T}
+的 \tcode{variant_alternative<I, T>}。
+然后，每个模板的特化都满足
+\oldconcept{TransformationTrait} 要求，
+其中成员 typedef \tcode{type} 命名以下类型：
 \begin{itemize}
-\item for the first specialization, \tcode{add_volatile_t<VA::type>}, and
-\item for the second specialization, \tcode{add_cv_t<VA::type>}.
+\item 对于第一个特化，\tcode{add_volatile_t<VA::type>}，以及
+\item 对于第二个特化，\tcode{add_cv_t<VA::type>}。
 \end{itemize}
 \end{itemdescr}
 
-\rSec1[depr.iterator]{Deprecated \tcode{iterator} class template}
+\rSec1[depr.iterator]{不推荐使用的 \tcode{iterator} 类模板}
 
 \pnum
-The header \libheaderrefx{iterator}{iterator.synopsis} has the following addition:
+头文件 \libheaderrefx{iterator}{iterator.synopsis} 具有以下附加内容：
 
 \indexlibraryglobal{iterator}%
 \begin{codeblock}
@@ -642,37 +626,32 @@ namespace std {
 \end{codeblock}
 
 \pnum
-The
 \tcode{iterator}
-template may be used as a base class to ease the definition of required types
-for new iterators.
+模板可以用作基类，以简化新迭代器所需类型的定义。
 
 \pnum
 \begin{note}
-If the new iterator type is a class template, then these aliases
-will not be visible from within the iterator class's template definition, but
-only to callers of that class.
+如果新迭代器类型是类模板，则这些别名
+将无法从迭代器类的模板定义中看到，而只能
+从该类的调用者中看到。
 \end{note}
 
 \pnum
 \begin{example}
-If a \Cpp{} program wants to define a bidirectional iterator for some data
-structure containing \tcode{double} and such that it works on a large memory
-model of the implementation, it can do so with:
+如果 \Cpp{} 程序想要为包含 \tcode{double} 的某个数据结构定义双向迭代器，并且该迭代器适用于实现的大内存模型，则可以使用以下方式实现：
 
 \begin{codeblock}
 class MyIterator :
   public iterator<bidirectional_iterator_tag, double, long, T*, T&> {
-  // code implementing \tcode{++}, etc.
+  // 实现 \tcode{++} 等的代码。
 };
 \end{codeblock}
 \end{example}
 
-\rSec1[depr.move.iter.elem]{Deprecated \tcode{move_iterator} access}
+\rSec1[depr.move.iter.elem]{不推荐使用的 \tcode{move_iterator} 访问}
 
 \pnum
-The following member is declared in addition to those members
-specified in \ref{move.iter.elem}:
+除了 \ref{move.iter.elem} 中指定的成员外，还声明了以下成员：
 
 \begin{codeblock}
 namespace std {
@@ -695,12 +674,11 @@ constexpr pointer operator->() const;
 \tcode{current}.
 \end{itemdescr}
 
-\rSec1[depr.locale.category]{Deprecated locale category facets}
+\rSec1[depr.locale.category]{不推荐使用的 locale 类别方面}
 
 \pnum
-The \tcode{ctype} locale category includes the following facets
-as if they were specified
-in \tref{locale.category.facets} of \ref{locale.category}.
+\tcode{ctype} locale 类别包括以下方面，
+就像它们在 \ref{locale.category} 的 \tref{locale.category.facets} 中指定的一样。
 
 \begin{codeblock}
 codecvt<char16_t, char, mbstate_t>
@@ -710,9 +688,8 @@ codecvt<char32_t, char8_t, mbstate_t>
 \end{codeblock}
 
 \pnum
-The \tcode{ctype} locale category includes the following facets
-as if they were specified
-in \tref{locale.spec} of \ref{locale.category}.
+\tcode{ctype} locale 类别包括以下方面，
+就像它们在 \ref{locale.category} 的 \tref{locale.spec} 中指定的一样。
 
 \begin{codeblock}
 codecvt_byname<char16_t, char, mbstate_t>
@@ -722,24 +699,24 @@ codecvt_byname<char32_t, char8_t, mbstate_t>
 \end{codeblock}
 
 \pnum
-The following class template specializations are required
-in addition to those specified in~\ref{locale.codecvt}.
+除了 \ref{locale.codecvt} 中指定的类模板特化外，还需要
+以下类模板特化。
 \indextext{UTF-8}%
 \indextext{UTF-16}%
-The specializations \tcode{codecvt<char16_t, char, mbstate_t>} and
+特化 \tcode{codecvt<char16_t, char, mbstate_t>} 和
 \tcode{codecvt<char16_t, char8_t, mbstate_t>}
-convert between the UTF-16 and UTF-8 encoding forms, and
+在 UTF-16 和 UTF-8 编码形式之间进行转换，并且
 \indextext{UTF-32}%
-the specializations \tcode{codecvt<char32_t, char, mbstate_t>} and
+特化 \tcode{codecvt<char32_t, char, mbstate_t>} 和
 \tcode{codecvt<char32_t, char8_t, mbstate_t>}
-convert between the UTF-32 and UTF-8 encoding forms.
+在 UTF-32 和 UTF-8 编码形式之间进行转换。
 
-\rSec1[depr.format]{Deprecated formatting}
+\rSec1[depr.format]{不推荐使用的格式化}
 
-\rSec2[depr.format.syn]{Header \tcode{<format>} synopsis}
+\rSec2[depr.format.syn]{头文件 \tcode{<format>} 概要}
 
 \pnum
-The header \libheaderref{format} has the following additions:
+头文件 \libheaderref{format} 具有以下附加内容：
 
 \begin{codeblock}
 namespace std {
@@ -748,7 +725,7 @@ namespace std {
 }
 \end{codeblock}
 
-\rSec2[depr.format.arg]{Formatting arguments}
+\rSec2[depr.format.arg]{格式化参数}
 
 \indexlibraryglobal{visit_format_arg}%
 \begin{itemdecl}
@@ -759,13 +736,13 @@ template<class Visitor, class Context>
 \begin{itemdescr}
 \pnum
 \effects
-Equivalent to: \tcode{return visit(std::forward<Visitor>(vis), arg.value);}
+等价于：\tcode{return visit(std::forward<Visitor>(vis), arg.value);}
 \end{itemdescr}
 
-\rSec1[depr.fs.path.factory]{Deprecated filesystem path factory functions}
+\rSec1[depr.fs.path.factory]{不推荐使用的 filesystem 路径工厂函数}
 
 \pnum
-The header \libheaderrefx{filesystem}{fs.filesystem.syn} has the following additions:
+头文件 \libheaderrefx{filesystem}{fs.filesystem.syn} 具有以下附加内容：
 
 \indexlibraryglobal{u8path}%
 \begin{itemdecl}
@@ -778,75 +755,75 @@ template<class InputIterator>
 \begin{itemdescr}
 \pnum
 \mandates
-The value type of \tcode{Source} and \tcode{InputIterator} is
-\tcode{char} or \keyword{char8_t}.
+\tcode{Source} 和 \tcode{InputIterator} 的值类型为
+\tcode{char} 或 \keyword{char8_t}。
 
 \pnum
 \expects
-The \tcode{source} and \range{first}{last} sequences are UTF-8 encoded.
-\tcode{Source} meets the requirements specified in \ref{fs.path.req}.
+\tcode{source} 和 \range{first}{last} 序列是 UTF-8 编码的。
+\tcode{Source} 满足 \ref{fs.path.req} 中指定的要求。
 
 \pnum
 \returns
 \begin{itemize}
-\item If \tcode{path::value_type} is \tcode{char} and the current native
-      narrow encoding\iref{fs.path.type.cvt} is UTF-8,
-      return \tcode{path(source)} or \tcode{path(first, last)};
-      otherwise,
-\item if \tcode{path::value_type} is \keyword{wchar_t} and the
-      native wide encoding is UTF-16, or
-      if \tcode{path::value_type} is \keyword{char16_t} or \keyword{char32_t},
-      convert \tcode{source} or \range{first}{last}
-      to a temporary, \tcode{tmp}, of type \tcode{path::string_type} and
-      return \tcode{path(tmp)};
-      otherwise,
-\item convert \tcode{source} or \range{first}{last}
-      to a temporary, \tcode{tmp}, of type \tcode{u32string} and
-      return \tcode{path(tmp)}.
+\item 如果 \tcode{path::value_type} 是 \tcode{char} 并且当前的本地
+      窄编码\iref{fs.path.type.cvt} 是 UTF-8，
+      返回 \tcode{path(source)} 或 \tcode{path(first, last)}；
+      否则，
+\item 如果 \tcode{path::value_type} 是 \keyword{wchar_t} 并且
+      本地宽编码是 UTF-16，或者
+      如果 \tcode{path::value_type} 是 \keyword{char16_t} 或 \keyword{char32_t}，
+      将 \tcode{source} 或 \range{first}{last}
+      转换为类型为 \tcode{path::string_type} 的临时变量 \tcode{tmp}，
+      并返回 \tcode{path(tmp)}；
+      否则，
+\item 将 \tcode{source} 或 \range{first}{last}
+      转换为类型为 \tcode{u32string} 的临时变量 \tcode{tmp}，
+      并返回 \tcode{path(tmp)}。
 \end{itemize}
 
 \pnum
 \remarks
-Argument format conversion\iref{fs.path.fmt.cvt} applies to the
-  arguments for these functions. How Unicode encoding conversions are performed is
-  unspecified.
+参数格式转换\iref{fs.path.fmt.cvt} 适用于
+  这些函数的参数。如何执行 Unicode 编码转换是
+  未指定的。
 
 \pnum
 \begin{example}
-A string is to be read from a database that is encoded in UTF-8, and used
-    to create a directory using the native encoding for filenames:
+要从以 UTF-8 编码的数据库中读取字符串，并使用
+    文件名的本地编码创建目录：
 \begin{codeblock}
 namespace fs = std::filesystem;
 std::string utf8_string = read_utf8_data();
 fs::create_directory(fs::u8path(utf8_string));
 \end{codeblock}
 
-For POSIX-based operating systems with the native narrow encoding set
-    to UTF-8, no encoding or type conversion occurs.
+对于将本地窄编码设置为 UTF-8 的基于 POSIX 的操作系统，
+    不会发生编码或类型转换。
 
-For POSIX-based operating systems with the native narrow encoding not
-    set to UTF-8, a conversion to UTF-32 occurs, followed by a conversion to the
-    current native narrow encoding. Some Unicode characters may have no native character
-    set representation.
+对于未将本地窄编码设置为 UTF-8 的基于 POSIX 的操作系统，
+    会发生到 UTF-32 的转换，然后转换为
+    当前的本地窄编码。某些 Unicode 字符可能没有本地字符
+    集表示。
 
-For Windows-based operating systems a conversion from UTF-8 to
-    UTF-16 occurs.
+对于基于 Windows 的操作系统，会发生从 UTF-8 到
+    UTF-16 的转换。
 \end{example}
 \begin{note}
-The example above is representative of
-a historical use of \tcode{filesystem::u8path}.
-To indicate a UTF-8 encoding,
-passing a \tcode{std::u8string} to \tcode{path}'s constructor is preferred
-as it is consistent with \tcode{path}'s handling of other encodings.
+上面的示例代表了
+    \tcode{filesystem::u8path} 的历史用法。
+为了指示 UTF-8 编码，
+    首选将 \tcode{std::u8string} 传递给 \tcode{path} 的构造函数，
+因为它与 \tcode{path} 对其他编码的处理方式一致。
 \end{note}
 \end{itemdescr}
 
-\rSec1[depr.atomics]{Deprecated atomic operations}
+\rSec1[depr.atomics]{不推荐使用的原子操作}
 
-\rSec2[depr.atomics.general]{General}
+\rSec2[depr.atomics.general]{概述}
 
 \pnum
-The header \libheaderrefx{atomic}{atomics.syn} has the following additions.
+头文件 \libheaderrefx{atomic}{atomics.syn} 具有以下附加内容。
 
 \begin{codeblock}
 namespace std {
@@ -859,12 +836,11 @@ namespace std {
 }
 \end{codeblock}
 
-\rSec2[depr.atomics.volatile]{Volatile access}
+\rSec2[depr.atomics.volatile]{Volatile 访问}
 
 \pnum
-If an \tcode{atomic}\iref{atomics.types.generic} specialization has one of the following overloads,
-then that overload participates in overload resolution
-even if \tcode{atomic<T>::is_always_lock_free} is \tcode{false}:
+如果 \tcode{atomic}\iref{atomics.types.generic} 特化具有以下重载之一，
+则即使 \tcode{atomic<T>::is_always_lock_free} 为 \tcode{false}，该重载也会参与重载决议：
 \begin{codeblock}
 void store(T desired, memory_order order = memory_order::seq_cst) volatile noexcept;
 T operator=(T desired) volatile noexcept;
@@ -884,7 +860,7 @@ T operator @\placeholdernc{op}@=(T operand) volatile noexcept;
 T* fetch_@\placeholdernc{key}@(ptrdiff_t operand, memory_order order = memory_order::seq_cst) volatile noexcept;
 \end{codeblock}
 
-\rSec2[depr.atomics.nonmembers]{Non-member functions}
+\rSec2[depr.atomics.nonmembers]{非成员函数}
 
 \indexlibraryglobal{atomic_init}%
 \begin{itemdecl}
@@ -897,10 +873,10 @@ template<class T>
 \begin{itemdescr}
 \pnum
 \effects
-Equivalent to: \tcode{atomic_store_explicit(object, desired, memory_order::relaxed);}
+等价于：\tcode{atomic_store_explicit(object, desired, memory_order::relaxed);}
 \end{itemdescr}
 
-\rSec2[depr.atomics.types.operations]{Operations on atomic types}
+\rSec2[depr.atomics.types.operations]{原子类型上的操作}
 
 \indexlibraryglobal{ATOMIC_VAR_INIT}%
 \begin{itemdecl}
@@ -909,15 +885,15 @@ Equivalent to: \tcode{atomic_store_explicit(object, desired, memory_order::relax
 
 \begin{itemdescr}
 \pnum
-The macro expands to a token sequence suitable for constant initialization of
-an atomic variable of static storage duration of a type that
-is initialization-compatible with \tcode{value}.
+该宏展开为一个记号序列，该序列适用于
+静态存储期的原子变量的常量初始化，该原子变量的类型
+与 \tcode{value} 初始化兼容。
 \begin{note}
-This operation possibly needs to initialize locks.
+此操作可能需要初始化锁。
 \end{note}
-Concurrent access to the variable being initialized,
-even via an atomic operation,
-constitutes a data race.
+对正在初始化的变量的并发访问，
+即使通过原子操作，
+也构成数据竞争。
 \begin{example}
 \begin{codeblock}
 atomic<int> v = ATOMIC_VAR_INIT(5);
