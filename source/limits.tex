@@ -1,127 +1,120 @@
 %!TEX root = std.tex
-\infannex{implimits}{Implementation quantities}
+\infannex{implimits}{实现量}
 
 \pnum
-Implementations can exhibit limitations for various quantities;
-some possibilities are presented in the following list.
-The bracketed number following each quantity is
-a potential minimum value for that quantity.
+实现可以对各种量表现出限制；
+以下列表中列出了一些可能性。
+每个量后面的括号中的数字是
+该量的潜在最小值。
 \begin{itemize}
 \item%
-Nesting levels of compound statements\iref{stmt.block},
-iteration control structures\iref{stmt.iter},
-and selection control structures\iref{stmt.select} [256].
+复合语句\iref{stmt.block}、
+迭代控制结构\iref{stmt.iter} 和
+选择控制结构\iref{stmt.select} 的嵌套级别 [256]。
 \item%
-Nesting levels of conditional inclusion\iref{cpp.cond} [256].
+条件包含\iref{cpp.cond} 的嵌套级别 [256]。
 \item%
-Pointer\iref{dcl.ptr},
-pointer-to-member\iref{dcl.mptr},
-array\iref{dcl.array}, and
-function\iref{dcl.fct}
-declarators (in any combination)
-modifying a type in a declaration [256].
+指针\iref{dcl.ptr}、
+成员指针\iref{dcl.mptr}、
+数组\iref{dcl.array} 和
+函数\iref{dcl.fct}
+声明符（以任意组合）
+在声明中修改类型 [256]。
 \item%
-Nesting levels of parenthesized expressions\iref{expr.prim.paren} within a full-expression [256].
+完整表达式中带括号的表达式\iref{expr.prim.paren} 的嵌套级别 [256]。
 \item%
-Number of
-characters in an internal identifier\iref{lex.name}
-or macro name\iref{cpp.replace} [1\,024].
+内部标识符\iref{lex.name}
+或宏名\iref{cpp.replace} 中的字符数 [1\,024]。
 \item%
-Number of
-characters in an external identifier\iref{lex.name,basic.link} [1\,024].
+外部标识符\iref{lex.name,basic.link} 中的字符数 [1\,024]。
 \item%
-External identifiers\iref{basic.link} in one translation unit [65\,536].
+一个翻译单元中的外部标识符\iref{basic.link} [65\,536]。
 \item%
-Identifiers with block scope declared in one block\iref{basic.scope.block} [1\,024].
+在一个块中声明的具有块作用域的标识符\iref{basic.scope.block} [1\,024]。
 \item%
-Structured bindings\iref{dcl.struct.bind} introduced in one declaration [256].
+在一个声明中引入的结构化绑定\iref{dcl.struct.bind} [256]。
 \item%
-Macro identifiers\iref{cpp.replace} simultaneously defined in one
-translation
-unit [65\,536].
+在一个翻译
+单元中同时定义的宏标识符\iref{cpp.replace} [65\,536]。
 \item%
-Parameters in one function definition\iref{dcl.fct.def.general} [256].
+一个函数定义中的参数\iref{dcl.fct.def.general} [256]。
 \item%
-Arguments in one function call\iref{expr.call} [256].
+一个函数调用中的实参\iref{expr.call} [256]。
 \item%
-Parameters in one macro definition\iref{cpp.replace} [256].
+一个宏定义中的参数\iref{cpp.replace} [256]。
 \item%
-Arguments in one macro invocation\iref{cpp.replace} [256].
+一个宏调用中的实参\iref{cpp.replace} [256]。
 \item%
-Characters in one logical source line\iref{lex.phases} [65\,536].
+一个逻辑源行中的字符\iref{lex.phases} [65\,536]。
 \item%
-Characters in a \grammarterm{string-literal}\iref{lex.string}
-(after concatenation\iref{lex.phases}) [65\,536].
+\grammarterm{string-literal}\iref{lex.string} 中的字符
+（连接后\iref{lex.phases}）[65\,536]。
 \item%
-Size of an object\iref{intro.object} [262\,144].
+对象\iref{intro.object} 的大小 [262\,144]。
 \item%
-Nesting levels for
 \tcode{\#include}
-files\iref{cpp.include} [256].
+文件\iref{cpp.include} 的嵌套级别 [256]。
 \item%
-Case labels for a
 \keyword{switch}
-statement\iref{stmt.switch} (excluding those for any nested
+语句\iref{stmt.switch} 的 case 标签
+（不包括任何嵌套的
 \keyword{switch}
-statements)
-[16\,384].
+语句的 case 标签）
+[16\,384]。
 \item%
-Non-static data members (including inherited ones) in a single class\iref{class.mem} [16\,384].
+单个类中的非静态数据成员（包括继承的）\iref{class.mem} [16\,384]。
 \item%
-Lambda-captures in one \grammarterm{lambda-expression}\iref{expr.prim.lambda.capture} [256].
+一个 \grammarterm{lambda-expression} 中的 lambda 捕获\iref{expr.prim.lambda.capture} [256]。
 \item%
-Enumeration constants in a single enumeration\iref{dcl.enum} [4\,096].
+单个枚举中的枚举常量\iref{dcl.enum} [4\,096]。
 \item%
-Levels of nested class definitions\iref{class.nest}
-in a single
+单个
 \grammarterm{member-specification}
-[256].
+中嵌套类定义\iref{class.nest} 的级别
+[256]。
 \item%
-Functions registered by
-\tcode{atexit()}\iref{support.start.term} [32].
+由 \tcode{atexit()}\iref{support.start.term} 注册的函数 [32]。
 \item%
-Functions registered by
-\tcode{at_quick_exit()}\iref{support.start.term} [32].
+由 \tcode{at_quick_exit()}\iref{support.start.term} 注册的函数 [32]。
 \item%
-Direct and indirect base classes\iref{class.derived} [16\,384].
+直接和间接基类\iref{class.derived} [16\,384]。
 \item%
-Direct base classes for a single class\iref{class.derived} [1\,024].
+单个类的直接基类\iref{class.derived} [1\,024]。
 \item%
-Class members declared in a single \grammarterm{member-specification}
-(including member functions)\iref{class.mem} [4\,096].
+在单个 \grammarterm{member-specification} 中声明的类成员
+（包括成员函数）\iref{class.mem} [4\,096]。
 \item%
-Final overriding virtual functions in a class,
-accessible or not\iref{class.virtual} [16\,384].
+类中可访问或不可访问的
+最终重写虚函数\iref{class.virtual} [16\,384]。
 \item%
-Direct and indirect virtual bases of a class\iref{class.mi} [1\,024].
+类的直接和间接虚基类\iref{class.mi} [1\,024]。
 \item%
-Static data members of a class\iref{class.static.data} [1\,024].
+类的静态数据成员\iref{class.static.data} [1\,024]。
 \item%
-Friend declarations in a class\iref{class.friend} [4\,096].
+类中的友元声明\iref{class.friend} [4\,096]。
 \item%
-Access control declarations in a class\iref{class.access.spec} [4\,096].
+类中的访问控制声明\iref{class.access.spec} [4\,096]。
 \item%
-Member initializers in a constructor definition\iref{class.base.init} [6\,144].
+构造函数定义中的成员初始化器\iref{class.base.init} [6\,144]。
 \item%
-\grammarterm{initializer-clause}{s} in one \grammarterm{braced-init-list}\iref{dcl.init} [16\,384].
+一个 \grammarterm{braced-init-list} 中的 \grammarterm{initializer-clause}{s}\iref{dcl.init} [16\,384]。
 \item%
-Scope qualifications of one identifier\iref{expr.prim.id.qual} [256].
+一个标识符的作用域限定\iref{expr.prim.id.qual} [256]。
 \item%
-Nested \grammarterm{linkage-specification}s\iref{dcl.link} [1\,024].
+嵌套的 \grammarterm{linkage-specification}s\iref{dcl.link} [1\,024]。
 \item%
-Recursive constexpr function invocations\iref{dcl.constexpr} [512].
+递归 constexpr 函数调用\iref{dcl.constexpr} [512]。
 \item%
-Full-expressions evaluated within a core constant expression\iref{expr.const} [1\,048\,576].
+在核心常量表达式中求值的完整表达式\iref{expr.const} [1\,048\,576]。
 \item%
-Template parameters in a template declaration\iref{temp.param} [1\,024].
+模板声明中的模板参数\iref{temp.param} [1\,024]。
 \item%
-Recursively nested template instantiations\iref{temp.inst}, including substitution
-during template argument deduction\iref{temp.deduct} [1\,024].
+递归嵌套的模板实例化\iref{temp.inst}，包括模板实参推导\iref{temp.deduct}
+期间的替换 [1\,024]。
 \item%
-Handlers per try block\iref{except.handle} [256].
+每个 try 块的处理程序\iref{except.handle} [256]。
 \item%
-Number of placeholders\iref{func.bind.place} [10].
+占位符的数量\iref{func.bind.place} [10]。
 \item%
-Number of hazard-protectable possibly-reclaimable objects\iref{saferecl.hp.general} [256].
-
+可危险保护的可回收对象的数量\iref{saferecl.hp.general} [256]。
 \end{itemize}
