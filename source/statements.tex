@@ -1,15 +1,15 @@
 %!TEX root = std.tex
-\rSec0[stmt.stmt]{Statements}%
+\rSec0[stmt.stmt]{语句}%
 \indextext{statement|(}
 
-\gramSec[gram.stmt]{Statements}
+\gramSec[gram.stmt]{语句}
 
 \indextext{block (statement)|see{statement, compound}}
 
-\rSec1[stmt.pre]{Preamble}
+\rSec1[stmt.pre]{前言}
 
 \pnum
-Except as indicated, statements are executed in sequence\iref{intro.execution}.
+除非另有说明，语句按顺序执行\iref{intro.execution}。
 
 \begin{bnf}
 \nontermdef{statement}\br
@@ -37,112 +37,63 @@ Except as indicated, statements are executed in sequence\iref{intro.execution}.
     structured-binding-declaration initializer
 \end{bnf}
 
-The optional \grammarterm{attribute-specifier-seq} appertains to the respective statement.
+可选的 \grammarterm{attribute-specifier-seq} 属于相应的语句。
 
 \pnum
-A \defn{substatement} of a \grammarterm{statement} is one of the following:
+\grammarterm{statement} 的 \defn{子语句} 是以下之一：
 \begin{itemize}
 \item
-  for a \grammarterm{labeled-statement}, its \grammarterm{statement},
+  对于 \grammarterm{labeled-statement}，是其 \grammarterm{statement}，
 \item
-  for a \grammarterm{compound-statement}, any \grammarterm{statement} of its \grammarterm{statement-seq},
+  对于 \grammarterm{compound-statement}，是其 \grammarterm{statement-seq} 的任何 \grammarterm{statement}，
 \item
-  for a \grammarterm{selection-statement}, any of its \grammarterm{statement}{s} or \grammarterm{compound-statement}{s} (but not its \grammarterm{init-statement}), or
+  对于 \grammarterm{selection-statement}，是其任何 \grammarterm{statement} 或 \grammarterm{compound-statement}（但不是其 \grammarterm{init-statement}），或者
 \item
-  for an \grammarterm{iteration-statement}, its \grammarterm{statement} (but not an \grammarterm{init-statement}).
+  对于 \grammarterm{iteration-statement}，是其 \grammarterm{statement}（但不是 \grammarterm{init-statement}）。
 \end{itemize}
 \begin{note}
-The \grammarterm{compound-statement} of a \grammarterm{lambda-expression}
-is not a substatement of the \grammarterm{statement} (if any)
-in which the \grammarterm{lambda-expression} lexically appears.
+\grammarterm{lambda-expression} 的 \grammarterm{compound-statement} 不是 \grammarterm{lambda-expression} 在词法上出现的 \grammarterm{statement}（如果有）的子语句。
 \end{note}
 
 \pnum
 \indextext{statement!enclosing}%
-A \grammarterm{statement} \tcode{S1} \defnx{encloses}{enclosing statement}
-a \grammarterm{statement} \tcode{S2} if
+如果满足以下条件，则 \grammarterm{statement} \tcode{S1} \defnx{包围}{enclosing statement} \grammarterm{statement} \tcode{S2}：
 \begin{itemize}
 \item
-  \tcode{S2} is a substatement of \tcode{S1},
+  \tcode{S2} 是 \tcode{S1} 的子语句，
 \item
-  \tcode{S1} is a \grammarterm{selection-statement} or
-  \grammarterm{iteration-statement} and
-  \tcode{S2} is the \grammarterm{init-statement} of \tcode{S1},
+  \tcode{S1} 是 \grammarterm{selection-statement} 或 \grammarterm{iteration-statement}，并且 \tcode{S2} 是 \tcode{S1} 的 \grammarterm{init-statement}，
 \item
-  \tcode{S1} is a \grammarterm{try-block} and \tcode{S2}
-  is its \grammarterm{compound-statement} or
-  any of the \grammarterm{compound-statement}{s} of
-  its \grammarterm{handler}{s}, or
+  \tcode{S1} 是 \grammarterm{try-block} 并且 \tcode{S2} 是其 \grammarterm{compound-statement} 或其 \grammarterm{handler} 的任何 \grammarterm{compound-statement}，或者
 \item
-  \tcode{S1} encloses a statement \tcode{S3} and \tcode{S3} encloses \tcode{S2}.
+  \tcode{S1} 包围语句 \tcode{S3} 并且 \tcode{S3} 包围 \tcode{S2}。
 \end{itemize}
 \indextext{statement!enclosed by}%
-A statement \tcode{S1} is
-\defnx{enclosed by}{enclosed by statement}
-a statement \tcode{S2} if
-\tcode{S2} encloses \tcode{S1}.
+如果 \tcode{S2} 包围 \tcode{S1}，则语句 \tcode{S1} \defnx{被}{enclosed by statement} 语句 \tcode{S2} 包围。
 
 \pnum
 \indextext{\idxgram{condition}{s}!rules for}%
-The rules for \grammarterm{condition}{s} apply both
-to \grammarterm{selection-statement}{s}\iref{stmt.select} and
-to the \keyword{for} and \keyword{while} statements\iref{stmt.iter}.
-If a \grammarterm{structured-binding-declaration}
-appears in a \grammarterm{condition},
-the \grammarterm{condition} is a structured binding declaration\iref{dcl.pre}.
-A \grammarterm{condition} that is
-neither an \grammarterm{expression} nor a structured binding declaration
-is a declaration\iref{dcl.dcl}.
-The \grammarterm{declarator} shall not
-specify a function or an array. The \grammarterm{decl-specifier-seq} shall not
-define a class or enumeration. If the \keyword{auto} \grammarterm{type-specifier} appears in
-the \grammarterm{decl-specifier-seq},
-the type of the identifier being declared is deduced from the initializer as described in~\ref{dcl.spec.auto}.
+\grammarterm{condition} 的规则既适用于 \grammarterm{selection-statement}\iref{stmt.select}，也适用于 \keyword{for} 和 \keyword{while} 语句\iref{stmt.iter}。如果 \grammarterm{structured-binding-declaration} 出现在 \grammarterm{condition} 中，则 \grammarterm{condition} 是结构化绑定声明\iref{dcl.pre}。既不是 \grammarterm{expression} 也不是结构化绑定声明的 \grammarterm{condition} 是声明\iref{dcl.dcl}。\grammarterm{declarator} 不应指定函数或数组。\grammarterm{decl-specifier-seq} 不应定义类或枚举。如果 \keyword{auto} \grammarterm{type-specifier} 出现在 \grammarterm{decl-specifier-seq} 中，则被声明标识符的类型从初始化器中推导出来，如 \ref{dcl.spec.auto} 中所述。
 
 \pnum
-The \defnadj{decision}{variable} of a \grammarterm{condition}
-that is neither an \grammarterm{expression} nor a structured binding declaration
-is the declared variable.
-The decision variable of a \grammarterm{condition}
-that is a structured binding declaration is specified in \ref{dcl.struct.bind}.
+既不是 \grammarterm{expression} 也不是结构化绑定声明的 \grammarterm{condition} 的\defnadj{决策}{variable} 变量是被声明的变量。\grammarterm{condition}（作为结构化绑定声明）的决策变量在 \ref{dcl.struct.bind} 中指定。
 
 \pnum
-The value of a \grammarterm{condition} that is not an \grammarterm{expression}
-in a statement other than a \keyword{switch} statement is the value of the
-decision variable
-contextually converted to \tcode{bool}\iref{conv}.
-If that
-conversion is ill-formed, the program is ill-formed.
-The value of a
-\grammarterm{condition} that is an expression is the value of the
-expression, contextually converted to \tcode{bool}
-for statements other
-than \keyword{switch};
-if that conversion is ill-formed, the program is
-ill-formed. The value of the condition will be referred to as simply
-``the condition'' where the usage is unambiguous.
+在 \keyword{switch} 语句之外的语句中，不是 \grammarterm{expression} 的 \grammarterm{condition} 的值是上下文转换为 \tcode{bool}\iref{conv} 的决策变量的值。如果该转换是非良构的，则程序是非良构的。对于 \keyword{switch} 之外的语句，作为 \grammarterm{expression} 的 \grammarterm{condition} 的值是表达式的值，上下文转换为 \tcode{bool}；如果该转换是非良构的，则程序是非良构的。在用法明确的情况下，条件的值将被简称为“条件”。
 
 \pnum
-If a \grammarterm{condition} can be syntactically resolved
-as either an expression or a declaration,
-it is interpreted as the latter.
+如果 \grammarterm{condition} 可以在语法上解析为表达式或声明，则将其解释为后者。
 
 \pnum
-In the \grammarterm{decl-specifier-seq} of a \grammarterm{condition},
-including that of any \grammarterm{structured-binding-declaration} of
-the \grammarterm{condition},
-each
-\grammarterm{decl-specifier} shall be either a \grammarterm{type-specifier}
-or \keyword{constexpr}.
+在 \grammarterm{condition} 的 \grammarterm{decl-specifier-seq} 中，包括 \grammarterm{condition} 的任何 \grammarterm{structured-binding-declaration} 的 \grammarterm{decl-specifier-seq} 中，每个 \grammarterm{decl-specifier} 都应是 \grammarterm{type-specifier} 或 \keyword{constexpr}。
 
-\rSec1[stmt.label]{Label}%
+\rSec1[stmt.label]{标签}%
 \indextext{statement!labeled}
 
 \pnum
 \indextext{statement!labeled}%
 \indextext{\idxcode{:}!label specifier}%
-A label can be added to a statement or
-used anywhere in a \grammarterm{compound-statement}.
+标签可以添加到语句中，也可以在 \grammarterm{compound-statement} 中的任何位置使用。
 
 \begin{bnf}
 \nontermdef{label}\br
@@ -156,68 +107,52 @@ used anywhere in a \grammarterm{compound-statement}.
     label statement
 \end{bnf}
 
-The optional \grammarterm{attribute-specifier-seq} appertains to the label.
+可选的 \grammarterm{attribute-specifier-seq} 属于标签。
 \indextext{statement!\idxcode{goto}}%
-The only use of a label with an \grammarterm{identifier} is
-as the target of a \tcode{goto}.
+带有 \grammarterm{identifier} 的标签的唯一用途是作为 \tcode{goto} 的目标。
 \indextext{label!scope of}%
-No two labels in a function shall have the same \grammarterm{identifier}.
-A label can be used in a \tcode{goto} statement
-before its introduction.
+函数中不得有两个标签具有相同的 \grammarterm{identifier}。标签可以在其引入之前在 \tcode{goto} 语句中使用。
 
 \pnum
 \indextext{\idxgram{labeled-statement}}%
 \indextext{label!\idxcode{case}}%
 \indextext{label!\idxcode{default}}%
-A \grammarterm{labeled-statement}
-whose \grammarterm{label} is a \keyword{case} or \keyword{default} label
-shall be enclosed by\iref{stmt.pre} a \keyword{switch} statement\iref{stmt.switch}.
+其 \grammarterm{label} 是 \keyword{case} 或 \keyword{default} 标签的 \grammarterm{labeled-statement} 应被 \keyword{switch} 语句\iref{stmt.switch} 包围\iref{stmt.pre}。
 
 \pnum
-A \defnadj{control-flow-limited}{statement} is a statement \tcode{S} for which:
+\defnadj{控制流受限}{statement} 语句是语句 \tcode{S}，其中：
 \begin{itemize}
 \item
-  a \keyword{case} or \keyword{default} label appearing within \tcode{S} shall
-  be associated with a \keyword{switch} statement\iref{stmt.switch} within
-  \tcode{S}, and
+  出现在 \tcode{S} 内的 \keyword{case} 或 \keyword{default} 标签应与 \tcode{S} 内的 \keyword{switch} 语句\iref{stmt.switch} 相关联，并且
 \item
-  a label declared in \tcode{S} shall only be referred to by a
-  statement\iref{stmt.goto} in \tcode{S}.
+  在 \tcode{S} 中声明的标签只能被 \tcode{S} 中的 \grammarterm{statement}\iref{stmt.goto} 引用。
 \end{itemize}
 
 
-\rSec1[stmt.expr]{Expression statement}%
+\rSec1[stmt.expr]{表达式语句}%
 \indextext{statement!expression}
 
 \pnum
-Expression statements have the form
+表达式语句的形式为
 \begin{bnf}
 \nontermdef{expression-statement}\br
     \opt{expression} \terminal{;}
 \end{bnf}
 
-The expression is
-a discarded-value expression\iref{expr.context}.
-All
+该表达式是一个被丢弃值的表达式\iref{expr.context}。表达式语句中的所有
 \indextext{side effects}%
-side effects from an expression statement
-are completed before the next statement is executed.
+副作用在执行下一条语句之前完成。
 \indextext{statement!empty}%
-An expression statement with the \grammarterm{expression} missing is called
-a \defnadj{null}{statement}.
+缺少 \grammarterm{expression} 的表达式语句称为 \defnadj{空}{statement} 语句。
 \begin{note}
-Most statements are expression statements --- usually assignments or
-function calls. A null statement is useful to supply a null body to an
-iteration statement such as a \keyword{while}
-statement\iref{stmt.while}.
+大多数语句都是表达式语句 --- 通常是赋值或函数调用。空语句对于向诸如 \keyword{while} 语句\iref{stmt.while} 之类的迭代语句提供空主体很有用。
 \end{note}
 
-\rSec1[stmt.block]{Compound statement or block}%
+\rSec1[stmt.block]{复合语句或块}%
 \indextext{\idxcode{\{\}}!block statement}%
 
 \pnum
-A \defnadj{compound}{statement} (also known as a block) groups a
-sequence of statements into a single statement.
+\defnadj{复合}{statement} 语句（也称为块）将一系列语句组合成单个语句。
 
 \begin{bnf}
 \nontermdef{compound-statement}\br
@@ -234,22 +169,20 @@ sequence of statements into a single statement.
     label \opt{label-seq}
 \end{bnf}
 
-A label at the end of a \grammarterm{compound-statement}
-is treated as if it were followed by a null statement.
+\grammarterm{compound-statement} 末尾的标签被视为后跟一个空语句。
 
 \pnum
 \begin{note}
-A compound statement defines a block scope\iref{basic.scope}.
-A declaration is a \grammarterm{statement}\iref{stmt.dcl}.
+复合语句定义了一个块作用域\iref{basic.scope}。声明是一个 \grammarterm{statement}\iref{stmt.dcl}。
 \end{note}
 
-\rSec1[stmt.select]{Selection statements}%
+\rSec1[stmt.select]{选择语句}%
 
-\rSec2[stmt.select.general]{General}%
+\rSec2[stmt.select.general]{概述}%
 \indextext{statement!selection|(}
 
 \pnum
-Selection statements choose one of several flows of control.
+选择语句选择多个控制流之一。
 
 \indextext{statement!\idxcode{if}}%
 \indextext{statement!\idxcode{switch}}%
@@ -263,71 +196,46 @@ Selection statements choose one of several flows of control.
     \keyword{switch} \terminal{(} \opt{init-statement} condition \terminal{)} statement
 \end{bnf}
 
-See~\ref{dcl.meaning} for the optional \grammarterm{attribute-specifier-seq} in a condition.
+有关条件中的可选 \grammarterm{attribute-specifier-seq}，请参见 \ref{dcl.meaning}。
 \begin{note}
-An \grammarterm{init-statement} ends with a semicolon.
+\grammarterm{init-statement} 以分号结尾。
 \end{note}
 
 \pnum
 \indextext{scope!\idxgram{selection-statement}}%
 \begin{note}
-Each \grammarterm{selection-statement} and
-each substatement of a \grammarterm{selection-statement}
-has a block scope\iref{basic.scope.block}.
+每个 \grammarterm{selection-statement} 和 \grammarterm{selection-statement} 的每个子语句都有一个块作用域\iref{basic.scope.block}。
 \end{note}
 
-\rSec2[stmt.if]{The \keyword{if} statement}%
+\rSec2[stmt.if]{ \keyword{if} 语句}%
 \indextext{statement!\idxcode{if}}
 
 \pnum
-If the condition\iref{stmt.pre} yields \tcode{true}, the first
-substatement is executed. If the \keyword{else} part of the selection
-statement is present and the condition yields \tcode{false}, the second
-substatement is executed. If the first substatement is reached via a
-label, the condition is not evaluated and the second substatement is
-not executed. In the second form of \keyword{if} statement
-(the one including \keyword{else}), if the first substatement is also an
-\keyword{if} statement then that inner \tcode{if} statement shall contain
-an \keyword{else} part.
+如果 condition\iref{stmt.pre} 产生 \tcode{true}，则执行第一个子语句。如果选择语句的 \keyword{else} 部分存在并且 condition 产生 \tcode{false}，则执行第二个子语句。如果通过标签到达第一个子语句，则不评估 condition，也不执行第二个子语句。在第二种形式的 \keyword{if} 语句（包含 \keyword{else} 的语句）中，如果第一个子语句也是一个 \keyword{if} 语句，则该内部 \tcode{if} 语句应包含一个 \keyword{else} 部分。
 \begin{footnote}
-In other words, the \keyword{else} is associated with the nearest un-elsed
-\keyword{if}.
+换句话说，\keyword{else} 与最近的未配对 \keyword{else} 的 \keyword{if} 相关联。
 \end{footnote}
 
 \pnum
-If the \keyword{if} statement is of the form \tcode{if constexpr},
-the value of the condition
-is contextually converted to \keyword{bool} and
-the converted expression shall be a constant expression\iref{expr.const};
-this
-form is called a \defn{constexpr if} statement. If the value of the
-converted condition is \tcode{false}, the first substatement is a
-\defn{discarded statement}, otherwise the second substatement, if
-present, is a discarded statement. During the instantiation of an
-enclosing templated entity\iref{temp.pre}, if the condition is
-not value-dependent after its instantiation, the discarded substatement
-(if any) is not instantiated.
-Each substatement of a constexpr if statement is a control-flow-limited
-statement\iref{stmt.label}.
+如果 \keyword{if} 语句的形式为 \tcode{if constexpr}，则 condition 的值被上下文转换为 \keyword{bool}，并且转换后的表达式应为常量表达式\iref{expr.const}；这种形式称为 \defn{constexpr if} 语句。如果转换后的 condition 的值为 \tcode{false}，则第一个子语句是 \defn{discarded statement}，否则第二个子语句（如果存在）是 discarded statement。在封闭的模板化实体\iref{temp.pre} 的实例化期间，如果 condition 在实例化后不是值依赖的，则 discarded statement（如果有）不会被实例化。constexpr if 语句的每个子语句都是控制流受限语句\iref{stmt.label}。
 \begin{example}
 \begin{codeblock}
-if constexpr (sizeof(int[2])) {}        // OK, narrowing allowed
+if constexpr (sizeof(int[2])) {}        // OK, 允许窄化
 \end{codeblock}
 \end{example}
 \begin{note}
-Odr-uses\iref{term.odr.use} in a discarded statement do not require
-an entity to be defined.
+discarded statement 中的 odr-use\iref{term.odr.use} 不需要定义实体。
 \end{note}
 \begin{example}
 \begin{codeblock}
 template<typename T, typename ... Rest> void g(T&& p, Rest&& ...rs) {
-  // ... handle \tcode{p}
+  // ... 处理 \tcode{p}
 
   if constexpr (sizeof...(rs) > 0)
-    g(rs...);       // never instantiated with an empty argument list
+    g(rs...);       // 从不使用空参数列表实例化
 }
 
-extern int x;       // no definition of \tcode{x} required
+extern int x;       // 不需要 \tcode{x} 的定义
 
 int f() {
   if constexpr (true)
@@ -341,170 +249,131 @@ int f() {
 \end{example}
 
 \pnum
-An \keyword{if} statement of the form
+形式为
 \begin{ncsimplebnf}
 \keyword{if} \opt{\keyword{constexpr}} \terminal{(} init-statement condition \terminal{)} statement
 \end{ncsimplebnf}
-is equivalent to
+的 \keyword{if} 语句等价于
 \begin{ncsimplebnf}
 \terminal{\{}\br
 \bnfindent init-statement\br
 \bnfindent \keyword{if} \opt{\keyword{constexpr}} \terminal{(} condition \terminal{)} statement\br
 \terminal{\}}
 \end{ncsimplebnf}
-and an \keyword{if} statement of the form
+形式为
 \begin{ncsimplebnf}
 \keyword{if} \opt{\keyword{constexpr}} \terminal{(} init-statement condition \terminal{)} statement \keyword{else} statement
 \end{ncsimplebnf}
-is equivalent to
+的 \keyword{if} 语句等价于
 \begin{ncsimplebnf}
 \terminal{\{}\br
 \bnfindent init-statement\br
 \bnfindent \keyword{if} \opt{\keyword{constexpr}} \terminal{(} condition \terminal{)} statement \keyword{else} statement\br
 \terminal{\}}
 \end{ncsimplebnf}
-except that the \grammarterm{init-statement} is
-in the same scope as the \grammarterm{condition}.
+除了 \grammarterm{init-statement} 与 \grammarterm{condition} 在同一作用域中。
 
 \pnum
-An \keyword{if} statement of the form \tcode{\keyword{if} \keyword{consteval}}
-is called a \defnadj{consteval if}{statement}.
-The \grammarterm{statement}, if any, in a consteval if statement
-shall be a \grammarterm{compound-statement}.
+形式为 \tcode{\keyword{if} \keyword{consteval}} 的 \keyword{if} 语句称为 \defnadj{consteval if}{statement} 语句。consteval if 语句中的 \grammarterm{statement}（如果有）应为 \grammarterm{compound-statement}。
 \begin{example}
 \begin{codeblock}
 constexpr void f(bool b) {
   if (true)
     if consteval { }
-    else ;              // error: not a \grammarterm{compound-statement}; \keyword{else} not associated with outer \keyword{if}
+    else ;              // 错误：不是 \grammarterm{compound-statement}；\keyword{else} 未与外部 \keyword{if} 关联
 }
 \end{codeblock}
 \end{example}
 
 \pnum
-If a consteval if statement is evaluated in a context
-that is manifestly constant-evaluated\iref{expr.const},
-the first substatement is executed.
+如果 consteval if 语句在明显常量求值的上下文\iref{expr.const}中求值，则执行第一个子语句。
 \begin{note}
-The first substatement is an immediate function context.
+第一个子语句是立即函数上下文。
 \end{note}
-Otherwise, if the \keyword{else} part of the selection statement is present,
-then the second substatement is executed.
-Each substatement of a consteval if statement is a control-flow-limited
-statement\iref{stmt.label}.
+否则，如果选择语句的 \keyword{else} 部分存在，则执行第二个子语句。consteval if 语句的每个子语句都是控制流受限语句\iref{stmt.label}。
 
 \pnum
-An \keyword{if} statement of the form
+形式为
 \begin{ncsimplebnf}
 \keyword{if} \terminal{!} \keyword{consteval} compound-statement
 \end{ncsimplebnf}
-is not itself a consteval if statement,
-but is equivalent to the consteval if statement
+的 \keyword{if} 语句本身不是 consteval if 语句，但等价于 consteval if 语句
 \begin{ncsimplebnf}
 \keyword{if} \keyword{consteval} \terminal{\{} \terminal{\}} \keyword{else} compound-statement
 \end{ncsimplebnf}
-An \keyword{if} statement of the form
+形式为
 \begin{ncsimplebnf}
 \keyword{if} \terminal{!} \keyword{consteval} compound-statement$_1$ \keyword{else} statement$_2$
 \end{ncsimplebnf}
-is not itself a consteval if statement,
-but is equivalent to the consteval if statement
+的 \keyword{if} 语句本身不是 consteval if 语句，但等价于 consteval if 语句
 \begin{ncsimplebnf}
 \keyword{if} \keyword{consteval} statement$_2$ \keyword{else} compound-statement$_1$
 \end{ncsimplebnf}
 
-\rSec2[stmt.switch]{The \keyword{switch} statement}%
+\rSec2[stmt.switch]{ \keyword{switch} 语句}%
 \indextext{statement!\idxcode{switch}}
 
 \pnum
-The \keyword{switch} statement causes control to be transferred to one of
-several statements depending on the value of a condition.
+\keyword{switch} 语句根据 condition 的值使控制转移到多个语句之一。
 
 \pnum
-If the \grammarterm{condition} is an \grammarterm{expression},
-the value of the condition is the value of the \grammarterm{expression};
-otherwise, it is the value of the decision variable.
-The value of the condition shall be of integral type, enumeration type, or class
-type. If of class type, the
-condition is contextually implicitly converted\iref{conv} to
-an integral or enumeration type.
-If the (possibly converted) type is subject to integral
-promotions\iref{conv.prom}, the condition is converted
-to the promoted type.
-Any
-statement within the \keyword{switch} statement can be labeled with one or
-more case labels as follows:
+如果 \grammarterm{condition} 是 \grammarterm{expression}，则 condition 的值是 \grammarterm{expression} 的值；否则，它是决策变量的值。condition 的值应为整数类型、枚举类型或类类型。如果是类类型，则 condition 上下文隐式转换\iref{conv}为整数或枚举类型。如果（可能转换后的）类型受整数提升\iref{conv.prom}的约束，则 condition 将转换为提升后的类型。 \keyword{switch} 语句中的任何语句都可以用一个或多个 case 标签标记，如下所示：
 \begin{ncbnf}
 \indextext{label!\idxcode{case}}%
 \keyword{case} constant-expression \terminal{:}
 \end{ncbnf}
-where the \grammarterm{constant-expression} shall be
-a converted constant expression\iref{expr.const} of the
-adjusted type of the switch condition. No two of the case constants in
-the same switch shall have the same value after conversion.
+其中 \grammarterm{constant-expression} 应为 switch condition 调整后类型的转换常量表达式\iref{expr.const}。同一 switch 中的两个 case 常量在转换后不得具有相同的值。
+
 
 \pnum
 \indextext{label!\idxcode{default}}%
-There shall be at most one label of the form
+在一个 \keyword{switch} 语句中，至多应有一个形式为
 \begin{codeblock}
 default :
 \end{codeblock}
-within a \keyword{switch} statement.
+的标签。
 
 \pnum
-Switch statements can be nested; a \keyword{case} or \keyword{default} label
-is associated with the smallest switch enclosing it.
+Switch 语句可以嵌套；\keyword{case} 或 \keyword{default} 标签与包含它的最小 switch 相关联。
 
 \pnum
-When the \keyword{switch} statement is executed, its condition is
-evaluated.
+当执行 \keyword{switch} 语句时，将评估其 condition。
 \indextext{label!\idxcode{case}}%
-If one of the case constants has the same value as the condition,
-control is passed to the statement following the matched case label. If
-no case constant matches the condition, and if there is a
+如果其中一个 case 常量的值与 condition 的值相同，则控制权将传递到匹配的 case 标签后面的语句。如果没有 case 常量与 condition 匹配，并且如果存在
 \indextext{label!\idxcode{default}}%
-\keyword{default} label, control passes to the statement labeled by the
-default label. If no case matches and if there is no \keyword{default}
-then none of the statements in the switch is executed.
+\keyword{default} 标签，则控制权传递到由 default 标签标记的语句。如果没有 case 匹配并且没有 \keyword{default}，则不执行 switch 中的任何语句。
 
 \pnum
-\keyword{case} and \keyword{default} labels in themselves do not alter the
-flow of control, which continues unimpeded across such labels. To exit
-from a switch, see \keyword{break}, \ref{stmt.break}.
+\keyword{case} 和 \keyword{default} 标签本身不会改变控制流，控制流会不受阻碍地跨越这些标签继续进行。要从 switch 中退出，请参见 \keyword{break}，\ref{stmt.break}。
 \begin{note}
-Usually, the substatement that is the subject of a switch is compound
-and \keyword{case} and \keyword{default} labels appear on the top-level
-statements contained within the (compound) substatement, but this is not
-required.
+通常，作为 switch 主体的子语句是复合的，并且 \keyword{case} 和 \keyword{default} 标签出现在包含在（复合）子语句中的顶层语句上，但这不是必需的。
 \indextext{statement!declaration in \tcode{switch}}%
-Declarations can appear in the substatement of a
-\keyword{switch} statement.
+声明可以出现在 \keyword{switch} 语句的子语句中。
 \end{note}
 
 \pnum
-A \keyword{switch} statement of the form
+形式为
 \begin{ncsimplebnf}
 \keyword{switch} \terminal{(} init-statement condition \terminal{)} statement
 \end{ncsimplebnf}
-is equivalent to
+的 \keyword{switch} 语句等价于
 \begin{ncsimplebnf}
 \terminal{\{}\br
 \bnfindent init-statement\br
 \bnfindent \keyword{switch} \terminal{(} condition \terminal{)} statement\br
 \terminal{\}}
 \end{ncsimplebnf}
-except that the \grammarterm{init-statement} is in
-the same scope as the \grammarterm{condition}.
+除了 \grammarterm{init-statement} 与 \grammarterm{condition} 在同一作用域中。
 
 \indextext{statement!selection|)}
 
-\rSec1[stmt.iter]{Iteration statements}%
+\rSec1[stmt.iter]{迭代语句}%
 
-\rSec2[stmt.iter.general]{General}%
+\rSec2[stmt.iter.general]{概述}%
 \indextext{statement!iteration|(}
 
 \pnum
-Iteration statements specify looping.
+迭代语句指定循环。
 
 \indextext{statement!\idxcode{while}}%
 \indextext{statement!\idxcode{do}}%
@@ -529,38 +398,30 @@ Iteration statements specify looping.
     expr-or-braced-init-list
 \end{bnf}
 
-See~\ref{dcl.meaning} for the optional \grammarterm{attribute-specifier-seq} in a
-\grammarterm{for-range-declaration}.
+有关 \grammarterm{for-range-declaration} 中可选的 \grammarterm{attribute-specifier-seq}，请参见 \ref{dcl.meaning}。
 \begin{note}
-An \grammarterm{init-statement} ends with a semicolon.
+\grammarterm{init-statement} 以分号结尾。
 \end{note}
 
 \pnum
 \indextext{scope!\idxgram{iteration-statement}}%
-The substatement in an \grammarterm{iteration-statement} implicitly defines
-a block scope\iref{basic.scope} which is entered and exited each time
-through the loop.
-If the substatement in an \grammarterm{iteration-statement} is
-a single statement and not a \grammarterm{compound-statement},
-it is as if it was rewritten to be
-a \grammarterm{compound-statement} containing the original statement.
+\grammarterm{iteration-statement} 中的子语句隐式定义了一个块作用域\iref{basic.scope}，每次循环都会进入和退出该作用域。如果 \grammarterm{iteration-statement} 中的子语句是单个语句而不是 \grammarterm{compound-statement}，则等同于将其重写为包含原始语句的 \grammarterm{compound-statement}。
 \begin{example}
 \begin{codeblock}
 while (--x >= 0)
   int i;
 \end{codeblock}
-can be equivalently rewritten as
+可以等价地重写为
 \begin{codeblock}
 while (--x >= 0) {
   int i;
 }
 \end{codeblock}
-Thus after the \keyword{while} statement, \tcode{i} is no longer in scope.
+因此，在 \keyword{while} 语句之后，\tcode{i} 不再在作用域内。
 \end{example}
 
 \pnum
-A \defnadj{trivially empty}{iteration statement} is
-an iteration statement matching one of the following forms:
+\defnadj{平凡空}{iteration statement} 迭代语句是匹配以下形式之一的迭代语句：
 \begin{itemize}
 \item \tcode{while (} \grammarterm{expression} \tcode{) ;}
 \item \tcode{while (} \grammarterm{expression} \tcode{) \{ \}}
@@ -569,37 +430,20 @@ an iteration statement matching one of the following forms:
 \item \tcode{for (} \grammarterm{init-statement} \opt{\grammarterm{expression}} \tcode{; ) ;}
 \item \tcode{for (} \grammarterm{init-statement} \opt{\grammarterm{expression}} \tcode{; ) \{ \}}
 \end{itemize}
-The \defnadj{controlling}{expression} of a trivially empty iteration statement
-is the \grammarterm{expression} of
-a \tcode{while}, \tcode{do}, or \tcode{for} statement
-(or \tcode{true}, if the \tcode{for} statement has no \grammarterm{expression}).
-A \defnadj{trivial infinite}{loop} is a trivially empty iteration statement
-for which the converted controlling expression is a constant expression,
-when interpreted as a \grammarterm{constant-expression}\iref{expr.const}, and
-evaluates to \tcode{true}.
-The \grammarterm{statement} of a trivial infinite loop is replaced with
-a call to the function \tcode{std::this_thread::yield}\iref{thread.thread.this};
-it is implementation-defined whether this replacement occurs
-on freestanding implementations.
+平凡空迭代语句的\defnadj{控制}{expression} 表达式是 \tcode{while}、\tcode{do} 或 \tcode{for} 语句的 \grammarterm{expression}（如果 \tcode{for} 语句没有 \grammarterm{expression}，则为 \tcode{true}）。当解释为 \grammarterm{constant-expression}\iref{expr.const} 时，\defnadj{平凡无限}{loop} 循环是一个平凡空迭代语句，其转换后的控制表达式是一个常量表达式，并且计算结果为 \tcode{true}。平凡无限循环的 \grammarterm{statement} 被替换为对函数 \tcode{std::this_thread::yield}\iref{thread.thread.this} 的调用；在独立实现上是否发生此替换是实现定义的。
 \begin{note}
-In a freestanding environment,
-concurrent forward progress is not guaranteed;
-such systems therefore require explicit cooperation.
-A call to yield can add implicit cooperation where none is otherwise intended.
+在独立环境中，不保证并发向前推进；因此，此类系统需要显式协作。在没有其他意图的情况下，调用 yield 可以添加隐式协作。
 \end{note}
 
-\rSec2[stmt.while]{The \keyword{while} statement}%
+\rSec2[stmt.while]{ \keyword{while} 语句}%
 \indextext{statement!\idxcode{while}}
 
 \pnum
-In the \keyword{while} statement, the substatement is executed repeatedly
-until the value of the condition\iref{stmt.pre} becomes
-\tcode{false}. The test takes place before each execution of the
-substatement.
+在 \keyword{while} 语句中，重复执行子语句，直到 condition\iref{stmt.pre} 的值变为 \tcode{false}。测试发生在每次执行子语句之前。
 
 \pnum
 \indextext{statement!declaration in \tcode{while}}%
-A \keyword{while} statement is equivalent to
+\keyword{while} 语句等价于
 \begin{ncsimplebnf}
 \exposid{label} \terminal{:}\br
 \terminal{\{}\br
@@ -610,8 +454,7 @@ A \keyword{while} statement is equivalent to
 \terminal{\}}
 \end{ncsimplebnf}
 \begin{note}
-The variable created in the condition is destroyed and created with each
-iteration of the loop.
+在 condition 中创建的变量在每次循环迭代时都会被销毁和创建。
 \begin{example}
 \begin{codeblock}
 struct A {
@@ -626,33 +469,28 @@ while (A a = i) {
   i = 0;
 }
 \end{codeblock}
-In the while-loop, the constructor and destructor are each called twice,
-once for the condition that succeeds and once for the condition that
-fails.
+在 while 循环中，构造函数和析构函数分别被调用两次，一次用于成功的 condition，一次用于失败的 condition。
 \end{example}
 \end{note}
 
-\rSec2[stmt.do]{The \keyword{do} statement}%
+\rSec2[stmt.do]{ \keyword{do} 语句}%
 \indextext{statement!\idxcode{do}}
 
 \pnum
-The expression is contextually converted to \tcode{bool}\iref{conv};
-if that conversion is ill-formed, the program is ill-formed.
+表达式被上下文转换为 \tcode{bool}\iref{conv}；如果该转换是非良构的，则程序是非良构的。
 
 \pnum
-In the \keyword{do} statement, the substatement is executed repeatedly
-until the value of the expression becomes \tcode{false}. The test takes
-place after each execution of the statement.
+在 \keyword{do} 语句中，重复执行子语句，直到 expression 的值变为 \tcode{false}。测试发生在每次执行语句之后。
 
-\rSec2[stmt.for]{The \tcode{for} statement}%
+\rSec2[stmt.for]{ \tcode{for} 语句}%
 \indextext{statement!\idxcode{for}}
 
 \pnum
-The \keyword{for} statement
+\keyword{for} 语句
 \begin{ncsimplebnf}
 \keyword{for} \terminal{(} init-statement \opt{condition} \terminal{;} \opt{expression} \terminal{)} statement
 \end{ncsimplebnf}
-is equivalent to
+等价于
 \begin{ncsimplebnf}
 \terminal{\{}\br
 \bnfindent init-statement\br
@@ -662,37 +500,23 @@ is equivalent to
 \bnfindent \terminal{\}}\br
 \terminal{\}}
 \end{ncsimplebnf}
-except that the \grammarterm{init-statement} is
-in the same scope as the \grammarterm{condition}, and
-except that a
-\indextext{statement!\tcode{continue} in \tcode{for}}%
-\keyword{continue} in \grammarterm{statement} (not enclosed in another
-iteration statement) will execute \grammarterm{expression} before
-re-evaluating \grammarterm{condition}.
+除了 \grammarterm{init-statement} 与 \grammarterm{condition} 在同一作用域中，并且除了 \grammarterm{statement} 中的 \keyword{continue}（不包含在另一个迭代语句中）将在重新评估 \grammarterm{condition} 之前执行 \grammarterm{expression}。
 \begin{note}
-Thus the first statement specifies initialization for the loop; the
-condition\iref{stmt.pre} specifies a test, sequenced before each
-iteration, such that the loop is exited when the condition becomes
-\tcode{false}; the expression often specifies incrementing that is
-sequenced after each iteration.
+因此，第一个语句指定循环的初始化；condition\iref{stmt.pre} 指定一个测试，该测试在每次迭代之前按顺序进行，以便当 condition 变为 \tcode{false} 时退出循环；expression 通常指定在每次迭代之后按顺序进行的递增。
 \end{note}
 
 \pnum
-Either or both of the \grammarterm{condition}
-and the \grammarterm{expression} can be omitted.
-A missing \grammarterm{condition}
-makes the implied \keyword{while} clause
-equivalent to \tcode{while(true)}.
+\grammarterm{condition} 和 \grammarterm{expression} 中的一个或两个都可以省略。缺少的 \grammarterm{condition} 使隐含的 \keyword{while} 子句等价于 \tcode{while(true)}。
 
-\rSec2[stmt.ranged]{The range-based \keyword{for} statement}%
+\rSec2[stmt.ranged]{基于范围的 \keyword{for} 语句}%
 \indextext{statement!range based for@range based \tcode{for}}
 
 \pnum
-The range-based \keyword{for} statement
+基于范围的 \keyword{for} 语句
 \begin{ncsimplebnf}
 \keyword{for} \terminal{(} \opt{init-statement} for-range-declaration \terminal{:} for-range-initializer \terminal{)} statement
 \end{ncsimplebnf}
-is equivalent to
+等价于
 \begin{ncsimplebnf}
 \terminal{\{}\br
 \bnfindent \opt{init-statement}\br
@@ -705,43 +529,24 @@ is equivalent to
 \bnfindent \terminal{\}}\br
 \terminal{\}}
 \end{ncsimplebnf}
-where
+其中
 \begin{itemize}
 \item
-if the \grammarterm{for-range-initializer} is an \grammarterm{expression},
-it is regarded as if it were surrounded by parentheses (so that a comma operator
-cannot be reinterpreted as delimiting two \grammarterm{init-declarator}{s});
+如果 \grammarterm{for-range-initializer} 是 \grammarterm{expression}，则将其视为被括号包围（因此逗号运算符不能被重新解释为分隔两个 \grammarterm{init-declarator}）；
 
-\item \exposid{range}, \exposid{begin}, and \exposid{end} are variables defined for
-exposition only; and
+\item \exposid{range}、\exposid{begin} 和 \exposid{end} 是仅为说明而定义的变量；并且
 
 \item
-\exposid{begin-expr} and \exposid{end-expr} are determined as follows:
+\exposid{begin-expr} 和 \exposid{end-expr} 确定如下：
 
 \begin{itemize}
-\item if the type of \exposid{range} is a reference to an
-array type \tcode{R}, \exposid{begin-expr} and \exposid{end-expr} are
-\exposid{range} and \exposid{range} \tcode{+} \tcode{N}, respectively,
-where \tcode{N} is
-the array bound. If \tcode{R} is an array of unknown bound or an array of
-incomplete type, the program is ill-formed;
+\item 如果 \exposid{range} 的类型是对数组类型 \tcode{R} 的引用，则 \exposid{begin-expr} 和 \exposid{end-expr} 分别是 \exposid{range} 和 \exposid{range} \tcode{+} \tcode{N}，其中 \tcode{N} 是数组边界。如果 \tcode{R} 是未知边界的数组或不完整类型的数组，则程序是非良构的；
 
-\item if the type of \exposid{range} is a reference to a
-class type \tcode{C}, and
-searches in the scope of \tcode{C}\iref{class.member.lookup}
-for the names \tcode{begin} and \tcode{end}
-each find at least one declaration,
-\exposid{begin-expr} and \exposid{end-expr} are
-\tcode{\exposid{range}.begin()} and \tcode{\exposid{range}.end()},
-respectively;
+\item 如果 \exposid{range} 的类型是对类类型 \tcode{C} 的引用，并且在 \tcode{C}\iref{class.member.lookup} 的作用域中搜索名称 \tcode{begin} 和 \tcode{end} 都至少找到一个声明，则 \exposid{begin-expr} 和 \exposid{end-expr} 分别是 \tcode{\exposid{range}.begin()} 和 \tcode{\exposid{range}.end()}；
 
-\item otherwise, \exposid{begin-expr} and \exposid{end-expr} are
-\tcode{begin(\exposid{range})} and \tcode{end(\exposid{range})}, respectively,
-where \tcode{begin} and \tcode{end} undergo
-argument-dependent lookup\iref{basic.lookup.argdep}.
+\item 否则，\exposid{begin-expr} 和 \exposid{end-expr} 分别是 \tcode{begin(\exposid{range})} 和 \tcode{end(\exposid{range})}，其中 \tcode{begin} 和 \tcode{end} 进行参数依赖查找\iref{basic.lookup.argdep}。
 \begin{note}
-Ordinary unqualified lookup\iref{basic.lookup.unqual} is not
-performed.
+不执行普通的非限定查找\iref{basic.lookup.unqual}。
 \end{note}
 \end{itemize}
 \end{itemize}
@@ -753,8 +558,7 @@ for (int& x : array)
 \end{codeblock}
 \end{example}
 \begin{note}
-The lifetime of some temporaries in the \grammarterm{for-range-initializer}
-is extended to cover the entire loop\iref{class.temporary}.
+\grammarterm{for-range-initializer} 中某些临时对象的生命周期被延长以覆盖整个循环\iref{class.temporary}。
 \end{note}
 \begin{example}
 \begin{codeblock}
@@ -764,26 +568,23 @@ const T& f2(T t)        { return t; }
 T g();
 
 void foo() {
-  for (auto e : f1(g())) {}     // OK, lifetime of return value of \tcode{g()} extended
-  for (auto e : f2(g())) {}     // undefined behavior
+  for (auto e : f1(g())) {}     // OK, \tcode{g()} 返回值的生命周期被延长
+  for (auto e : f2(g())) {}     // 未定义行为
 }
 \end{codeblock}
 \end{example}
 
 \pnum
-In the \grammarterm{decl-specifier-seq} of a \grammarterm{for-range-declaration},
-each \grammarterm{decl-specifier} shall be either a \grammarterm{type-specifier}
-or \keyword{constexpr}. The \grammarterm{decl-specifier-seq} shall not define a
-class or enumeration.%
+在 \grammarterm{for-range-declaration} 的 \grammarterm{decl-specifier-seq} 中，每个 \grammarterm{decl-specifier} 都应为 \grammarterm{type-specifier} 或 \keyword{constexpr}。\grammarterm{decl-specifier-seq} 不应定义类或枚举。%
 \indextext{statement!iteration|)}
 
-\rSec1[stmt.jump]{Jump statements}%
+\rSec1[stmt.jump]{跳转语句}%
 
-\rSec2[stmt.jump.general]{General}%
+\rSec2[stmt.jump.general]{概述}%
 \indextext{statement!jump}
 
 \pnum
-Jump statements unconditionally transfer control.
+跳转语句无条件地转移控制。
 \indextext{statement!jump}%
 
 \indextext{statement!\idxcode{break}}%
@@ -805,49 +606,34 @@ Jump statements unconditionally transfer control.
 \indextext{local variable!destruction of}%
 \indextext{scope!destructor and exit from}%
 \begin{note}
-On exit from a scope (however accomplished), objects with automatic storage
-duration\iref{basic.stc.auto} that have been constructed in that scope are destroyed
-in the reverse order of their construction\iref{stmt.dcl}.
-For temporaries, see~\ref{class.temporary}.
-However, the program can be terminated (by calling
+退出作用域时（无论以何种方式完成），在该作用域中构造的具有自动存储期\iref{basic.stc.auto}的对象将按其构造的相反顺序销毁\iref{stmt.dcl}。对于临时对象，请参见 \ref{class.temporary}。但是，程序可以在不销毁具有自动存储期的对象的情况下终止（例如，通过调用
 \indextext{\idxcode{exit}}%
 \indexlibraryglobal{exit}%
-\tcode{std::exit()} or
+\tcode{std::exit()} 或
 \indextext{\idxcode{abort}}%
 \indexlibraryglobal{abort}%
-\tcode{std::abort()}\iref{support.start.term}, for example) without
-destroying objects with automatic storage duration.
+\tcode{std::abort()}\iref{support.start.term}）。
 \end{note}
 \begin{note}
-A suspension of a coroutine\iref{expr.await} is not considered to be an exit from a scope.
+协程的挂起\iref{expr.await}不被视为退出作用域。
 \end{note}
 
-\rSec2[stmt.break]{The \keyword{break} statement}%
+\rSec2[stmt.break]{ \keyword{break} 语句}%
 \indextext{statement!\idxcode{break}}
 
 \pnum
-A \keyword{break} statement shall be enclosed by\iref{stmt.pre}
+\keyword{break} 语句应被\iref{stmt.pre}
 \indextext{\idxgram{iteration-statement}}%
 \indextext{statement!\idxcode{switch}}%
-an \grammarterm{iteration-statement}\iref{stmt.iter} or
-a \keyword{switch} statement\iref{stmt.switch}.
-The \keyword{break} statement causes
-termination of the smallest such enclosing statement;
-control passes to the statement following the
-terminated statement, if any.
+\grammarterm{iteration-statement}\iref{stmt.iter} 或 \keyword{switch} 语句\iref{stmt.switch} 包围。 \keyword{break} 语句导致终止最小的此类封闭语句；控制权传递到被终止语句之后的语句（如果有）。
 
-\rSec2[stmt.cont]{The \keyword{continue} statement}%
+\rSec2[stmt.cont]{ \keyword{continue} 语句}%
 \indextext{statement!\idxcode{continue}}
 
 \pnum
-A \keyword{continue}
-statement shall be enclosed by\iref{stmt.pre} an
+\keyword{continue} 语句应被\iref{stmt.pre}
 \indextext{\idxgram{iteration-statement}}%
-\grammarterm{iteration-statement}\iref{stmt.iter}.
-The \keyword{continue} statement
-causes control to pass to the loop-continuation portion of the
-smallest such enclosing statement, that is, to the end
-of the loop. More precisely, in each of the statements
+\grammarterm{iteration-statement}\iref{stmt.iter} 包围。\keyword{continue} 语句导致控制权传递到最小的此类封闭语句的循环继续部分，即循环的末尾。更准确地说，在每个语句中
 
 \begin{minipage}{.30\hsize}
 \begin{codeblock}
@@ -880,97 +666,67 @@ for (;;) {
 \end{codeblock}
 \end{minipage}
 
-a \keyword{continue} not contained in an enclosed iteration statement is
-equivalent to \tcode{goto} \exposid{contin}.
+未包含在封闭迭代语句中的 \keyword{continue} 等价于 \tcode{goto} \exposid{contin}。
 
-\rSec2[stmt.return]{The \keyword{return} statement}%
+\rSec2[stmt.return]{ \keyword{return} 语句}%
 \indextext{\idxcode{return}}%
 \indextext{function return|see{\tcode{return}}}%
 
 \pnum
-A function returns control to its caller by the \tcode{return} statement.
+函数通过 \tcode{return} 语句将控制权返回给其调用者。
 
 \pnum
-The \grammarterm{expr-or-braced-init-list}
-of a \tcode{return} statement is called its operand. A \tcode{return} statement with
-no operand shall be used only in a function whose return type is
-\cv{}~\keyword{void}, a constructor\iref{class.ctor}, or a
-destructor\iref{class.dtor}.
+\tcode{return} 语句的 \grammarterm{expr-or-braced-init-list} 称为其操作数。没有操作数的 \tcode{return} 语句只能在返回类型为 \cv{}~\keyword{void} 的函数、构造函数\iref{class.ctor} 或析构函数\iref{class.dtor} 中使用。
 \indextext{\idxcode{return}!constructor and}%
 \indextext{\idxcode{return}!constructor and}%
-A \tcode{return} statement with an operand of type \keyword{void} shall be used only
-in a function that has a \cv{}~\keyword{void} return type.
-A \tcode{return} statement with any other operand shall be used only
-in a function that has a return type other than \cv{}~\keyword{void};
+操作数为 \keyword{void} 类型的 \tcode{return} 语句只能在具有 \cv{}~\keyword{void} 返回类型的函数中使用。具有任何其他操作数的 \tcode{return} 语句只能在返回类型不是 \cv{}~\keyword{void} 的函数中使用；
 \indextext{conversion!return type}%
-the \tcode{return} statement initializes the
-returned reference or prvalue result object
-of the (explicit or implicit) function call
-by copy-initialization\iref{dcl.init} from the operand.
+\tcode{return} 语句通过从操作数进行复制初始化\iref{dcl.init} 来初始化（显式或隐式）函数调用的返回引用或纯右值结果对象。
 \begin{note}
-A constructor or destructor does not have a return type.
+构造函数或析构函数没有返回类型。
 \end{note}
 \begin{note}
-A \tcode{return} statement can involve
-an invocation of a constructor to perform a copy or move of the operand
-if it is not a prvalue or if its type differs from the return type of the function.
-A copy operation associated with a \tcode{return} statement can be elided or
-converted to a move operation if an automatic storage duration variable is returned\iref{class.copy.elision}.
+如果操作数不是纯右值或其类型与函数的返回类型不同，则 \tcode{return} 语句可能涉及调用构造函数来执行操作数的复制或移动。如果返回自动存储期变量，则与 \tcode{return} 语句关联的复制操作可以被省略或转换为移动操作\iref{class.copy.elision}。
 \end{note}
 
 \pnum
-The destructor for the result object
-is potentially invoked\iref{class.dtor,except.ctor}.
+结果对象的析构函数可能被调用\iref{class.dtor,except.ctor}。
 \begin{example}
 \begin{codeblock}
 class A {
   ~A() {}
 };
-A f() { return A(); }   // error: destructor of \tcode{A} is private (even though it is never invoked)
+A f() { return A(); }   // 错误：\tcode{A} 的析构函数是私有的（即使它从未被调用）
 \end{codeblock}
 \end{example}
 
 \pnum
-Flowing off the end of
-a constructor,
-a destructor, or
-a non-coroutine function with a \cv{}~\keyword{void} return type is
-equivalent to a \tcode{return} with no operand.
-Otherwise, flowing off the end of a function
-that is neither \tcode{main}\iref{basic.start.main} nor a coroutine\iref{dcl.fct.def.coroutine}
-results in undefined behavior.
+流出构造函数、析构函数或具有 \cv{}~\keyword{void} 返回类型的非协程函数的末尾等价于没有操作数的 \tcode{return}。否则，流出既不是 \tcode{main}\iref{basic.start.main} 也不是协程\iref{dcl.fct.def.coroutine} 的函数的末尾会导致未定义的行为。
 
 \pnum
-The copy-initialization of the result of the call is sequenced before the
-destruction of temporaries at the end of the full-expression established
-by the operand of the \tcode{return} statement, which, in turn, is sequenced
-before the destruction of local variables\iref{stmt.jump} of the block
-enclosing the \tcode{return} statement.
+对调用结果的复制初始化先序于由 \tcode{return} 语句的操作数建立的完整表达式末尾的临时对象的销毁，而后者又先序于包围 \tcode{return} 语句的块的局部变量\iref{stmt.jump} 的销毁。
 
 \pnum
-In a function whose return type is a reference,
-other than an invented function for \tcode{std::is_convertible}\iref{meta.rel},
-a \tcode{return} statement that binds the returned reference to
-a temporary expression\iref{class.temporary} is ill-formed.
+在返回类型为引用的函数中（除了 \tcode{std::is_convertible}\iref{meta.rel} 的虚构函数），将返回的引用绑定到临时表达式\iref{class.temporary} 的 \tcode{return} 语句是非良构的。
 \begin{example}
 \begin{codeblock}
 auto&& f1() {
-  return 42;            // ill-formed
+  return 42;            // 非良构
 }
 const double& f2() {
   static int x = 42;
-  return x;             // ill-formed
+  return x;             // 非良构
 }
 auto&& id(auto&& r) {
   return static_cast<decltype(r)&&>(r);
 }
 auto&& f3() {
-  return id(42);        // OK, but probably a bug
+  return id(42);        // OK, 但可能有错误
 }
 \end{codeblock}
 \end{example}
 
-\rSec2[stmt.return.coroutine]{The \keyword{co_return} statement}%
+\rSec2[stmt.return.coroutine]{ \keyword{co_return} 语句}%
 \indextext{\idxcode{co_return}}%
 \indextext{coroutine return|see{\tcode{co_return}}}%
 
@@ -980,114 +736,76 @@ auto&& f3() {
 \end{bnf}
 
 \pnum
-A \keyword{co_return} statement transfers control to
-the caller or resumer of a coroutine\iref{dcl.fct.def.coroutine}.
-A coroutine shall not enclose
-a \tcode{return} statement\iref{stmt.return}.
+\keyword{co_return} 语句将控制权转移到协程\iref{dcl.fct.def.coroutine}的调用者或恢复者。协程不应包含 \tcode{return} 语句\iref{stmt.return}。
 \begin{note}
-For this determination, it is irrelevant whether the \tcode{return} statement
-is enclosed by a discarded statement\iref{stmt.if}.
+对于此判定，\tcode{return} 语句是否被 discarded statement\iref{stmt.if} 包围是无关紧要的。
 \end{note}
 
 \pnum
-The \grammarterm{expr-or-braced-init-list} of a \keyword{co_return} statement is
-called its operand.
-Let \placeholder{p} be an lvalue naming the coroutine
-promise object\iref{dcl.fct.def.coroutine}.
-A \keyword{co_return} statement is equivalent to:
+\keyword{co_return} 语句的 \grammarterm{expr-or-braced-init-list} 称为其操作数。令 \placeholder{p} 为命名协程承诺对象\iref{dcl.fct.def.coroutine} 的左值。\keyword{co_return} 语句等价于：
 \begin{ncsimplebnf}
 \terminal{\{} S\terminal{;} \terminal{goto} \exposid{final-suspend}\terminal{;} \terminal{\}}
 \end{ncsimplebnf}
-where \exposid{final-suspend} is the exposition-only label
-defined in \ref{dcl.fct.def.coroutine}
-and \placeholder{S} is defined as follows:
+其中 \exposid{final-suspend} 是 \ref{dcl.fct.def.coroutine} 中定义的仅用于说明的标签，\placeholder{S} 定义如下：
 \begin{itemize}
 \item
-If the operand is a \grammarterm{braced-init-list} or an expression of non-\keyword{void} type,
-\placeholder{S} is \placeholder{p}\tcode{.return_value(}\grammarterm{expr-or-braced-init-list}{}\tcode{)}.
-The expression \placeholder{S} shall be a prvalue of type \keyword{void}.
+如果操作数是 \grammarterm{braced-init-list} 或非 \keyword{void} 类型的表达式，则 \placeholder{S} 是 \placeholder{p}\tcode{.return_value(}\grammarterm{expr-or-braced-init-list}{}\tcode{)}。表达式 \placeholder{S} 应为 \keyword{void} 类型的纯右值。
 
 \item
-Otherwise,
-\placeholder{S} is the \grammarterm{compound-statement} \tcode{\{}{ }\opt{\grammarterm{expression}} \tcode{;} \placeholder{p}\tcode{.return_void()}\tcode{;{ }\}}.
-The expression \placeholder{p}\tcode{.return_void()}
-shall be a prvalue of type \keyword{void}.
+否则，\placeholder{S} 是 \grammarterm{compound-statement} \tcode{\{}{ }\opt{\grammarterm{expression}} \tcode{;} \placeholder{p}\tcode{.return_void()}\tcode{;{ }\}}。表达式 \placeholder{p}\tcode{.return_void()} 应为 \keyword{void} 类型的纯右值。
 \end{itemize}
 
 \pnum
-If a search for the name \tcode{return_void} in the scope of the promise type
-finds any declarations,
-flowing off the end of a coroutine's \grammarterm{function-body}
-is equivalent to a \keyword{co_return} with no operand;
-otherwise flowing off the end of a coroutine's \grammarterm{function-body}
-results in undefined behavior.
+如果在承诺类型的作用域中搜索名称 \tcode{return_void} 找到任何声明，则流出协程的 \grammarterm{function-body} 的末尾等价于没有操作数的 \keyword{co_return}；否则流出协程的 \grammarterm{function-body} 的末尾会导致未定义的行为。
 
-\rSec2[stmt.goto]{The \keyword{goto} statement}%
+\rSec2[stmt.goto]{ \keyword{goto} 语句}%
 \indextext{statement!\idxcode{goto}}
 
 \pnum
-The \tcode{goto} statement unconditionally transfers control to the
-statement labeled by the identifier. The identifier shall be a
+\tcode{goto} 语句无条件地将控制权转移到由标识符标记的语句。标识符应为当前函数中的
 \indextext{label}%
-label\iref{stmt.label} located in the current function.
+标签\iref{stmt.label}。
 
-\rSec1[stmt.dcl]{Declaration statement}%
+\rSec1[stmt.dcl]{声明语句}%
 \indextext{statement!declaration}
 
 \pnum
-A declaration statement introduces one or more new names into a
-block; it has the form
+声明语句将一个或多个新名称引入块中；它的形式为
 \begin{bnf}
 \nontermdef{declaration-statement}\br
     block-declaration
 \end{bnf}
 \begin{note}
-If an identifier introduced by a declaration was previously declared in
-an outer block,
+如果由声明引入的标识符先前在外层块中声明过，
 \indextext{declaration hiding|see{name hiding}}%
 \indextext{name hiding}%
 \indextext{block (statement)!structure}%
-the outer declaration is hidden
-for the remainder of the block\iref{basic.lookup.unqual},
-after which it resumes its force.
+则外部声明在该块的其余部分\iref{basic.lookup.unqual}被隐藏，之后它恢复其效力。
 \end{note}
 
 \pnum
 \indextext{block (statement)!initialization in}%
 \indextext{initialization!automatic}%
 \indextext{active|see{variable, active}}%
-A block variable with automatic storage duration\iref{basic.stc.auto}
-is \defnx{active}{variable!active} everywhere in the scope to which it belongs
-after its \grammarterm{init-declarator}.
+具有自动存储期\iref{basic.stc.auto}的块变量在其 \grammarterm{init-declarator} 之后的所属作用域内的任何地方都是\defnx{活动的}{variable!active}。
 \indextext{initialization!jump past}%
 \indextext{\idxcode{goto}!initialization and}%
-Upon each transfer of control (including sequential execution of statements)
-within a function from point $P$ to point $Q$,
-all block variables with automatic storage duration
-that are active at $P$ and not at $Q$ are destroyed in the reverse order of their construction.
-Then, all block variables with automatic storage duration
-that are active at $Q$ but not at $P$ are initialized in declaration order;
-unless all such variables have vacuous initialization\iref{basic.life},
-the transfer of control shall not be a jump.
+在函数内从点 $P$ 到点 $Q$ 的每次控制转移（包括语句的顺序执行）时，所有在 $P$ 处活动但不在 $Q$ 处活动的具有自动存储期的块变量将按其构造的相反顺序销毁。然后，所有在 $Q$ 处活动但不在 $P$ 处活动的具有自动存储期的块变量将按声明顺序初始化；除非所有此类变量都具有空初始化\iref{basic.life}，否则控制转移不应是跳转。
 \begin{footnote}
-The transfer from the condition of a \keyword{switch} statement to a
-\keyword{case} label is considered a jump in this respect.
+从 \keyword{switch} 语句的 condition 到 \keyword{case} 标签的转移在这方面被认为是跳转。
 \end{footnote}
-When a \grammarterm{declaration-statement} is executed,
-$P$ and $Q$ are the points immediately before and after it;
-when a function returns, $Q$ is after its body.
+当执行 \grammarterm{declaration-statement} 时，$P$ 和 $Q$ 分别是其之前和之后的点；当函数返回时，$Q$ 在其主体之后。
 \begin{example}
 \begin{codeblock}
 void f() {
   // ...
-  goto lx;          // error: jump into scope of \tcode{a}
+  goto lx;          // 错误：跳入 \tcode{a} 的作用域
   // ...
 ly:
   X a = 1;
   // ...
 lx:
-  goto ly;          // OK, jump implies destructor call for \tcode{a} followed by
-                    // construction again immediately following label \tcode{ly}
+  goto ly;          // OK，跳过意味着调用 \tcode{a} 的析构函数，然后在标签 \tcode{ly} 之后立即再次构造
 }
 \end{codeblock}
 \end{example}
@@ -1097,31 +815,15 @@ lx:
 \indextext{initialization!dynamic block-scope}%
 \indextext{initialization!local \tcode{static}}%
 \indextext{initialization!local \tcode{thread_local}}%
-Dynamic initialization of a block variable with
-static storage duration\iref{basic.stc.static} or
-thread storage duration\iref{basic.stc.thread} is performed
-the first time control passes through its declaration; such a variable is
-considered initialized upon the completion of its initialization. If the
-initialization exits by throwing an exception, the initialization is not
-complete, so it will be tried again the next time control enters the
-declaration.
-If control enters the declaration concurrently while the variable is
-being initialized, the concurrent execution shall wait for completion
-of the initialization.
+具有静态存储期\iref{basic.stc.static}或线程存储期\iref{basic.stc.thread}的块变量的动态初始化在第一次控制通过其声明时执行；此类变量在其初始化完成后被认为是已初始化的。如果初始化通过抛出异常退出，则初始化未完成，因此下次控制进入声明时将再次尝试。如果当变量正在初始化时控制并发地进入声明，则并发执行应等待初始化完成。
 \begin{note}
-A conforming implementation cannot introduce
-any deadlock around execution of the initializer.
-Deadlocks might still be caused by the program logic;
-the implementation need only avoid deadlocks
-due to its own synchronization operations.
+符合标准的实现不能在初始化程序的执行周围引入任何死锁。死锁仍可能由程序逻辑引起；实现只需要避免由于其自身的同步操作导致的死锁。
 \end{note}
-If control
-re-enters the declaration recursively while
-the variable is being initialized, the behavior is undefined.
+如果当变量正在初始化时控制递归地重新进入声明，则行为是未定义的。
 \begin{example}
 \begin{codeblock}
 int foo(int i) {
-  static int s = foo(2*i);      // undefined behavior: recursive call
+  static int s = foo(2*i);      // 未定义行为：递归调用
   return i+1;
 }
 \end{codeblock}
@@ -1129,55 +831,38 @@ int foo(int i) {
 
 \pnum
 \indextext{\idxcode{static}!destruction of local}%
-An object associated with
-a block variable with static or thread storage duration
-will be destroyed if and only if it was constructed.
+与具有静态或线程存储期的块变量相关联的对象当且仅当它被构造时才会被销毁。
 \begin{note}
-\ref{basic.start.term} describes the order in which such objects are destroyed.
+\ref{basic.start.term} 描述了此类对象被销毁的顺序。
 \end{note}
 
-\rSec1[stmt.ambig]{Ambiguity resolution}%
+\rSec1[stmt.ambig]{歧义消解}%
 \indextext{ambiguity!declaration versus expression}
 
 \pnum
-There is an ambiguity in the grammar involving
-\grammarterm{expression-statement}{s} and \grammarterm{declaration}{s}: An
-\grammarterm{expression-statement} with a function-style explicit type
-conversion\iref{expr.type.conv} as its leftmost subexpression can be
-indistinguishable from a \grammarterm{declaration} where the first
-\grammarterm{declarator} starts with a \tcode{(}. In those cases the
-\grammarterm{statement} is considered a \grammarterm{declaration},
-except as specified below.
+在涉及 \grammarterm{expression-statement} 和 \grammarterm{declaration} 的语法中存在歧义：以函数式显式类型转换\iref{expr.type.conv} 作为其最左侧子表达式的 \grammarterm{expression-statement} 可能与第一个 \grammarterm{declarator} 以 \tcode{(} 开头的 \grammarterm{declaration} 无法区分。在这些情况下，\grammarterm{statement} 被认为是 \grammarterm{declaration}，除非另有规定。
 
 \pnum
 \begin{note}
-If the \grammarterm{statement} cannot syntactically be a
-\grammarterm{declaration}, there is no ambiguity,
-so this rule does not apply.
-In some cases, the whole \grammarterm{statement} needs to be examined
-to determine whether this is the case. This resolves the meaning
-of many examples.
+如果 \grammarterm{statement} 在语法上不能是 \grammarterm{declaration}，则不存在歧义，因此该规则不适用。在某些情况下，需要检查整个 \grammarterm{statement} 来确定是否属于这种情况。这解决了许多示例的含义。
 \begin{example}
-Assuming \tcode{T} is a
-\grammarterm{simple-type-specifier}\iref{dcl.type.simple},
+假设 \tcode{T} 是 \grammarterm{simple-type-specifier}\iref{dcl.type.simple}，
 
 \begin{codeblock}
-T(a)->m = 7;        // expression-statement
-T(a)++;             // expression-statement
-T(a,5)<<c;          // expression-statement
+T(a)->m = 7;        // 表达式语句
+T(a)++;             // 表达式语句
+T(a,5)<<c;          // 表达式语句
 
-T(*d)(int);         //  declaration
-T(e)[5];            //  declaration
-T(f) = { 1, 2 };    //  declaration
-T(*g)(double(3));   //  declaration
+T(*d)(int);         //  声明
+T(e)[5];            //  声明
+T(f) = { 1, 2 };    //  声明
+T(*g)(double(3));   //  声明
 \end{codeblock}
 
-In the last example above, \tcode{g}, which is a pointer to \tcode{T},
-is initialized to \tcode{double(3)}. This is of course ill-formed for
-semantic reasons, but that does not affect the syntactic analysis.
+在上面的最后一个示例中，\tcode{g}（它是指向 \tcode{T} 的指针）被初始化为 \tcode{double(3)}。当然，由于语义原因，这是非良构的，但这不影响语法分析。
 \end{example}
 
-The remaining cases are \grammarterm{declaration}{s}.
+其余情况是 \grammarterm{declaration}。
 \begin{example}
 \begin{codeblock}
 class T {
@@ -1187,29 +872,18 @@ public:
   T(int);
   T(int, int);
 };
-T(a);               //  declaration
-T(*b)();            //  declaration
-T(c)=7;             //  declaration
-T(d),e,f=3;         //  declaration
+T(a);               //  声明
+T(*b)();            //  声明
+T(c)=7;             //  声明
+T(d),e,f=3;         //  声明
 extern int h;
-T(g)(h,2);          //  declaration
+T(g)(h,2);          //  声明
 \end{codeblock}
 \end{example}
 \end{note}
 
 \pnum
-The disambiguation is purely syntactic; that is, the meaning of the
-names occurring in such a statement, beyond whether they are
-\grammarterm{type-name}{s} or not, is not generally used in or changed by the
-disambiguation. Class templates are instantiated as necessary to
-determine if a qualified name is a \grammarterm{type-name}. Disambiguation
-precedes parsing, and a statement disambiguated as a declaration may be
-an ill-formed declaration.
-If, during parsing, lookup finds
-that a name in a template argument is bound to
-(part of) the declaration being parsed,
-the program is ill-formed.
-No diagnostic is required.
+消歧纯粹是句法上的；也就是说，出现在此类语句中的名称的含义，除了它们是否是 \grammarterm{type-name} 之外，通常不会在消歧中使用或被消歧改变。类模板会根据需要进行实例化，以确定限定名是否为 \grammarterm{type-name}。消歧先于解析，并且被消歧为声明的语句可能是非良构的声明。如果在解析过程中，查找发现模板参数中的名称绑定到正在解析的声明（的一部分），则程序是非良构的。不需要诊断。
 \begin{example}
 \begin{codeblock}
 struct T1 {
@@ -1221,20 +895,18 @@ struct T2 { T2(int) { } };
 int a, (*(*b)(T2))(int), c, d;
 
 void f() {
-  // disambiguation requires this to be parsed as a declaration:
+  // 消歧要求将其解析为声明：
   T1(a) = 3,
-  T2(4),                        // \tcode{T2} will be declared as a variable of type \tcode{T1}, but this will not
-  (*(*b)(T2(c)))(int(d));       // allow the last part of the declaration to parse properly,
-                                // since it depends on \tcode{T2} being a type-name
+  T2(4),                        // \tcode{T2} 将被声明为 \tcode{T1} 类型的变量，但这不会
+  (*(*b)(T2(c)))(int(d));       // 允许声明的最后一部分正确解析，
+                                // 因为它依赖于 \tcode{T2} 是一个类型名称
 }
 \end{codeblock}
 \end{example}
 
+
 \pnum
-A syntactically ambiguous statement that can syntactically be
-a \grammarterm{declaration} with an outermost \grammarterm{declarator}
-with a \grammarterm{trailing-return-type}
-is considered a \grammarterm{declaration} only if it starts with \keyword{auto}.
+在语法上模棱两可的语句，如果它在语法上可以是一个最外层 \grammarterm{declarator} 带有 \grammarterm{trailing-return-type} 的 \grammarterm{declaration}，那么只有当它以 \keyword{auto} 开头时，才被认为是 \grammarterm{declaration}。
 \begin{example}
 \begin{codeblock}
 struct M;
@@ -1244,18 +916,18 @@ struct S {
   int M;
 
   void mem(S s) {
-    auto(s)()->M;               // expression, \tcode{S::M} hides \tcode{::M}
+    auto(s)()->M;               // 表达式，\tcode{S::M} 隐藏了 \tcode{::M}
   }
 };
 
 void f(S s) {
   {
-    auto(s)()->N;               // expression
-    auto(s)()->M;               // function declaration
+    auto(s)()->N;               // 表达式
+    auto(s)()->M;               // 函数声明
   }
   {
-    S(s)()->N;                  // expression
-    S(s)()->M;                  // expression
+    S(s)()->N;                  // 表达式
+    S(s)()->M;                  // 表达式
   }
 }
 \end{codeblock}
