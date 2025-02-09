@@ -1,106 +1,96 @@
-%!TEX root = std.tex
-\rSec0[concepts]{Concepts library}
+\rSec0[concepts]{概念库}
 
-\rSec1[concepts.general]{General}
-
-\pnum
-This Clause describes library components that \Cpp{} programs may use to perform
-compile-time validation of template arguments and perform function dispatch
-based on properties of types. The purpose of these concepts is to establish
-a foundation for equational reasoning in programs.
+\rSec1[concepts.general]{概述}
 
 \pnum
-The following subclauses describe language-related concepts, comparison
-concepts, object concepts, and callable concepts as summarized in
-\tref{concepts.summary}.
+本条款描述了 \Cpp{} 程序可以用来执行
+模板参数的编译时验证并执行函数分派的库组件，
+基于类型的属性。这些概念的目的是建立
+程序中等式推理的基础。
 
-\begin{libsumtab}{Fundamental concepts library summary}{concepts.summary}
-\ref{concepts.equality} & Equality preservation     &                    \\ \hline
-\ref{concepts.lang}     & Language-related concepts & \tcode{<concepts>} \\
-\ref{concepts.compare}  & Comparison concepts       &                    \\
-\ref{concepts.object}   & Object concepts           &                    \\
-\ref{concepts.callable} & Callable concepts         &                    \\
+\pnum
+以下子条款描述了语言相关的概念、比较
+概念、对象概念和可调用概念，如
+\tref{concepts.summary} 中所总结。
+
+\begin{libsumtab}{基本概念库摘要}{concepts.summary}
+\ref{concepts.equality} & 等式保持     &                    \\ \hline
+\ref{concepts.lang}     & 语言相关概念 & \tcode{<concepts>} \\
+\ref{concepts.compare}  & 比较概念       &                    \\
+\ref{concepts.object}   & 对象概念           &                    \\
+\ref{concepts.callable} & 可调用概念         &                    \\
 \end{libsumtab}
 
-\rSec1[concepts.equality]{Equality preservation}
+\rSec1[concepts.equality]{等式保持}
 
 \pnum
-An expression is \defnx{equality-preserving}{expression!equality-preserving} if,
-given equal inputs, the expression results in equal outputs. The inputs to an
-expression are the set of the expression's operands. The output of an expression
-is the expression's result and all operands modified by the expression.
-For the purposes of this subclause,
-the operands of an expression are the largest subexpressions that include only:
+如果给定相等的输入，表达式会产生相等的结果，则表达式是 \defnx{等式保持}{expression!equality-preserving} 的。
+表达式的输入是表达式操作数的集合。
+表达式的输出是表达式的结果和表达式修改的所有操作数。
+对于本子条款的目的，
+表达式的操作数是包含以下内容的最大子表达式：
 \begin{itemize}
 \item
-an \grammarterm{id-expression}\iref{expr.prim.id}, and
+\grammarterm{id-expression}\iref{expr.prim.id}，和
 \item
-invocations of the library function templates
-\tcode{std::move},
-\tcode{std::forward}, and
-\tcode{std::declval}\iref{forward,declval}.
+库函数模板的调用
+\tcode{std::move}、
+\tcode{std::forward} 和
+\tcode{std::declval}\iref{forward,declval}。
 \end{itemize}
 \begin{example}
-The operands of the expression \tcode{a = std::move(b)} are
-\tcode{a} and \tcode{std::move(b)}.
+表达式 \tcode{a = std::move(b)} 的操作数是
+\tcode{a} 和 \tcode{std::move(b)}。
 \end{example}
 
 \pnum
-Not all input values need be valid for a given expression.
+并非所有输入值对于给定表达式都需要有效。
 \begin{example}
-For integers \tcode{a} and \tcode{b},
-the expression \tcode{a / b} is not well-defined
-when \tcode{b} is \tcode{0}.
-This does not preclude the expression \tcode{a / b} being equality-preserving.
+对于整数 \tcode{a} 和 \tcode{b}，
+当 \tcode{b} 为 \tcode{0} 时，表达式 \tcode{a / b} 没有明确定义。
+这并不排除表达式 \tcode{a / b} 是等式保持的。
 \end{example}
-The \defnx{domain}{expression!domain} of an expression is the set of
-input values for which the expression is required to be well-defined.
+表达式的 \defnx{域}{expression!domain} 是
+需要将表达式定义为良构的输入值的集合。
 
 \pnum
-Expressions required to be equality-preserving are further
-required to be stable: two evaluations of such an expression with the same input
-objects are required to have equal outputs absent any explicit intervening
-modification of those input objects.
+需要保持等式的表达式进一步
+需要是稳定的：在没有任何明确干预的情况下，使用相同的输入对象对该表达式进行两次求值
+需要修改这些输入对象才能得到相等的输出。
 \begin{note}
-This requirement allows generic code to reason about the current values of
-objects based on knowledge of the prior values as observed via
-equality-preserving expressions. It effectively forbids spontaneous changes to
-an object, changes to an object from another thread of execution, changes to an
-object as side effects of non-modifying expressions, and changes to an object as
-side effects of modifying a distinct object if those changes could be observable
-to a library function via an equality-preserving expression that is required to
-be valid for that object.
+此要求允许通用代码基于
+通过等式保持表达式观察到的先前值来推断对象的当前值。它有效地禁止自发更改
+对象、来自另一个执行线程的更改、作为非修改表达式的副作用对对象的更改以及
+如果这些更改可以通过需要有效的等式保持表达式对库函数可见，则作为修改不同对象的副作用对对象的更改
+为该对象。
 \end{note}
 
 \pnum
-Expressions declared in a \grammarterm{requires-expression} in the library clauses are
-required to be equality-preserving, except for those annotated with the comment
-``not required to be equality-preserving.'' An expression so annotated
-may be equality-preserving, but is not required to be so.
+库条款中的 \grammarterm{requires-expression} 中声明的表达式是
+需要保持等式的，除非那些带有注释
+“不需要保持等式”的表达式。如此注释的表达式
+可能是等式保持的，但不是必需的。
 
 \pnum
-An expression that may alter the value of one or more of its inputs in a manner
-observable to equality-preserving expressions is said to modify those inputs.
-The library clauses use a notational convention to specify which expressions declared
-in a \grammarterm{requires-expression} modify which inputs: except where
-otherwise specified, an expression operand that is a non-constant lvalue or
-rvalue may be modified. Operands that are constant lvalues or rvalues are
-required to not be modified.
-For the purposes of this subclause,
-the cv-qualification and value category of each operand
-are determined by assuming
-that each template type parameter
-denotes a cv-unqualified complete non-array object type.
+可能会改变其一个或多个输入的值，
+其方式对等式保持表达式是可观察的，则称该表达式修改了这些输入。
+库条款使用符号约定来指定哪些表达式在
+\grammarterm{requires-expression} 中声明修改哪些输入：除非
+另有说明，否则作为非常量左值或
+右值的表达式操作数可能会被修改。要求不修改作为常量左值或右值的操作数。
+对于本子条款的目的，
+每个操作数的 cv 限定和值类别
+由假设
+每个模板类型参数
+表示一个 cv 非限定的完整非数组对象类型。
 
 \pnum
-Where a \grammarterm{requires-expression} declares an expression that is
-non-modifying for some constant lvalue operand, additional variations of that
-expression that accept a non-constant lvalue or (possibly constant) rvalue for
-the given operand are also required except where such an expression variation is
-explicitly required with differing semantics. These
-\term{implicit expression variations} are required to meet the semantic
-requirements of the declared expression. The extent to which an implementation
-validates the syntax of the variations is unspecified.
+当 \grammarterm{requires-expression} 声明一个表达式是
+对于某些常量左值操作数是非修改的，该表达式的其他变体接受非常量左值或（可能为常量）右值
+对于给定的操作数也是必需的，除非明确要求此类表达式变体具有不同的语义。这些
+\term{隐式表达式变体} 需要满足
+声明的表达式的语义要求。实现到何种程度
+验证变体的语法是未指定的。
 
 \pnum
 \begin{example}
@@ -112,16 +102,16 @@ template<class T> concept C = requires(T a, T b, const T c, const T d) {
 };
 \end{codeblock}
 
-For the above example:
+对于上面的例子：
 \begin{itemize}
 \item
-Expression \#1 does not modify either of its operands, \#2 modifies both of its
-operands, and \#3 modifies only its first operand \tcode{a}.
+表达式 \#1 不修改其任何一个操作数，\#2 修改其两个操作数，
+而 \#3 仅修改其第一个操作数 \tcode{a}。
 
 \item
-Expression \#1 implicitly requires additional expression variations that meet
-the requirements for \tcode{c == d} (including non-modification), as if the
-expressions
+表达式 \#1 隐式地要求满足
+\tcode{c == d}（包括非修改）要求的附加表达式变体，就好像
+表达式
 \begin{codeblock}
                                             c  ==           b;
           c  == std::move(d);               c  == std::move(b);
@@ -133,23 +123,21 @@ std::move(c) == std::move(d);     std::move(c) == std::move(b);
 std::move(a) ==           d;      std::move(a) ==           b;
 std::move(a) == std::move(d);     std::move(a) == std::move(b);
 \end{codeblock}
-had been declared as well.
+也已被声明。
 
 \item
-Expression \#3 implicitly requires additional expression variations that meet
-the requirements for \tcode{a = c} (including non-modification of the second
-operand), as if the expressions \tcode{a = b} and \tcode{a = std::move(c)} had
-been declared. Expression \#3 does not implicitly require an expression
-variation with a non-constant rvalue second operand, since expression \#2
-already specifies exactly such an expression explicitly.
+表达式 \#3 隐式地要求满足
+\tcode{a = c}（包括不修改第二个操作数）要求的附加表达式变体，就好像表达式 \tcode{a = b} 和 \tcode{a = std::move(c)} 已
+被声明。表达式 \#3 不隐式地要求使用非常量右值第二个操作数的表达式
+变体，因为表达式 \#2 已经明确指定了这样的表达式。
 \end{itemize}
 \end{example}
 
 \pnum
 \begin{example}
-The following type \tcode{T} meets the explicitly stated syntactic requirements
-of concept \tcode{C} above but does not meet the additional implicit
-requirements:
+以下类型 \tcode{T} 满足
+上面概念 \tcode{C} 的显式声明的语法要求，但不满足附加的隐式
+要求：
 
 \begin{codeblock}
 struct T {
@@ -158,41 +146,40 @@ struct T {
 };
 \end{codeblock}
 
-\tcode{T} fails to meet the implicit requirements of \tcode{C},
-so \tcode{T} satisfies but does not model \tcode{C}.
-Since implementations are not required to validate the syntax
-of implicit requirements, it is unspecified whether an implementation diagnoses
-as ill-formed a program that requires \tcode{C<T>}.
+\tcode{T} 未能满足 \tcode{C} 的隐式要求，
+因此 \tcode{T} 满足但不建模 \tcode{C}。
+由于不需要实现来验证隐式要求的语法，
+因此未指定实现是否将需要 \tcode{C<T>} 的程序诊断为病态的。
 \end{example}
 
-\rSec1[concepts.syn]{Header \tcode{<concepts>} synopsis}
+\rSec1[concepts.syn]{头文件 \tcode{<concepts>} 概要}
 
 \indexheader{concepts}%
 \begin{codeblock}
 // all freestanding
 namespace std {
-  // \ref{concepts.lang}, language-related concepts
-  // \ref{concept.same}, concept \libconcept{same_as}
+  // \ref{concepts.lang}，语言相关概念
+  // \ref{concept.same}，概念 \libconcept{same_as}
   template<class T, class U>
     concept same_as = @\seebelow@;
 
-  // \ref{concept.derived}, concept \libconcept{derived_from}
+  // \ref{concept.derived}，概念 \libconcept{derived_from}
   template<class Derived, class Base>
     concept derived_from = @\seebelow@;
 
-  // \ref{concept.convertible}, concept \libconcept{convertible_to}
+  // \ref{concept.convertible}，概念 \libconcept{convertible_to}
   template<class From, class To>
     concept convertible_to = @\seebelow@;
 
-  // \ref{concept.commonref}, concept \libconcept{common_reference_with}
+  // \ref{concept.commonref}，概念 \libconcept{common_reference_with}
   template<class T, class U>
     concept common_reference_with = @\seebelow@;
 
-  // \ref{concept.common}, concept \libconcept{common_with}
+  // \ref{concept.common}，概念 \libconcept{common_with}
   template<class T, class U>
     concept common_with = @\seebelow@;
 
-  // \ref{concepts.arithmetic}, arithmetic concepts
+  // \ref{concepts.arithmetic}，算术概念
   template<class T>
     concept integral = @\seebelow@;
   template<class T>
@@ -202,11 +189,11 @@ namespace std {
   template<class T>
     concept floating_point = @\seebelow@;
 
-  // \ref{concept.assignable}, concept \libconcept{assignable_from}
+  // \ref{concept.assignable}，概念 \libconcept{assignable_from}
   template<class LHS, class RHS>
     concept assignable_from = @\seebelow@;
 
-  // \ref{concept.swappable}, concept \libconcept{swappable}
+  // \ref{concept.swappable}，概念 \libconcept{swappable}
   namespace ranges {
     inline namespace @\unspec@ {
       inline constexpr @\unspec@ swap = @\unspec@;
@@ -217,40 +204,40 @@ namespace std {
   template<class T, class U>
     concept swappable_with = @\seebelow@;
 
-  // \ref{concept.destructible}, concept \libconcept{destructible}
+  // \ref{concept.destructible}，概念 \libconcept{destructible}
   template<class T>
     concept destructible = @\seebelow@;
 
-  // \ref{concept.constructible}, concept \libconcept{constructible_from}
+  // \ref{concept.constructible}，概念 \libconcept{constructible_from}
   template<class T, class... Args>
     concept constructible_from = @\seebelow@;
 
-  // \ref{concept.default.init}, concept \libconcept{default_initializable}
+  // \ref{concept.default.init}，概念 \libconcept{default_initializable}
   template<class T>
     concept default_initializable = @\seebelow@;
 
-  // \ref{concept.moveconstructible}, concept \libconcept{move_constructible}
+  // \ref{concept.moveconstructible}，概念 \libconcept{move_constructible}
   template<class T>
     concept move_constructible = @\seebelow@;
 
-  // \ref{concept.copyconstructible}, concept \libconcept{copy_constructible}
+  // \ref{concept.copyconstructible}，概念 \libconcept{copy_constructible}
   template<class T>
     concept copy_constructible = @\seebelow@;
 
-  // \ref{concepts.compare}, comparison concepts
-  // \ref{concept.equalitycomparable}, concept \libconcept{equality_comparable}
+  // \ref{concepts.compare}，比较概念
+  // \ref{concept.equalitycomparable}，概念 \libconcept{equality_comparable}
   template<class T>
     concept equality_comparable = @\seebelow@;
   template<class T, class U>
     concept equality_comparable_with = @\seebelow@;
 
-  // \ref{concept.totallyordered}, concept \libconcept{totally_ordered}
+  // \ref{concept.totallyordered}，概念 \libconcept{totally_ordered}
   template<class T>
     concept totally_ordered = @\seebelow@;
   template<class T, class U>
     concept totally_ordered_with = @\seebelow@;
 
-  // \ref{concepts.object}, object concepts
+  // \ref{concepts.object}，对象概念
   template<class T>
     concept movable = @\seebelow@;
   template<class T>
@@ -260,43 +247,42 @@ namespace std {
   template<class T>
     concept regular = @\seebelow@;
 
-  // \ref{concepts.callable}, callable concepts
-  // \ref{concept.invocable}, concept \libconcept{invocable}
+  // \ref{concepts.callable}，可调用概念
+  // \ref{concept.invocable}，概念 \libconcept{invocable}
   template<class F, class... Args>
     concept invocable = @\seebelow@;
 
-  // \ref{concept.regularinvocable}, concept \libconcept{regular_invocable}
+  // \ref{concept.regularinvocable}，概念 \libconcept{regular_invocable}
   template<class F, class... Args>
     concept regular_invocable = @\seebelow@;
 
-  // \ref{concept.predicate}, concept \libconcept{predicate}
+  // \ref{concept.predicate}，概念 \libconcept{predicate}
   template<class F, class... Args>
     concept predicate = @\seebelow@;
 
-  // \ref{concept.relation}, concept \libconcept{relation}
+  // \ref{concept.relation}，概念 \libconcept{relation}
   template<class R, class T, class U>
     concept relation = @\seebelow@;
 
-  // \ref{concept.equiv}, concept \libconcept{equivalence_relation}
+  // \ref{concept.equiv}，概念 \libconcept{equivalence_relation}
   template<class R, class T, class U>
     concept equivalence_relation = @\seebelow@;
 
-  // \ref{concept.strictweakorder}, concept \libconcept{strict_weak_order}
+  // \ref{concept.strictweakorder}，概念 \libconcept{strict_weak_order}
   template<class R, class T, class U>
     concept strict_weak_order = @\seebelow@;
 }
 \end{codeblock}
 
-\rSec1[concepts.lang]{Language-related concepts}
+\rSec1[concepts.lang]{语言相关概念}
 
-\rSec2[concepts.lang.general]{General}
+\rSec2[concepts.lang.general]{概述}
 
 \pnum
-Subclause \ref{concepts.lang} contains the definition of concepts corresponding to language
-features. These concepts express relationships between types, type
-classifications, and fundamental type properties.
+子条款 \ref{concepts.lang} 包含对应于语言特性的概念定义。
+这些概念表达了类型、类型分类和基本类型属性之间的关系。
 
-\rSec2[concept.same]{Concept \cname{same_as}}
+\rSec2[concept.same]{概念 \cname{same_as}}
 
 \begin{itemdecl}
 template<class T, class U>
@@ -309,12 +295,12 @@ template<class T, class U>
 \begin{itemdescr}
 \pnum
 \begin{note}
-\tcode{\libconcept{same_as}<T, U>} subsumes \tcode{\libconcept{same_as}<U, T>} and
-vice versa.
+\tcode{\libconcept{same_as}<T, U>} 包含 \tcode{\libconcept{same_as}<U, T>} 并且
+反之亦然。
 \end{note}
 \end{itemdescr}
 
-\rSec2[concept.derived]{Concept \cname{derived_from}}
+\rSec2[concept.derived]{概念 \cname{derived_from}}
 
 \begin{itemdecl}
 template<class Derived, class Base>
@@ -326,22 +312,20 @@ template<class Derived, class Base>
 \begin{itemdescr}
 \pnum
 \begin{note}
-\tcode{\libconcept{derived_from}<Derived, Base>} is satisfied if and only if
-\tcode{Derived} is publicly and unambiguously derived from \tcode{Base}, or
-\tcode{Derived} and \tcode{Base} are the same class type ignoring cv-qualifiers.
+\tcode{\libconcept{derived_from}<Derived, Base>} 当且仅当
+\tcode{Derived} 公开且明确地派生自 \tcode{Base} 时才满足，或者
+\tcode{Derived} 和 \tcode{Base} 是相同的类类型，忽略 cv 限定符。
 \end{note}
 \end{itemdescr}
 
-\rSec2[concept.convertible]{Concept \cname{convertible_to}}
+\rSec2[concept.convertible]{概念 \cname{convertible_to}}
 
 \pnum
-Given types \tcode{From} and \tcode{To} and
-an expression \tcode{E}
-whose type and value category are the same as those of \tcode{declval<From>()},
-\tcode{\libconcept{convertible_to}<From, To>} requires \tcode{E}
-to be both implicitly and explicitly convertible to type \tcode{To}.
-The implicit and explicit conversions are required to produce equal
-results.
+给定类型 \tcode{From} 和 \tcode{To} 以及
+类型和值类别与 \tcode{declval<From>()} 相同的表达式 \tcode{E}，
+\tcode{\libconcept{convertible_to}<From, To>} 要求 \tcode{E}
+可以隐式和显式地转换为类型 \tcode{To}。
+隐式和显式转换需要产生相等的结果。
 
 \begin{itemdecl}
 template<class From, class To>
@@ -354,53 +338,52 @@ template<class From, class To>
 
 \begin{itemdescr}
 \pnum
-Let \tcode{FromR} be \tcode{add_rvalue_reference_t<From>} and
-\tcode{test} be the invented function:
+令 \tcode{FromR} 为 \tcode{add_rvalue_reference_t<From>} 并且
+\tcode{test} 为虚构的函数：
 \begin{codeblock}
 To test(FromR (&f)()) {
   return f();
 }
 \end{codeblock}
-and let \tcode{f} be a function with no arguments and return type \tcode{FromR}
-such that \tcode{f()} is equality-preserving.
-Types \tcode{From} and \tcode{To} model \tcode{\libconcept{convertible_to}<From, To>}
-only if:
+令 \tcode{f} 为一个没有参数且返回类型为 \tcode{FromR} 的函数
+使得 \tcode{f()} 是等式保持的。
+类型 \tcode{From} 和 \tcode{To} 建模 \tcode{\libconcept{convertible_to}<From, To>}
+仅当：
 
 \begin{itemize}
 \item
-\tcode{To} is not an object or reference-to-object type, or
-\tcode{static_cast<To>(f())} is equal to \tcode{test(f)}.
+\tcode{To} 不是对象或对象引用类型，或者
+\tcode{static_cast<To>(f())} 等于 \tcode{test(f)}。
 
 \item
-\tcode{FromR} is not a reference-to-object type, or
+\tcode{FromR} 不是对象引用类型，或者
 
 \begin{itemize}
 \item
-If \tcode{FromR} is an rvalue reference to a non const-qualified type, the
-resulting state of the object referenced by \tcode{f()} after either above
-expression is valid but unspecified\iref{lib.types.movedfrom}.
+如果 \tcode{FromR} 是对非 const 限定类型的右值引用，则
+在上述任一表达式之后，\tcode{f()} 引用的对象的状态
+是有效的但未指定的\iref{lib.types.movedfrom}。
 
 \item
-Otherwise, the object referred to by \tcode{f()} is not modified by either above
-expression.
+否则，\tcode{f()} 引用的对象不会被上述任一表达式修改。
 \end{itemize}
 \end{itemize}
 \end{itemdescr}
 
 
-\rSec2[concept.commonref]{Concept \cname{common_reference_with}}
+\rSec2[concept.commonref]{概念 \cname{common_reference_with}}
 
 \pnum
-For two types \tcode{T} and \tcode{U}, if \tcode{common_reference_t<T, U>}
-is well-formed and denotes a type \tcode{C} such that both
+对于两种类型 \tcode{T} 和 \tcode{U}，如果 \tcode{common_reference_t<T, U>}
+是良构的并且表示一个类型 \tcode{C}，使得
 \tcode{\libconcept{convertible_to}<T, C>}
-and
+和
 \tcode{\libconcept{convertible_to}<U, C>}
-are modeled, then \tcode{T} and \tcode{U} share a
-\term{common reference type}, \tcode{C}.
+均被建模，则 \tcode{T} 和 \tcode{U} 共享一个
+\term{共同引用类型}，\tcode{C}。
 \begin{note}
-\tcode{C} can be the same as \tcode{T} or \tcode{U}, or can be a
-different type. \tcode{C} can be a reference type.
+\tcode{C} 可以与 \tcode{T} 或 \tcode{U} 相同，或者可以是
+不同的类型。\tcode{C} 可以是引用类型。
 \end{note}
 
 \begin{itemdecl}
@@ -413,37 +396,37 @@ template<class T, class U>
 
 \begin{itemdescr}
 \pnum
-Let \tcode{C} be \tcode{common_reference_t<T, U>}.
-Let \tcode{t1} and \tcode{t2} be equality-preserving
-expressions\iref{concepts.equality} such that
-\tcode{decltype((t1))} and \tcode{decltype((t2))} are each \tcode{T}, and
-let \tcode{u1} and \tcode{u2} be equality-preserving expressions such that
-\tcode{decltype((u1))} and \tcode{decltype((u2))} are each \tcode{U}.
-\tcode{T} and \tcode{U} model \tcode{\libconcept{common_reference_with}<T, U>}
-only if
+令 \tcode{C} 为 \tcode{common_reference_t<T, U>}。
+令 \tcode{t1} 和 \tcode{t2} 为等式保持
+表达式\iref{concepts.equality}，使得
+\tcode{decltype((t1))} 和 \tcode{decltype((t2))} 均为 \tcode{T}，并且
+令 \tcode{u1} 和 \tcode{u2} 为等式保持表达式，使得
+\tcode{decltype((u1))} 和 \tcode{decltype((u2))} 均为 \tcode{U}。
+\tcode{T} 和 \tcode{U} 建模 \tcode{\libconcept{common_reference_with}<T, U>}
+仅当
 \begin{itemize}
-\item \tcode{C(t1)} equals \tcode{C(t2)} if and only if
-  \tcode{t1} equals \tcode{t2}, and
-\item \tcode{C(u1)} equals \tcode{C(u2)} if and only if
-  \tcode{u1} equals \tcode{u2}.
+\item \tcode{C(t1)} 等于 \tcode{C(t2)} 当且仅当
+  \tcode{t1} 等于 \tcode{t2}，并且
+\item \tcode{C(u1)} 等于 \tcode{C(u2)} 当且仅当
+  \tcode{u1} 等于 \tcode{u2}。
 \end{itemize}
 
 \pnum
 \begin{note}
-Users can customize the behavior of \libconcept{common_reference_with} by specializing
-the \tcode{basic_common_reference} class template\iref{meta.trans.other}.
+用户可以通过特化
+\tcode{basic_common_reference} 类模板\iref{meta.trans.other} 来定制 \libconcept{common_reference_with} 的行为。
 \end{note}
 \end{itemdescr}
 
-\rSec2[concept.common]{Concept \cname{common_with}}
+\rSec2[concept.common]{概念 \cname{common_with}}
 
 \pnum
-If \tcode{T} and \tcode{U} can both be explicitly converted to some third type,
-\tcode{C}, then \tcode{T} and \tcode{U} share a \term{common type},
-\tcode{C}.
+如果 \tcode{T} 和 \tcode{U} 都可以显式转换为某个第三类型，
+\tcode{C}，则 \tcode{T} 和 \tcode{U} 共享一个 \term{共同类型}，
+\tcode{C}。
 \begin{note}
-\tcode{C} can be the same as \tcode{T} or \tcode{U}, or can be a
-different type. \tcode{C} is not necessarily unique.
+\tcode{C} 可以与 \tcode{T} 或 \tcode{U} 相同，或者可以是
+不同的类型。\tcode{C} 不一定是唯一的。
 \end{note}
 
 \begin{itemdecl}
@@ -466,30 +449,30 @@ template<class T, class U>
 
 \begin{itemdescr}
 \pnum
-Let \tcode{C} be \tcode{common_type_t<T, U>}.
-Let \tcode{t1} and \tcode{t2} be
-equality-preserving expressions\iref{concepts.equality} such that
-\tcode{decltype((t1))} and \tcode{decltype((t2))} are each \tcode{T}, and
-let \tcode{u1} and \tcode{u2} be equality-preserving expressions such that
-\tcode{decltype((u1))} and \tcode{decltype((u2))} are each \tcode{U}.
-\tcode{T} and \tcode{U} model \tcode{\libconcept{common_with}<T, U>}
-only if
+令 \tcode{C} 为 \tcode{common_type_t<T, U>}。
+令 \tcode{t1} 和 \tcode{t2} 为
+等式保持表达式\iref{concepts.equality}，使得
+\tcode{decltype((t1))} 和 \tcode{decltype((t2))} 均为 \tcode{T}，并且
+令 \tcode{u1} 和 \tcode{u2} 为等式保持表达式，使得
+\tcode{decltype((u1))} 和 \tcode{decltype((u2))} 均为 \tcode{U}。
+\tcode{T} 和 \tcode{U} 建模 \tcode{\libconcept{common_with}<T, U>}
+仅当
 \begin{itemize}
-\item \tcode{C(t1)} equals \tcode{C(t2)} if and only if
-  \tcode{t1} equals \tcode{t2}, and
-\item \tcode{C(u1)} equals \tcode{C(u2)} if and only if
-  \tcode{u1} equals \tcode{u2}.
+\item \tcode{C(t1)} 等于 \tcode{C(t2)} 当且仅当
+  \tcode{t1} 等于 \tcode{t2}，并且
+\item \tcode{C(u1)} 等于 \tcode{C(u2)} 当且仅当
+  \tcode{u1} 等于 \tcode{u2}。
 \end{itemize}
 
 \pnum
 \begin{note}
-Users can customize the behavior of \libconcept{common_with} by specializing the
-\tcode{common_type} class template\iref{meta.trans.other}.
+用户可以通过特化
+\tcode{common_type} 类模板\iref{meta.trans.other} 来定制 \libconcept{common_with} 的行为。
 \end{note}
 
 \end{itemdescr}
 
-\rSec2[concepts.arithmetic]{Arithmetic concepts}
+\rSec2[concepts.arithmetic]{算术概念}
 
 \begin{itemdecl}
 template<class T>
@@ -505,18 +488,18 @@ template<class T>
 \begin{itemdescr}
 \pnum
 \begin{note}
-\libconcept{signed_integral} can be modeled even by types that are
-not signed integer types\iref{basic.fundamental}; for example, \tcode{char}.
+\libconcept{signed_integral} 甚至可以由
+不是有符号整数类型\iref{basic.fundamental} 的类型建模；例如，\tcode{char}。
 \end{note}
 
 \pnum
 \begin{note}
-\libconcept{unsigned_integral} can be modeled even by types that are
-not unsigned integer types\iref{basic.fundamental}; for example, \tcode{bool}.
+\libconcept{unsigned_integral} 甚至可以由
+不是无符号整数类型\iref{basic.fundamental} 的类型建模；例如，\tcode{bool}。
 \end{note}
 \end{itemdescr}
 
-\rSec2[concept.assignable]{Concept \cname{assignable_from}}
+\rSec2[concept.assignable]{概念 \cname{assignable_from}}
 
 \begin{itemdecl}
 template<class LHS, class RHS>
@@ -530,145 +513,138 @@ template<class LHS, class RHS>
 
 \begin{itemdescr}
 \pnum
-Let:
+令：
 \begin{itemize}
-\item \tcode{lhs} be an lvalue that refers to an object \tcode{lcopy} such that
-  \tcode{decltype((lhs))} is \tcode{LHS},
-\item \tcode{rhs} be an expression such that \tcode{decltype((rhs))} is
-  \tcode{RHS}, and
-\item \tcode{rcopy} be a distinct object that is equal to \tcode{rhs}.
+\item \tcode{lhs} 为一个左值，它引用一个对象 \tcode{lcopy}，使得
+  \tcode{decltype((lhs))} 为 \tcode{LHS}，
+\item \tcode{rhs} 为一个表达式，使得 \tcode{decltype((rhs))} 为
+  \tcode{RHS}，并且
+\item \tcode{rcopy} 为一个与 \tcode{rhs} 相等的不同对象。
 \end{itemize}
-\tcode{LHS} and \tcode{RHS} model
-\tcode{\libconcept{assignable_from}<LHS, RHS>} only if
+\tcode{LHS} 和 \tcode{RHS} 建模
+\tcode{\libconcept{assignable_from}<LHS, RHS>} 仅当
 
 \begin{itemize}
-\item \tcode{addressof(lhs = rhs) == addressof(lcopy)}.
+\item \tcode{addressof(lhs = rhs) == addressof(lcopy)}。
 
-\item After evaluating \tcode{lhs = rhs}:
+\item 在评估 \tcode{lhs = rhs} 之后：
 
 \begin{itemize}
-\item \tcode{lhs} is equal to \tcode{rcopy}, unless \tcode{rhs} is a non-const
-xvalue that refers to \tcode{lcopy}.
+\item \tcode{lhs} 等于 \tcode{rcopy}，除非 \tcode{rhs} 是一个引用 \tcode{lcopy} 的非常量
+xvalue。
 
-\item If \tcode{rhs} is a non-\keyword{const} xvalue, the resulting state of the
-object to which it refers is valid but unspecified\iref{lib.types.movedfrom}.
+\item 如果 \tcode{rhs} 是一个非常量 xvalue，则其引用的对象的状态
+是有效的但未指定的\iref{lib.types.movedfrom}。
 
-\item Otherwise, if \tcode{rhs} is a glvalue, the object to which it refers is
-  not modified.
+\item 否则，如果 \tcode{rhs} 是一个 glvalue，则其引用的对象
+  不被修改。
 \end{itemize}
 \end{itemize}
 
 \pnum
 \begin{note}
-Assignment need not be a total function\iref{structure.requirements};
-in particular, if assignment to an object \tcode{x} can result in a modification
-of some other object \tcode{y}, then \tcode{x = y} is likely not in the domain
-of \tcode{=}.
+赋值不需要是全函数\iref{structure.requirements}；
+特别是，如果对对象 \tcode{x} 的赋值可能导致
+修改某个其他对象 \tcode{y}，则 \tcode{x = y} 很可能不在 \tcode{=} 的域中。
 \end{note}
 \end{itemdescr}
 
-\rSec2[concept.swappable]{Concept \cname{swappable}}
+\rSec2[concept.swappable]{概念 \cname{swappable}}
 
 \pnum
-Let \tcode{t1} and \tcode{t2} be equality-preserving expressions that denote
-distinct equal objects of type \tcode{T}, and let \tcode{u1} and \tcode{u2}
-similarly denote distinct equal objects of type \tcode{U}.
+令 \tcode{t1} 和 \tcode{t2} 为表示
+类型为 \tcode{T} 的不同相等对象的等式保持表达式，令 \tcode{u1} 和 \tcode{u2}
+类似地表示类型为 \tcode{U} 的不同相等对象。
 \begin{note}
-\tcode{t1} and \tcode{u1} can denote distinct objects, or the same object.
+\tcode{t1} 和 \tcode{u1} 可以表示不同的对象，或相同的对象。
 \end{note}
-An operation
-\term{exchanges the values} denoted by \tcode{t1} and \tcode{u1} if and only
-if the operation modifies neither \tcode{t2} nor \tcode{u2} and:
+当且仅当该操作
+既不修改 \tcode{t2} 也不修改 \tcode{u2} 并且：
 \begin{itemize}
-\item If \tcode{T} and \tcode{U} are the same type, the result of the operation
-  is that \tcode{t1} equals \tcode{u2} and \tcode{u1} equals \tcode{t2}.
+\item 如果 \tcode{T} 和 \tcode{U} 是相同的类型，则操作的结果是
+  \tcode{t1} 等于 \tcode{u2} 并且 \tcode{u1} 等于 \tcode{t2}。
 
-\item If \tcode{T} and \tcode{U} are different types and
+\item 如果 \tcode{T} 和 \tcode{U} 是不同的类型并且
   \tcode{\libconcept{common_reference_with}<decltype((t1)), decltype((u1))>}
-  is modeled,
-  the result of the operation is that
-  \tcode{C(t1)} equals \tcode{C(u2)}
-  and
-  \tcode{C(u1)} equals \tcode{C(t2)}
-  where \tcode{C} is \tcode{common_reference_t<decltype((t1)), decltype((u1))>}.
+  被建模，
+  操作的结果是
+  \tcode{C(t1)} 等于 \tcode{C(u2)}
+  并且
+  \tcode{C(u1)} 等于 \tcode{C(t2)}
+  其中 \tcode{C} 是 \tcode{common_reference_t<decltype((t1)), decltype((u1))>}。
 \end{itemize}
 
 \pnum
 \indexlibraryglobal{swap}%
-The name \tcode{ranges::swap} denotes a customization point
-object\iref{customization.point.object}. The expression
-\tcode{ranges::swap(E1, E2)} for subexpressions \tcode{E1}
-and \tcode{E2} is expression-equivalent to an expression
-\tcode{S} determined as follows:
+名称 \tcode{ranges::swap} 表示一个定制点
+对象\iref{customization.point.object}。表达式
+\tcode{ranges::swap(E1, E2)} 对于子表达式 \tcode{E1}
+和 \tcode{E2} 与表达式
+\tcode{S} 在表达式上等价，\tcode{S} 的确定方式如下：
 
 \begin{itemize}
 \item
-  \tcode{S} is \tcode{(void)swap(E1, E2)}
+  \tcode{S} 是 \tcode{(void)swap(E1, E2)}
 \begin{footnote}
-The name \tcode{swap} is used
-  here unqualified.
+名称 \tcode{swap} 是
+  此处不限定使用的。
 \end{footnote}
-if \tcode{E1} or \tcode{E2}
-  has class or enumeration type\iref{basic.compound} and that expression is valid, with
-  overload resolution performed in a context that includes the declaration
+如果 \tcode{E1} 或 \tcode{E2}
+  具有类或枚举类型\iref{basic.compound} 并且该表达式有效，则在包含声明的上下文中执行重载决议
 \begin{codeblock}
 template<class T>
   void swap(T&, T&) = delete;
 \end{codeblock}
-  and does not include a declaration of \tcode{ranges::swap}.
-  If the function selected by overload resolution does not
-  exchange the values denoted by
-  \tcode{E1} and \tcode{E2},
-  the program is ill-formed, no diagnostic required.
+  并且不包括 \tcode{ranges::swap} 的声明。
+  如果重载决议选择的函数没有
+  交换 \tcode{E1} 和 \tcode{E2} 所表示的值，
+  则程序是病态的，不需要诊断。
   \begin{note}
-  This precludes calling unconstrained program-defined overloads of
-  \tcode{swap}. When the deleted overload is viable, program-defined overloads
-  need to be more specialized\iref{temp.func.order} to be selected.
+  这排除了调用非约束的程序定义的 \tcode{swap} 重载。当删除的重载
+  是可行的时，程序定义的重载需要更加特化\iref{temp.func.order} 才能被选择。
   \end{note}
 
 \item
-  Otherwise, if \tcode{E1} and \tcode{E2}
-  are lvalues of array types\iref{basic.compound}
-  with equal extent and \tcode{ranges::swap(*E1, *E2)}
-  is a valid expression,
-  \tcode{S} is \tcode{(void)ranges::swap_ranges(E1, E2)},
-  except that
-  \tcode{noexcept(S)} is equal to
-  \tcode{noexcept(\brk{}ranges::swap(*E1, *E2))}.
+  否则，如果 \tcode{E1} 和 \tcode{E2}
+  是具有相等范围的数组类型\iref{basic.compound} 的左值
+  并且 \tcode{ranges::swap(*E1, *E2)}
+  是一个有效表达式，
+  则 \tcode{S} 是 \tcode{(void)ranges::swap_ranges(E1, E2)}，
+  除了
+  \tcode{noexcept(S)} 等于
+  \tcode{noexcept(\brk{}ranges::swap(*E1, *E2))}。
 
 \item
-  Otherwise, if \tcode{E1} and \tcode{E2} are lvalues of the
-  same type \tcode{T} that models \tcode{\libconcept{move_constructible}<T>} and
-  \tcode{\libconcept{assignable_from}<T\&, T>},
-  \tcode{S} is an expression that exchanges the denoted values.
-  \tcode{S} is a constant expression if
+  否则，如果 \tcode{E1} 和 \tcode{E2} 是
+  相同类型 \tcode{T} 的左值，该类型建模 \tcode{\libconcept{move_constructible}<T>} 和
+  \tcode{\libconcept{assignable_from}<T\&, T>}，
+  则 \tcode{S} 是一个交换表示值的表达式。
+  \tcode{S} 是一个常量表达式，如果
   \begin{itemize}
-  \item \tcode{T} is a literal type\iref{term.literal.type},
-  \item both \tcode{E1 = std::move(E2)} and \tcode{E2 = std::move(E1)} are
-    constant subexpressions\iref{defns.const.subexpr}, and
-  \item the full-expressions of the initializers in the declarations
+  \item \tcode{T} 是一个字面量类型\iref{term.literal.type}，
+  \item \tcode{E1 = std::move(E2)} 和 \tcode{E2 = std::move(E1)} 均为
+    常量子表达式\iref{defns.const.subexpr}，并且
+  \item 声明中初始值设定项的完整表达式
 \begin{codeblock}
 T t1(std::move(E1));
 T t2(std::move(E2));
 \end{codeblock}
-are constant subexpressions.
+是常量子表达式。
   \end{itemize}
-  \tcode{noexcept(S)} is equal to
-  \tcode{is_nothrow_move_constructible_v<T> \&\& is_nothrow_move_assignable\-_v<T>}.
+  \tcode{noexcept(S)} 等于
+  \tcode{is_nothrow_move_constructible_v<T> \&\& is_nothrow_move_assignable\-_v<T>}。
 
 \item
-  Otherwise, \tcode{ranges::swap(E1, E2)} is ill-formed.
+  否则，\tcode{ranges::swap(E1, E2)} 是病态的。
   \begin{note}
-  This case can result in substitution failure when \tcode{ranges::swap(E1, E2)}
-  appears in the immediate context of a template instantiation.
+  当 \tcode{ranges::swap(E1, E2)} 出现在模板实例化的直接上下文中时，这种情况可能导致替换失败。
   \end{note}
 \end{itemize}
 
 \pnum
 \begin{note}
-Whenever \tcode{ranges::swap(E1, E2)} is a valid expression, it
-exchanges the values denoted by
-\tcode{E1} and \tcode{E2} and has type \keyword{void}.
+只要 \tcode{ranges::swap(E1, E2)} 是一个有效的表达式，它就会
+交换 \tcode{E1} 和 \tcode{E2} 所表示的值，并且类型为 \keyword{void}。
 \end{note}
 
 \begin{itemdecl}
@@ -690,14 +666,14 @@ template<class T, class U>
 
 \pnum
 \begin{note}
-The semantics of the \libconcept{swappable} and \libconcept{swappable_with}
-concepts are fully defined by the \tcode{ranges::swap} customization point object.
+\libconcept{swappable} 和 \libconcept{swappable_with}
+概念的语义完全由 \tcode{ranges::swap} 定制点对象定义。
 \end{note}
 
 \pnum
 \begin{example}
-User code can ensure that the evaluation of \tcode{swap} calls
-is performed in an appropriate context under the various conditions as follows:
+用户代码可以确保在各种条件下，
+在适当的上下文中执行 \tcode{swap} 调用的评估，如下所示：
 \begin{codeblock}
 #include <cassert>
 #include <concepts>
@@ -739,304 +715,290 @@ int main() {
 \end{codeblock}
 \end{example}
 
-\rSec2[concept.destructible]{Concept \cname{destructible}}
+\rSec2[concept.destructible]{概念 \cname{destructible}}
 
 \pnum
-The \libconcept{destructible} concept specifies properties of all types,
-instances of which can be destroyed at the end of their lifetime, or reference
-types.
+\libconcept{destructible} 概念指定了所有类型的属性，
+其的实例可以在其生命周期结束时被销毁，或者引用
+类型。
 
 \begin{itemdecl}
 template<class T>
-  concept @\deflibconcept{destructible}@ = is_nothrow_destructible_v<T>;
+concept @\deflibconcept{destructible}@ = is_nothrow_destructible_v<T>;
 \end{itemdecl}
 
 \begin{itemdescr}
 \pnum
 \begin{note}
-Unlike the \oldconcept{Destructible} requirements~(\tref{cpp17.destructible}), this
-concept forbids destructors that are potentially throwing, even if a particular
-invocation of the destructor does not actually throw.
+与 \oldconcept{Destructible} 要求~(\tref{cpp17.destructible}) 不同，此
+概念禁止可能是抛出的析构函数，即使析构函数的特定
+调用实际上不会抛出。
 \end{note}
 \end{itemdescr}
 
-\rSec2[concept.constructible]{Concept \cname{constructible_from}}
+\rSec2[concept.constructible]{概念 \cname{constructible_from}}
 
 \pnum
-The \libconcept{constructible_from} concept constrains the initialization of a
-variable of a given type with a particular set of argument types.
+\libconcept{constructible_from} 概念约束了具有特定参数类型集合的
+给定类型的变量的初始化。
 
 \begin{itemdecl}
 template<class T, class... Args>
-  concept @\deflibconcept{constructible_from}@ = @\libconcept{destructible}@<T> && is_constructible_v<T, Args...>;
+concept @\deflibconcept{constructible_from}@ = @\libconcept{destructible}@<T> && is_constructible_v<T, Args...>;
 \end{itemdecl}
 
-\rSec2[concept.default.init]{Concept \cname{default_initializable}}
+\rSec2[concept.default.init]{概念 \cname{default_initializable}}
 
 \begin{itemdecl}
 template<class T>
-  constexpr bool @\exposid{is-default-initializable}@ = @\seebelow@;         // \expos
+constexpr bool @\exposid{is-default-initializable}@ = @\seebelow@;         // \expos
 
 template<class T>
-  concept @\deflibconcept{default_initializable}@ = @\libconcept{constructible_from}@<T> &&
-                                  requires { T{}; } &&
-                                  @\exposid{is-default-initializable}@<T>;
+concept @\deflibconcept{default_initializable}@ = @\libconcept{constructible_from}@<T> &&
+                                requires { T{}; } &&
+                                @\exposid{is-default-initializable}@<T>;
 \end{itemdecl}
 
 \begin{itemdescr}
 \pnum
-For a type \tcode{T}, \tcode{\exposid{is-default-initializable}<T>} is \tcode{true}
-if and only if the variable definition
+对于类型 \tcode{T}，\tcode{\exposid{is-default-initializable}<T>} 为 \tcode{true}
+当且仅当变量定义
 \begin{codeblock}
 T t;
 \end{codeblock}
-is well-formed for some invented variable \tcode{t};
-otherwise it is \tcode{false}.
-Access checking is performed as if in a context unrelated to \tcode{T}.
-Only the validity of the immediate context of the variable initialization is considered.
+对于某个虚构的变量 \tcode{t} 是良构的；
+否则为 \tcode{false}。
+访问检查的执行就像在与 \tcode{T} 无关的上下文中一样。
+仅考虑变量初始化的直接上下文的有效性。
 \end{itemdescr}
 
-\rSec2[concept.moveconstructible]{Concept \cname{move_constructible}}
+\rSec2[concept.moveconstructible]{概念 \cname{move_constructible}}
 
 \begin{itemdecl}
 template<class T>
-  concept @\deflibconcept{move_constructible}@ = @\libconcept{constructible_from}@<T, T> && @\libconcept{convertible_to}@<T, T>;
+concept @\deflibconcept{move_constructible}@ = @\libconcept{constructible_from}@<T, T> && @\libconcept{convertible_to}@<T, T>;
 \end{itemdecl}
 
 \begin{itemdescr}
 \pnum
-If \tcode{T} is an object type, then let \tcode{rv} be an rvalue of type
-\tcode{T} and \tcode{u2} a distinct object of type \tcode{T} equal to
-\tcode{rv}. \tcode{T} models \libconcept{move_constructible} only if
+如果 \tcode{T} 是对象类型，则令 \tcode{rv} 为类型
+\tcode{T} 的右值，并且 \tcode{u2} 为等于
+\tcode{rv} 的类型 \tcode{T} 的不同对象。\tcode{T} 建模 \libconcept{move_constructible} 仅当
 
 \begin{itemize}
-\item After the definition \tcode{T u = rv;}, \tcode{u} is equal to \tcode{u2}.
+\item 在定义 \tcode{T u = rv;} 之后，\tcode{u} 等于 \tcode{u2}。
 
-\item \tcode{T(rv)} is equal to \tcode{u2}.
+\item \tcode{T(rv)} 等于 \tcode{u2}。
 
-\item If \tcode{T} is not \keyword{const}, \tcode{rv}'s resulting state is valid
-but unspecified\iref{lib.types.movedfrom}; otherwise, it is unchanged.
+\item 如果 \tcode{T} 不是 \keyword{const}，则 \tcode{rv} 的结果状态是有效的
+但未指定的\iref{lib.types.movedfrom}；否则，它是不变的。
 \end{itemize}
 \end{itemdescr}
 
-\rSec2[concept.copyconstructible]{Concept \cname{copy_constructible}}
+\rSec2[concept.copyconstructible]{概念 \cname{copy_constructible}}
 
 \begin{itemdecl}
 template<class T>
-  concept @\deflibconcept{copy_constructible}@ =
-    @\libconcept{move_constructible}@<T> &&
-    @\libconcept{constructible_from}@<T, T&> && @\libconcept{convertible_to}@<T&, T> &&
-    @\libconcept{constructible_from}@<T, const T&> && @\libconcept{convertible_to}@<const T&, T> &&
-    @\libconcept{constructible_from}@<T, const T> && @\libconcept{convertible_to}@<const T, T>;
+concept @\deflibconcept{copy_constructible}@ =
+  @\libconcept{move_constructible}@<T> &&
+  @\libconcept{constructible_from}@<T, T&> && @\libconcept{convertible_to}@<T&, T> &&
+  @\libconcept{constructible_from}@<T, const T&> && @\libconcept{convertible_to}@<const T&, T> &&
+  @\libconcept{constructible_from}@<T, const T> && @\libconcept{convertible_to}@<const T, T>;
 \end{itemdecl}
 
 \begin{itemdescr}
 \pnum
-If \tcode{T} is an object type, then let \tcode{v} be an lvalue of type
-\tcode{T} or \tcode{\keyword{const} T} or an rvalue of type \tcode{\keyword{const} T}.
-\tcode{T} models \libconcept{copy_constructible} only if
+如果 \tcode{T} 是对象类型，则令 \tcode{v} 为类型
+\tcode{T} 或 \tcode{\keyword{const} T} 的左值，或类型 \tcode{\keyword{const} T} 的右值。
+\tcode{T} 建模 \libconcept{copy_constructible} 仅当
 
 \begin{itemize}
-\item After the definition \tcode{T u = v;},
-\tcode{u} is equal to \tcode{v}\iref{concepts.equality} and
-\tcode{v} is not modified.
+\item 在定义 \tcode{T u = v;} 之后，
+\tcode{u} 等于 \tcode{v}\iref{concepts.equality} 并且
+\tcode{v} 未被修改。
 
-\item \tcode{T(v)} is equal to \tcode{v} and does not modify \tcode{v}.
+\item \tcode{T(v)} 等于 \tcode{v} 并且不修改 \tcode{v}。
 \end{itemize}
 
 \end{itemdescr}
 
-\rSec1[concepts.compare]{Comparison concepts}
+\rSec1[concepts.compare]{比较概念}
 
-\rSec2[concepts.compare.general]{General}
-
-\pnum
-Subclause \ref{concepts.compare} describes concepts that establish relationships and orderings
-on values of possibly differing object types.
+\rSec2[concepts.compare.general]{概述}
 
 \pnum
-Given an expression \tcode{E} and a type \tcode{C},
-let \tcode{\exposid{CONVERT_TO_LVALUE}<C>(E)} be:
+子条款 \ref{concepts.compare} 描述了在可能不同的对象类型的值上建立关系和排序的概念。
+
+\pnum
+给定一个表达式 \tcode{E} 和一个类型 \tcode{C}，
+令 \tcode{\exposid{CONVERT_TO_LVALUE}<C>(E)} 为：
 \begin{itemize}
 \item
-\tcode{static_cast<const C\&>(as_const(E))} if that is a valid expression, and
+如果 \tcode{static_cast<const C\&>(as_const(E))} 是一个有效的表达式，则为它，以及
 \item
-\tcode{static_cast<const C\&>(std::move(E))} otherwise.
+否则为 \tcode{static_cast<const C\&>(std::move(E))}。
 \end{itemize}
 
-\rSec2[concept.booleantestable]{Boolean testability}
+\rSec2[concept.booleantestable]{布尔可测试性}
 
 \pnum
-The exposition-only \exposconcept{boolean-testable} concept
-specifies the requirements on expressions
-that are convertible to \tcode{bool} and
-for which the logical operators\iref{expr.log.and,expr.log.or,expr.unary.op}
-have the conventional semantics.
+仅用于说明的 \exposconcept{boolean-testable} 概念
+指定了对可转换为 \tcode{bool} 并且
+逻辑运算符\iref{expr.log.and,expr.log.or,expr.unary.op}
+具有常规语义的表达式的要求。
 
 \begin{itemdecl}
 template<class T>
-  concept @\defexposconcept{boolean-testable-impl}@ = @\libconcept{convertible_to}@<T, bool>;  // \expos
+concept @\defexposconcept{boolean-testable-impl}@ = @\libconcept{convertible_to}@<T, bool>;  // \expos
 \end{itemdecl}
 
 \pnum
-Let \tcode{e} be an expression such that
-\tcode{decltype((e))} is \tcode{T}.
-\tcode{T} models \exposconcept{boolean-testable-impl} only if
+令 \tcode{e} 为一个表达式，使得
+\tcode{decltype((e))} 是 \tcode{T}。
+\tcode{T} 建模 \exposconcept{boolean-testable-impl} 仅当
 
 \begin{itemize}
 \item
-either \tcode{remove_cvref_t<T>} is not a class type, or
-a search for the names \tcode{operator\&\&} and \tcode{operator||}
-in the scope of \tcode{remove_cvref_t<T>}
-finds nothing; and
+\tcode{remove_cvref_t<T>} 不是类类型，或者
+在 \tcode{remove_cvref_t<T>} 的作用域中搜索名称 \tcode{operator\&\&} 和 \tcode{operator||}
+未找到任何内容；以及
 
 \item
-argument-dependent lookup\iref{basic.lookup.argdep}
-for the names \tcode{operator\&\&} and \tcode{operator||}
-with \tcode{T} as the only argument type
-finds no disqualifying declaration (defined below).
+以 \tcode{T} 作为唯一参数类型
+对名称 \tcode{operator\&\&} 和 \tcode{operator||} 进行依赖于实参的查找\iref{basic.lookup.argdep}
+找不到不合格的声明（定义如下）。
 \end{itemize}
 
 \pnum
-A \defnadj{disqualifying}{parameter}
-is a function parameter whose declared type \tcode{P}
+\defnadj{不合格}{形参}
+是一个函数形参，其声明的类型 \tcode{P}
 
 \begin{itemize}
 \item
-is not dependent on a template parameter, and
-there exists an implicit conversion sequence\iref{over.best.ics}
-from \tcode{e} to \tcode{P}; or
+不依赖于模板形参，并且
+存在从 \tcode{e} 到 \tcode{P} 的隐式转换序列\iref{over.best.ics}；或者
 
 \item
-is dependent on one or more template parameters, and either
+依赖于一个或多个模板形参，并且满足以下条件之一
 \begin{itemize}
 \item
-\tcode{P} contains no template parameter that
-participates in template argument deduction\iref{temp.deduct.type}, or
+\tcode{P} 不包含参与模板实参推导\iref{temp.deduct.type} 的模板形参，或者
 \item
-template argument deduction
-using the rules for deducing template arguments
-in a function call\iref{temp.deduct.call} and
-\tcode{e} as the argument succeeds.
+使用函数调用中推导模板实参的规则\iref{temp.deduct.call} 进行的模板实参推导和
+\tcode{e} 作为实参成功。
 \end{itemize}
 \end{itemize}
 
 \pnum
 \indextext{template!function!key parameter of}%
-A \defnadj{key}{parameter} of a function template \tcode{D}
-is a function parameter of type \cv{} \tcode{X} or reference thereto,
-where \tcode{X} names a specialization of a class template that
-has the same innermost enclosing non-inline namespace as \tcode{D}, and
-\tcode{X} contains at least one template parameter that
-participates in template argument deduction.
+函数模板 \tcode{D} 的 \defnadj{关键}{形参}
+是类型为 \cv{} \tcode{X} 或其引用的函数形参，
+其中 \tcode{X} 命名一个类模板的特化，该类模板具有与 \tcode{D} 相同的最内层封闭非内联命名空间，并且
+\tcode{X} 包含至少一个参与模板实参推导的模板形参。
 \begin{example}
-In
+在
 \begin{codeblock}
 namespace Z {
-  template<class> struct C {};
-  template<class T>
-    void operator&&(C<T> x, T y);
-  template<class T>
-    void operator||(C<type_identity_t<T>> x, T y);
+template<class> struct C {};
+template<class T>
+  void operator&&(C<T> x, T y);
+template<class T>
+  void operator||(C<type_identity_t<T>> x, T y);
 }
 \end{codeblock}
-the declaration of \tcode{Z::operator\&\&}
-contains one key parameter, \tcode{C<T> x}, and
-the declaration of \tcode{Z::operator||}
-contains no key parameters.
+\tcode{Z::operator\&\&} 的声明
+包含一个关键形参 \tcode{C<T> x}，并且
+\tcode{Z::operator||} 的声明
+不包含关键形参。
 \end{example}
 
 \pnum
-A \defnadj{disqualifying}{declaration} is
+\defnadj{不合格}{声明} 是
 
 \begin{itemize}
 \item
-a (non-template) function declaration that
-contains at least one disqualifying parameter; or
+包含至少一个不合格形参的（非模板）函数声明；或者
 
 \item
-a function template declaration that
-contains at least one disqualifying parameter, where
+包含至少一个不合格形参的函数模板声明，其中
 \begin{itemize}
-\item at least one disqualifying parameter is a key parameter; or
-\item the declaration contains no key parameters; or
-\item the declaration declares a function template
-to which no name is bound\iref{dcl.meaning}.
+\item 至少一个不合格形参是关键形参；或者
+\item 声明不包含关键形参；或者
+\item 声明声明了一个未绑定任何名称的函数模板\iref{dcl.meaning}。
 \end{itemize}
 \end{itemize}
 
 \pnum
 \begin{note}
-The intention is to ensure that
-given two types \tcode{T1} and \tcode{T2}
-that each model \exposconcept{boolean-testable-impl},
-the \tcode{\&\&} and \tcode{||} operators within the expressions
-\tcode{declval<T1>() \&\& declval<T2>()} and
-\tcode{declval<T1>() || declval<T2>()}
-resolve to the corresponding built-in operators.
+目的是确保
+给定两个类型 \tcode{T1} 和 \tcode{T2}
+每个都建模 \exposconcept{boolean-testable-impl}，
+表达式 \tcode{declval<T1>() \&\& declval<T2>()} 和
+\tcode{declval<T1>() || declval<T2>()} 中的 \tcode{\&\&} 和 \tcode{||} 运算符
+解析为相应的内置运算符。
 \end{note}
 
 \begin{itemdecl}
 template<class T>
-  concept @\defexposconcept{boolean-testable}@ =                // \expos
-    @\exposconcept{boolean-testable-impl}@<T> && requires(T&& t) {
-      { !std::forward<T>(t) } -> @\exposconcept{boolean-testable-impl}@;
-    };
+concept @\defexposconcept{boolean-testable}@ =                // \expos
+  @\exposconcept{boolean-testable-impl}@<T> && requires(T&& t) {
+    { !std::forward<T>(t) } -> @\exposconcept{boolean-testable-impl}@;
+  };
 \end{itemdecl}
 
 \pnum
-Let \tcode{e} be an expression such that
-\tcode{decltype((e))} is \tcode{T}.
-\tcode{T} models \exposconcept{boolean-testable} only if
-\tcode{bool(e) == !bool(!e)}.
+令 \tcode{e} 为一个表达式，使得
+\tcode{decltype((e))} 是 \tcode{T}。
+\tcode{T} 建模 \exposconcept{boolean-testable} 仅当
+\tcode{bool(e) == !bool(!e)}。
 
 \pnum
 \begin{example}
-The types
-\tcode{bool},
-\tcode{true_type}\iref{meta.type.synop},
-\tcode{int*}, and
+类型
+\tcode{bool}、
+\tcode{true_type}\iref{meta.type.synop}、
+\tcode{int*} 和
 \tcode{bitset<N>::reference}\iref{template.bitset}
-model \exposconcept{boolean-testable}.
+建模 \exposconcept{boolean-testable}。
 \end{example}
 
-\rSec2[concept.comparisoncommontype]{Comparison common types}
+\rSec2[concept.comparisoncommontype]{比较公共类型}
 
 \begin{itemdecl}
 template<class T, class U, class C = common_reference_t<const T&, const U&>>
-  concept @\defexposconcept{comparison-common-type-with-impl}@ =   // \expos
-    @\libconcept{same_as}@<common_reference_t<const T&, const U&>,
-            common_reference_t<const U&, const T&>> &&
-    requires {
-      requires @\libconcept{convertible_to}@<const T&, const C&> || @\libconcept{convertible_to}@<T, const C&>;
-      requires @\libconcept{convertible_to}@<const U&, const C&> || @\libconcept{convertible_to}@<U, const C&>;
-    };
+concept @\defexposconcept{comparison-common-type-with-impl}@ =   // \expos
+  @\libconcept{same_as}@<common_reference_t<const T&, const U&>,
+          common_reference_t<const U&, const T&>> &&
+  requires {
+    requires @\libconcept{convertible_to}@<const T&, const C&> || @\libconcept{convertible_to}@<T, const C&>;
+    requires @\libconcept{convertible_to}@<const U&, const C&> || @\libconcept{convertible_to}@<U, const C&>;
+  };
 
 template<class T, class U>
-  concept @\defexposconcept{comparison-common-type-with}@ =   // \expos
-    @\exposconcept{comparison-common-type-with-impl}@<remove_cvref_t<T>, remove_cvref_t<U>>;
+concept @\defexposconcept{comparison-common-type-with}@ =   // \expos
+  @\exposconcept{comparison-common-type-with-impl}@<remove_cvref_t<T>, remove_cvref_t<U>>;
 \end{itemdecl}
 
 \pnum
-Let \tcode{C} be \tcode{common_reference_t<const T\&, const U\&>}.
-Let \tcode{t1} and \tcode{t2} be equality-preserving expressions
-that are lvalues of type \tcode{remove_cvref_t<T>}, and
-let \tcode{u1} and \tcode{u2} be equality-preserving expressions
-that are lvalues of type \tcode{remove_cvref_t<U>}.
-\tcode{T} and \tcode{U} model
-\tcode{\exposconcept{comparison-common-type-with}<T, U>} only if
+令 \tcode{C} 为 \tcode{common_reference_t<const T\&, const U\&>}。
+令 \tcode{t1} 和 \tcode{t2} 为等式保持表达式
+作为类型 \tcode{remove_cvref_t<T>} 的左值，并且
+令 \tcode{u1} 和 \tcode{u2} 为等式保持表达式
+作为类型 \tcode{remove_cvref_t<U>} 的左值。
+\tcode{T} 和 \tcode{U} 建模
+\tcode{\exposconcept{comparison-common-type-with}<T, U>} 仅当
 \begin{itemize}
 \item
-\tcode{\exposid{CONVERT_TO_LVALUE}<C>(t1)} equals
+\tcode{\exposid{CONVERT_TO_LVALUE}<C>(t1)} 等于
 \tcode{\exposid{CONVERT_TO_LVALUE}<C>(t2)}
-if and only if \tcode{t1} equals \tcode{t2}, and
+当且仅当 \tcode{t1} 等于 \tcode{t2}，并且
 \item
-\tcode{\exposid{CONVERT_TO_LVALUE}<C>(u1)} equals
+\tcode{\exposid{CONVERT_TO_LVALUE}<C>(u1)} 等于
 \tcode{\exposid{CONVERT_TO_LVALUE}<C>(u2)}
-if and only if \tcode{u1} equals \tcode{u2}
+当且仅当 \tcode{u1} 等于 \tcode{u2}
 \end{itemize}
 
-\rSec2[concept.equalitycomparable]{Concept \cname{equality_comparable}}
+\rSec2[concept.equalitycomparable]{概念 \cname{equality_comparable}}
 
 \begin{itemdecl}
 template<class T, class U>
@@ -1052,18 +1014,18 @@ template<class T, class U>
 
 \begin{itemdescr}
 \pnum
-Given types \tcode{T} and \tcode{U},
-let \tcode{t} and \tcode{u} be lvalues of types
-\tcode{const remove_reference_t<T>} and
-\tcode{const remove_reference_t<U>} respectively.
-\tcode{T} and \tcode{U} model
-\tcode{\exposconcept{weakly-equality-comparable-with}<T, U>} only if
+给定类型 \tcode{T} 和 \tcode{U}，
+令 \tcode{t} 和 \tcode{u} 分别为类型
+\tcode{const remove_reference_t<T>} 和
+\tcode{const remove_reference_t<U>} 的左值。
+\tcode{T} 和 \tcode{U} 建模
+\tcode{\exposconcept{weakly-equality-comparable-with}<T, U>} 仅当
 \begin{itemize}
-\item \tcode{t == u}, \tcode{u == t}, \tcode{t != u}, and \tcode{u != t}
-      have the same domain.
-\item \tcode{bool(u == t) ==  bool(t == u)}.
-\item \tcode{bool(t != u) == !bool(t == u)}.
-\item \tcode{bool(u != t) ==  bool(t != u)}.
+\item \tcode{t == u}、\tcode{u == t}、\tcode{t != u} 和 \tcode{u != t}
+      具有相同的域。
+\item \tcode{bool(u == t) ==  bool(t == u)}。
+\item \tcode{bool(t != u) == !bool(t == u)}。
+\item \tcode{bool(u != t) ==  bool(t != u)}。
 \end{itemize}
 \end{itemdescr}
 
@@ -1074,15 +1036,14 @@ template<class T>
 
 \begin{itemdescr}
 \pnum
-Let \tcode{a} and \tcode{b} be objects of type \tcode{T}.
-\tcode{T} models \libconcept{equality_comparable} only if
-\tcode{bool(a == b)} is \tcode{true} when \tcode{a} is equal to
-\tcode{b}\iref{concepts.equality}, and \tcode{false} otherwise.
+令 \tcode{a} 和 \tcode{b} 为类型 \tcode{T} 的对象。
+当 \tcode{a} 等于
+\tcode{b}\iref{concepts.equality} 时，\tcode{T} 建模 \libconcept{equality_comparable} 仅当 \tcode{bool(a == b)} 为 \tcode{true}，否则为 \tcode{false}。
 
 \pnum
 \begin{note}
-The requirement that the expression \tcode{a == b} is equality-preserving
-implies that \tcode{==} is transitive and symmetric.
+表达式 \tcode{a == b} 是等式保持的要求
+暗示 \tcode{==} 是传递的和对称的。
 \end{note}
 \end{itemdescr}
 
@@ -1100,25 +1061,25 @@ template<class T, class U>
 
 \begin{itemdescr}
 \pnum
-Given types \tcode{T} and \tcode{U},
-let \tcode{t} and \tcode{t2} be lvalues
-denoting distinct equal objects of types \tcode{const remove_reference_t<T>} and
-\tcode{remove_cvref_t<T>}, respectively,
-let \tcode{u} and \tcode{u2} be lvalues
-denoting distinct equal objects of types \tcode{const remove_reference_t<U>} and
-\tcode{remove_cvref_t<U>}, respectively, and
-let \tcode{C} be:
+给定类型 \tcode{T} 和 \tcode{U}，
+令 \tcode{t} 和 \tcode{t2} 为左值
+分别表示类型 \tcode{const remove_reference_t<T>} 和
+\tcode{remove_cvref_t<T>} 的不同的相等对象，
+令 \tcode{u} 和 \tcode{u2} 为左值
+分别表示类型 \tcode{const remove_reference_t<U>} 和
+\tcode{remove_cvref_t<U>} 的不同的相等对象，并且
+令 \tcode{C} 为：
 \begin{codeblock}
 common_reference_t<const remove_reference_t<T>&, const remove_reference_t<U>&>
 \end{codeblock}
-\tcode{T} and \tcode{U} model
-\tcode{\libconcept{equality_comparable_with}<T, U>} only if
+\tcode{T} 和 \tcode{U} 建模
+\tcode{\libconcept{equality_comparable_with}<T, U>} 仅当
 \begin{codeblock}
 bool(t == u) == bool(@\exposid{CONVERT_TO_LVALUE}@<C>(t2) == @\exposid{CONVERT_TO_LVALUE}@<C>(u2))
 \end{codeblock}
 \end{itemdescr}
 
-\rSec2[concept.totallyordered]{Concept \cname{totally_ordered}}
+\rSec2[concept.totallyordered]{概念 \cname{totally_ordered}}
 
 \begin{itemdecl}
 template<class T>
@@ -1128,17 +1089,17 @@ template<class T>
 
 \begin{itemdescr}
 \pnum
-Given a type \tcode{T}, let \tcode{a}, \tcode{b}, and \tcode{c} be
-lvalues of type \tcode{const remove_reference_t<T>}.
-\tcode{T} models \libconcept{totally_ordered} only if
+给定一个类型 \tcode{T}，令 \tcode{a}、\tcode{b} 和 \tcode{c} 为
+类型 \tcode{const remove_reference_t<T>} 的左值。
+\tcode{T} 建模 \libconcept{totally_ordered} 仅当
 
 \begin{itemize}
-\item Exactly one of \tcode{bool(a < b)}, \tcode{bool(a > b)}, or
-      \tcode{bool(a == b)} is \tcode{true}.
-\item If \tcode{bool(a < b)} and \tcode{bool(b < c)}, then
-      \tcode{bool(a < c)}.
-\item \tcode{bool(a <= b) == !bool(b < a)}.
-\item \tcode{bool(a >= b) == !bool(a < b)}.
+\item \tcode{bool(a < b)}、\tcode{bool(a > b)} 或
+      \tcode{bool(a == b)} 中恰好有一个为 \tcode{true}。
+\item 如果 \tcode{bool(a < b)} 且 \tcode{bool(b < c)}，则
+      \tcode{bool(a < c)}。
+\item \tcode{bool(a <= b) == !bool(b < a)}。
+\item \tcode{bool(a >= b) == !bool(a < b)}。
 \end{itemize}
 
 \end{itemdescr}
@@ -1157,19 +1118,19 @@ template<class T, class U>
 
 \begin{itemdescr}
 \pnum
-Given types \tcode{T} and \tcode{U},
-let \tcode{t} and \tcode{t2} be lvalues
-denoting distinct equal objects of types \tcode{const remove_reference_t<T>} and
-\tcode{remove_cvref_t<T>}, respectively,
-let \tcode{u} and \tcode{u2} be lvalues
-denoting distinct equal objects of types \tcode{const remove_reference_t<U>} and
-\tcode{remove_cvref_t<U>}, respectively, and
-let \tcode{C} be:
+给定类型 \tcode{T} 和 \tcode{U}，
+令 \tcode{t} 和 \tcode{t2} 为左值
+分别表示类型 \tcode{const remove_reference_t<T>} 和
+\tcode{remove_cvref_t<T>} 的不同的相等对象，
+令 \tcode{u} 和 \tcode{u2} 为左值
+分别表示类型 \tcode{const remove_reference_t<U>} 和
+\tcode{remove_cvref_t<U>} 的不同的相等对象，并且
+令 \tcode{C} 为：
 \begin{codeblock}
 common_reference_t<const remove_reference_t<T>&, const remove_reference_t<U>&>
 \end{codeblock}
-\tcode{T} and \tcode{U} model
-\tcode{\libconcept{totally_ordered_with}<T, U>} only if
+\tcode{T} 和 \tcode{U} 建模
+\tcode{\libconcept{totally_ordered_with}<T, U>} 仅当
 \begin{itemize}
 \item \tcode{bool(t <  u) == bool(\exposid{CONVERT_TO_LVALUE}<C>(t2) <  \exposid{CONVERT_TO_LVALUE}<C>(u2))}.
 \item \tcode{bool(t >  u) == bool(\exposid{CONVERT_TO_LVALUE}<C>(t2) >  \exposid{CONVERT_TO_LVALUE}<C>(u2))}.
@@ -1182,11 +1143,10 @@ common_reference_t<const remove_reference_t<T>&, const remove_reference_t<U>&>
 \end{itemize}
 \end{itemdescr}
 
-\rSec1[concepts.object]{Object concepts}
+\rSec1[concepts.object]{对象概念}
 
 \pnum
-This subclause describes concepts that specify the basis of the
-value-oriented programming style on which the library is based.
+本子条款描述了指定库所基于的面向值编程风格的基础的概念。
 
 \begin{itemdecl}
 template<class T>
@@ -1204,33 +1164,32 @@ template<class T>
 \begin{itemdescr}
 \pnum
 \begin{note}
-The \libconcept{semiregular} concept is modeled by types that behave similarly
-to fundamental types like \tcode{int}, except that they need not
-be comparable with \tcode{==}.
+\libconcept{semiregular} 概念由行为类似于
+像 \tcode{int} 这样的基本类型，只是它们不需要
+与 \tcode{==} 进行比较的类型建模。
 \end{note}
 
 \pnum
 \begin{note}
-The \libconcept{regular} concept is modeled by types that behave similarly to
-fundamental types like \tcode{int} and that are comparable with
-\tcode{==}.
+\libconcept{regular} 概念由行为类似于
+像 \tcode{int} 这样的基本类型并且可以与 \tcode{==} 进行比较的类型建模。
 \end{note}
 \end{itemdescr}
 
-\rSec1[concepts.callable]{Callable concepts}
+\rSec1[concepts.callable]{可调用概念}
 
-\rSec2[concepts.callable.general]{General}
-
-\pnum
-The concepts in \ref{concepts.callable} describe the requirements on function
-objects\iref{function.objects} and their arguments.
-
-\rSec2[concept.invocable]{Concept \cname{invocable}}
+\rSec2[concepts.callable.general]{概述}
 
 \pnum
-The \libconcept{invocable} concept specifies a relationship between a callable
-type\iref{func.def} \tcode{F} and a set of argument types \tcode{Args...} which
-can be evaluated by the library function \tcode{invoke}\iref{func.invoke}.
+\ref{concepts.callable} 中的概念描述了对函数
+对象\iref{function.objects} 及其参数的要求。
+
+\rSec2[concept.invocable]{概念 \cname{invocable}}
+
+\pnum
+\libconcept{invocable} 概念指定了可调用
+类型\iref{func.def} \tcode{F} 和一组参数类型 \tcode{Args...} 之间的关系，它们
+可以通过库函数 \tcode{invoke}\iref{func.invoke} 进行评估。
 
 \begin{itemdecl}
 template<class F, class... Args>
@@ -1242,13 +1201,13 @@ template<class F, class... Args>
 \begin{itemdescr}
 \pnum
 \begin{example}
-A function that generates random numbers can model \libconcept{invocable},
-since the \tcode{invoke} function call expression is not required to be
-equality-preserving\iref{concepts.equality}.
+生成随机数的函数可以建模 \libconcept{invocable}，
+因为 \tcode{invoke} 函数调用表达式不需要
+等式保持\iref{concepts.equality}。
 \end{example}
 \end{itemdescr}
 
-\rSec2[concept.regularinvocable]{Concept \cname{regular_invocable}}
+\rSec2[concept.regularinvocable]{概念 \cname{regular_invocable}}
 
 \begin{itemdecl}
 template<class F, class... Args>
@@ -1257,27 +1216,26 @@ template<class F, class... Args>
 
 \begin{itemdescr}
 \pnum
-The \tcode{invoke} function call expression shall be
-equality-preserving\iref{concepts.equality} and
-shall not modify the function object or the arguments.
+\tcode{invoke} 函数调用表达式应为
+等式保持\iref{concepts.equality} 并且
+不应修改函数对象或参数。
 \begin{note}
-This requirement supersedes the annotation in the definition of
-\libconcept{invocable}.
+此要求取代了 \libconcept{invocable} 定义中的注释。
 \end{note}
 
 \pnum
 \begin{example}
-A random number generator does not model \libconcept{regular_invocable}.
+随机数生成器不建模 \libconcept{regular_invocable}。
 \end{example}
 
 \pnum
 \begin{note}
-The distinction between \libconcept{invocable} and \libconcept{regular_invocable}
-is purely semantic.
+\libconcept{invocable} 和 \libconcept{regular_invocable} 之间的区别
+纯粹是语义上的。
 \end{note}
 \end{itemdescr}
 
-\rSec2[concept.predicate]{Concept \cname{predicate}}
+\rSec2[concept.predicate]{概念 \cname{predicate}}
 
 \begin{itemdecl}
 template<class F, class... Args>
@@ -1285,7 +1243,7 @@ template<class F, class... Args>
     @\libconcept{regular_invocable}@<F, Args...> && @\exposconcept{boolean-testable}@<invoke_result_t<F, Args...>>;
 \end{itemdecl}
 
-\rSec2[concept.relation]{Concept \cname{relation}}
+\rSec2[concept.relation]{概念 \cname{relation}}
 
 \begin{itemdecl}
 template<class R, class T, class U>
@@ -1294,7 +1252,7 @@ template<class R, class T, class U>
     @\libconcept{predicate}@<R, T, U> && @\libconcept{predicate}@<R, U, T>;
 \end{itemdecl}
 
-\rSec2[concept.equiv]{Concept \cname{equivalence_relation}}
+\rSec2[concept.equiv]{概念 \cname{equivalence_relation}}
 
 \begin{itemdecl}
 template<class R, class T, class U>
@@ -1303,11 +1261,11 @@ template<class R, class T, class U>
 
 \begin{itemdescr}
 \pnum
-A \libconcept{relation} models \libconcept{equivalence_relation} only if
-it imposes an equivalence relation on its arguments.
+\libconcept{relation} 建模 \libconcept{equivalence_relation} 仅当
+它对其参数施加等价关系。
 \end{itemdescr}
 
-\rSec2[concept.strictweakorder]{Concept \cname{strict_weak_order}}
+\rSec2[concept.strictweakorder]{概念 \cname{strict_weak_order}}
 
 \begin{itemdecl}
 template<class R, class T, class U>
@@ -1316,55 +1274,51 @@ template<class R, class T, class U>
 
 \begin{itemdescr}
 \pnum
-A \libconcept{relation} models \libconcept{strict_weak_order} only if
-it imposes a \term{strict weak ordering} on its arguments.
+\libconcept{relation} 建模 \libconcept{strict_weak_order} 仅当
+它对其参数施加\term{严格弱序}。
 
 \pnum
-The term
-\term{strict}
-refers to the
-requirement of an irreflexive relation (\tcode{!comp(x, x)} for all \tcode{x}),
-and the term
-\term{weak}
-to requirements that are not as strong as
-those for a total ordering,
-but stronger than those for a partial
-ordering.
-If we define
+术语
+\term{严格}
+指的是
+非自反关系的要求（对于所有 \tcode{x}，\tcode{!comp(x, x)}），
+以及术语
+\term{弱}
+指的是不如全序的要求那么强，
+但比偏序的要求更强。
+如果我们将
 \tcode{equiv(a, b)}
-as
-\tcode{!comp(a, b) \&\& !comp(b, a)},
-then the requirements are that
+定义为
+\tcode{!comp(a, b) \&\& !comp(b, a)}，
+那么要求是
 \tcode{comp}
-and
+和
 \tcode{equiv}
-both be transitive relations:
+都是传递关系：
 
 \begin{itemize}
 \item
 \tcode{comp(a, b) \&\& comp(b, c)}
-implies
+暗示
 \tcode{comp(a, c)}
 \item
 \tcode{equiv(a, b) \&\& equiv(b, c)}
-implies
+暗示
 \tcode{equiv(a, c)}
 \end{itemize}
 
 \pnum
 \begin{note}
-Under these conditions, it can be shown that
+在这些条件下，可以证明
 \begin{itemize}
 \item
 \tcode{equiv}
-is an equivalence relation,
+是一个等价关系，
 \item
 \tcode{comp}
-induces a well-defined relation on the equivalence
-classes determined by
-\tcode{equiv}, and
+在由 \tcode{equiv} 确定的等价类上导出一个明确定义的关系，并且
 \item
-the induced relation is a strict total ordering.
+导出的关系是一个严格全序。
 \end{itemize}
 \end{note}
 \end{itemdescr}
